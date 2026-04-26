@@ -1,0 +1,8 @@
+namespace Eternelle.Modules.Weddings.Domain.DressCodeConfigs;
+
+public readonly record struct DressCodeConfigId(Guid Value)
+{
+    public static DressCodeConfigId New() => new(Guid.CreateVersion7());
+
+    public override string ToString() => Value.ToString();
+}

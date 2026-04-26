@@ -1,0 +1,53 @@
+# Build output
+bin/
+obj/
+out/
+
+# NuGet
+/packages/
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# IDE — Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# IDE — JetBrains Rider
+.idea/
+*.iml
+riderModule.iml
+/_ReSharper.Caches/
+
+# IDE — VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs and test results
+*.log
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# Entity Framework migrations bundle (generated binary)
+efbundle
+efbundle.exe
+
+# Docker — keep compose files but ignore generated container state
+.containers/
+
+# Environment / secrets — never commit these
+.env
+.env.local
+*.env
+appsettings.Local.json
+appsettings.local.json

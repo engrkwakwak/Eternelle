@@ -1,0 +1,25 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/API/">
+    <Project Path="src/API/Eternelle.Api/Eternelle.Api.csproj" Id="5b24468e-244c-4245-86f4-2acfb1f96dee" />
+  </Folder>
+  <Folder Name="/src/Common/">
+    <Project Path="src/Common/Eternelle.Common.Application/Eternelle.Common.Application.csproj" />
+    <Project Path="src/Common/Eternelle.Common.Domain/Eternelle.Common.Domain.csproj" />
+    <Project Path="src/Common/Eternelle.Common.Infrastructure/Eternelle.Common.Infrastructure.csproj" Id="399ff310-9470-4164-835f-771883a1e5d5" />
+    <Project Path="src/Common/Eternelle.Common.Presentation/Eternelle.Common.Presentation.csproj" Id="54cfc49d-e0bb-44a0-84ac-ee35515c1b5e" />
+  </Folder>
+  <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Wedding/">
+    <Project Path="src/Modules/Weddings/Eternelle.Modules.Weddings.Domain/Eternelle.Modules.Weddings.Domain.csproj" Id="8ca34ec3-032b-4439-bc9f-318df0f9e87a" />
+  </Folder>
+  <Folder Name="/test/" />
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+</Solution>

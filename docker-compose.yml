@@ -1,0 +1,21 @@
+services:
+  eternelle.api:
+    image: ${DOCKER_REGISTRY-}eternelleapi
+    build:
+      context: .
+      dockerfile: src/API/Eternelle.Api/Dockerfile
+    ports:
+      - 5000:8080
+      - 5001:8081
+
+  eternelle.database:
+    image: postgres:latest
+    container_name: Eternelle.Database
+    environment:
+      - POSTGRES_DB=eternelle
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./.containers/db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432

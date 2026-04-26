@@ -1,0 +1,6 @@
+@Eternelle.Api_HostAddress = http://localhost:5000
+
+GET {{Eternelle.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
