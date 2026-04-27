@@ -1,6 +1,6 @@
-﻿using Evently.Common.Domain;
+﻿using Eternelle.Common.Domain;
 
-namespace Evently.Common.Presentation.Results;
+namespace Eternelle.Common.Presentation.Results;
 
 public static class ResultExtensions
 {

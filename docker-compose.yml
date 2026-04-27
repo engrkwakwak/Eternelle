@@ -7,9 +7,12 @@ services:
     ports:
       - 5000:8080
       - 5001:8081
+    depends_on:
+      - eternelle.database
+      - eternelle.redis
 
   eternelle.database:
-    image: postgres:latest
+    image: postgres:17
     container_name: Eternelle.Database
     environment:
       - POSTGRES_DB=eternelle
@@ -19,3 +22,11 @@ services:
       - ./.containers/db:/var/lib/postgresql/data
     ports:
       - 5432:5432
+
+  eternelle.redis:
+    image: redis:latest
+    container_name: Eternelle.Redis
+    volumes:
+      - ./.containers/redis:/data
+    ports:
+      - 6379:6379

@@ -6,7 +6,7 @@ using Serilog.Context;
 
 namespace Eternelle.Common.Application.Behaviors;
 
-internal sealed class RequestLoggingPipelineBehavior<TRequest, TResponse>(
+internal sealed partial class RequestLoggingPipelineBehavior<TRequest, TResponse>(
     ILogger<RequestLoggingPipelineBehavior<TRequest, TResponse>> logger)
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : class
