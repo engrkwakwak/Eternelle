@@ -11,5 +11,10 @@
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="src\Modules\Weddings\Eternelle.Modules.Weddings.Application\Weddings\UpdateSnapShareConfig\UpdateSnapShareConfigCommand.cs" />
+    <None Include="src\Modules\Weddings\Eternelle.Modules.Weddings.Application\Weddings\UpdateSnapShareConfig\UpdateSnapShareConfigCommandValidator.cs" />
+    <None Include="src\Modules\Weddings\Eternelle.Modules.Weddings.Application\Weddings\UpdateWeddingDetails\UpdateWeddingDetailsCommand.cs" />
+    <None Include="src\Modules\Weddings\Eternelle.Modules.Weddings.Application\Weddings\UpdateWeddingDetails\UpdateWeddingDetailsCommandHandler.cs" />
+    <None Include="src\Modules\Weddings\Eternelle.Modules.Weddings.Application\Weddings\UpdateWeddingDetails\UpdateWeddingDetailsCommandValidator.cs" />
   </ItemGroup>
 </Project>
