@@ -15,6 +15,14 @@ WORKDIR /src
 COPY ["Directory.Packages.props", "."]
 COPY ["Directory.Build.props", "."]
 COPY ["src/API/Eternelle.Api/Eternelle.Api.csproj", "src/API/Eternelle.Api/"]
+COPY ["src/Modules/Weddings/Eternelle.Modules.Weddings.Infrastructure/Eternelle.Modules.Weddings.Infrastructure.csproj", "src/Modules/Weddings/Eternelle.Modules.Weddings.Infrastructure/"]
+COPY ["src/Modules/Weddings/Eternelle.Modules.Weddings.Application/Eternelle.Modules.Weddings.Application.csproj", "src/Modules/Weddings/Eternelle.Modules.Weddings.Application/"]
+COPY ["src/Modules/Weddings/Eternelle.Modules.Weddings.Domain/Eternelle.Modules.Weddings.Domain.csproj", "src/Modules/Weddings/Eternelle.Modules.Weddings.Domain/"]
+COPY ["src/Modules/Weddings/Eternelle.Modules.Weddings.Presentation/Eternelle.Modules.Weddings.Presentation.csproj", "src/Modules/Weddings/Eternelle.Modules.Weddings.Presentation/"]
+COPY ["src/Common/Eternelle.Common.Infrastructure/Eternelle.Common.Infrastructure.csproj", "src/Common/Eternelle.Common.Infrastructure/"]
+COPY ["src/Common/Eternelle.Common.Application/Eternelle.Common.Application.csproj", "src/Common/Eternelle.Common.Application/"]
+COPY ["src/Common/Eternelle.Common.Domain/Eternelle.Common.Domain.csproj", "src/Common/Eternelle.Common.Domain/"]
+COPY ["src/Common/Eternelle.Common.Presentation/Eternelle.Common.Presentation.csproj", "src/Common/Eternelle.Common.Presentation/"]
 RUN dotnet restore "./src/API/Eternelle.Api/Eternelle.Api.csproj"
 COPY . .
 WORKDIR "/src/src/API/Eternelle.Api"

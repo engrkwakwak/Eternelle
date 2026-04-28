@@ -9,6 +9,11 @@ public static class WeddingErrors
             "Weddings.NotFound",
             $"The wedding with the identifier {id.Value} was not found");
 
+    public static Error TenantAlreadyHasWedding(Guid tenantId) =>
+        Error.Conflict(
+            "Weddings.TenantAlreadyHasWedding",
+            $"A wedding for tenant {tenantId} already exists");
+
     public static Error PartnerAlreadyExists(PartnerNumber partnerNumber) =>
         Error.Conflict(
             "Weddings.PartnerAlreadyExists",
