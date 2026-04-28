@@ -13,10 +13,15 @@ internal sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> log
     {
         logger.LogError(exception, "Unhandled exception occurred");
 
+        if (httpContext.Response.HasStarted)
+        {
+            return false;
+        }
+
         var problemDetails = new ProblemDetails
         {
             Status = StatusCodes.Status500InternalServerError,
-            Type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.6.1",
+            Type = "https://www.rfc-editor.org/rfc/rfc9110#section-15.6.1",
             Title = "Server failure"
         };
 

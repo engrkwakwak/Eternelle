@@ -6,6 +6,8 @@ using Eternelle.Common.Infrastructure;
 using Eternelle.Common.Infrastructure.Configuration;
 using Eternelle.Common.Presentation.Endpoints;
 using Eternelle.Modules.Weddings.Infrastructure;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -31,6 +33,10 @@ builder.Services.AddInfrastructure(
     databaseConnectionString: databaseConnectionString,
     redisConnectionString: redisConnectionString);
 
+builder.Services.AddHealthChecks()
+    .AddNpgSql(databaseConnectionString)
+    .AddRedis(redisConnectionString);
+
 builder.Configuration.AddModuleConfiguration(["weddings"]);
 
 builder.Services.AddWeddingsModule(builder.Configuration);
@@ -44,6 +50,11 @@ if (app.Environment.IsDevelopment())
 
     app.ApplyMigrations();
 }
+
+app.MapHealthChecks("health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.UseLogContextTraceLogging();
 

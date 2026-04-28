@@ -10,6 +10,12 @@ internal sealed class ConfigureProcessInboxJob(IOptions<InboxOptions> inboxOptio
 
     public void Configure(QuartzOptions options)
     {
+        if (_inboxOptions.IntervalInSeconds <= 0)
+        {
+            throw new InvalidOperationException(
+                $"Weddings:Inbox:IntervalInSeconds must be a positive integer. Current value: {_inboxOptions.IntervalInSeconds}");
+        }
+
         string jobName = typeof(ProcessInboxJob).FullName!;
 
         options

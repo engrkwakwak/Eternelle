@@ -4,6 +4,7 @@ using Eternelle.Common.Application.Data;
 using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Common.Infrastructure.Outbox;
+using Eternelle.Modules.Weddings.Infrastructure.Database;
 
 namespace Eternelle.Modules.Weddings.Infrastructure.Outbox;
 
@@ -17,7 +18,7 @@ internal sealed class IdempotentDomainEventHandler<TDomainEvent>(
     {
         await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync();
 
-        var outboxMessageConsumer = new OutboxMessageConsumer(domainEvent.Id, decorated.GetType().Name);
+        var outboxMessageConsumer = new OutboxMessageConsumer(domainEvent.Id, decorated.GetType().FullName!);
 
         if (await OutboxConsumerExistsAsync(connection, outboxMessageConsumer))
         {
@@ -34,10 +35,10 @@ internal sealed class IdempotentDomainEventHandler<TDomainEvent>(
         OutboxMessageConsumer outboxMessageConsumer)
     {
         const string sql =
-            """
+            $"""
             SELECT EXISTS(
                 SELECT 1
-                FROM wedding.outbox_message_consumers
+                FROM {Schemas.Weddings}.outbox_message_consumers
                 WHERE outbox_message_id = @OutboxMessageId AND
                       name = @Name
             )
@@ -51,8 +52,8 @@ internal sealed class IdempotentDomainEventHandler<TDomainEvent>(
         OutboxMessageConsumer outboxMessageConsumer)
     {
         const string sql =
-            """
-            INSERT INTO wedding.outbox_message_consumers(outbox_message_id, name)
+            $"""
+            INSERT INTO {Schemas.Weddings}.outbox_message_consumers(outbox_message_id, name)
             VALUES (@OutboxMessageId, @Name)
             """;
 

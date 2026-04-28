@@ -156,7 +156,7 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_snap_share_configs_id",
+                name: "ix_snap_share_configs_wedding_id",
                 schema: "wedding",
                 table: "snap_share_configs",
                 column: "wedding_id",

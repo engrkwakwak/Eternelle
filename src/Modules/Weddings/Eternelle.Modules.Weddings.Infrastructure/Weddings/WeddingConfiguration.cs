@@ -82,6 +82,9 @@ internal sealed class WeddingConfiguration : IEntityTypeConfiguration<Wedding>
 
             snapShare.Property(s => s.CtaText).HasColumnName("cta_text");
             snapShare.Property(s => s.Enabled).IsRequired();
+
+            snapShare.HasIndex(s => s.WeddingId).IsUnique()
+                .HasDatabaseName("ix_snap_share_configs_wedding_id");
         });
 
         builder.Navigation(w => w.SnapShare).IsRequired(false);

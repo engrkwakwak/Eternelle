@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(WeddingsDbContext))]
-    [Migration("20260426183140_InitialCreate")]
+    [Migration("20260428024551_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -247,7 +247,7 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
 
                             b1.HasIndex("WeddingId")
                                 .IsUnique()
-                                .HasDatabaseName("ix_snap_share_configs_id");
+                                .HasDatabaseName("ix_snap_share_configs_wedding_id");
 
                             b1.ToTable("snap_share_configs", "wedding");
 

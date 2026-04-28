@@ -3,6 +3,7 @@ using Dapper;
 using Eternelle.Common.Application.Data;
 using Eternelle.Common.Application.EventBus;
 using Eternelle.Common.Infrastructure.Inbox;
+using Eternelle.Modules.Weddings.Infrastructure.Database;
 
 namespace Eternelle.Modules.Weddings.Infrastructure.Inbox;
 
@@ -18,7 +19,7 @@ internal sealed class IdempotentIntegrationEventHandler<TIntegrationEvent>(
     {
         await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync();
 
-        var inboxMessageConsumer = new InboxMessageConsumer(integrationEvent.Id, decorated.GetType().Name);
+        var inboxMessageConsumer = new InboxMessageConsumer(integrationEvent.Id, decorated.GetType().FullName!);
 
         if (await InboxConsumerExistsAsync(connection, inboxMessageConsumer))
         {
@@ -35,10 +36,10 @@ internal sealed class IdempotentIntegrationEventHandler<TIntegrationEvent>(
         InboxMessageConsumer inboxMessageConsumer)
     {
         const string sql =
-            """
+            $"""
             SELECT EXISTS(
                 SELECT 1
-                FROM wedding.inbox_message_consumers
+                FROM {Schemas.Weddings}.inbox_message_consumers
                 WHERE inbox_message_id = @InboxMessageId AND
                       name = @Name
             )
@@ -52,8 +53,8 @@ internal sealed class IdempotentIntegrationEventHandler<TIntegrationEvent>(
         InboxMessageConsumer inboxMessageConsumer)
     {
         const string sql =
-            """
-            INSERT INTO wedding.inbox_message_consumers(inbox_message_id, name)
+            $"""
+            INSERT INTO {Schemas.Weddings}.inbox_message_consumers(inbox_message_id, name)
             VALUES (@InboxMessageId, @Name)
             """;
 

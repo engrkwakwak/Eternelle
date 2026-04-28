@@ -13,6 +13,12 @@ internal sealed class CreateWeddingCommandHandler(
 {
     public async Task<Result<Guid>> Handle(CreateWeddingCommand command, CancellationToken cancellationToken)
     {
+        Wedding? existing = await weddingRepository.GetByTenantIdAsync(command.TenantId, cancellationToken);
+        if (existing is not null)
+        {
+            return Result.Failure<Guid>(WeddingErrors.TenantAlreadyHasWedding(command.TenantId));
+        }
+
         Hashtag? hashtag = null;
         if (command.Hashtag is not null)
         {

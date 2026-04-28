@@ -244,7 +244,7 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
 
                             b1.HasIndex("WeddingId")
                                 .IsUnique()
-                                .HasDatabaseName("ix_snap_share_configs_id");
+                                .HasDatabaseName("ix_snap_share_configs_wedding_id");
 
                             b1.ToTable("snap_share_configs", "wedding");
 
