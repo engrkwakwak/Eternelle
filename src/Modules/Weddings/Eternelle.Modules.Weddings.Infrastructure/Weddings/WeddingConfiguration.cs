@@ -50,8 +50,8 @@ internal sealed class WeddingConfiguration : IEntityTypeConfiguration<Wedding>
                 .HasConversion<int>()
                 .IsRequired();
 
-            partner.Property(p => p.FirstName).IsRequired();
-            partner.Property(p => p.LastName).IsRequired();
+            partner.Property(p => p.FirstName).IsRequired().HasMaxLength(Partner.MaxFirstNameLength);
+            partner.Property(p => p.LastName).IsRequired().HasMaxLength(Partner.MaxLastNameLength);
             partner.Property(p => p.Bio);
             partner.Property(p => p.ImageUrl);
 
