@@ -172,7 +172,7 @@ reviews:
     psscriptanalyzer:
       enabled: true # PowerShell scripts (PMC, CI scripts)
     fortitudeLint:
-      enabled: true # .NET / Roslyn static analysis
+      enabled: false # Fortran linter - not applicable to a .NET/C# project
 
     # ── Disabled — not applicable to a .NET/C# project ─────────────────────
     ruff:
@@ -255,9 +255,10 @@ knowledge_base:
   code_guidelines:
     enabled: true
     filePatterns:
-      - "**/*.cs"
-      - "**/*.yaml"
-      - "**/*.yml"
+      - "README.md"
+      - "CONTRIBUTING.md"
+      - "docs/**/*.md"
+      - ".coderabbit.yaml"
   learnings:
     scope: auto
   issues:

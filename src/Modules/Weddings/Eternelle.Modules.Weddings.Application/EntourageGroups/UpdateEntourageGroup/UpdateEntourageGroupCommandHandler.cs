@@ -23,7 +23,7 @@ internal sealed class UpdateEntourageGroupCommandHandler(
         group.UpdateDetails(
             command.Label,
             command.Subtitle,
-            command.GroupType.HasValue ? (EntourageGroupType)command.GroupType.Value : null,
+            command.GroupType.HasValue ? (EntourageGroupType)command.GroupType.Value : group.GroupType,
             (EntourageRenderMode)command.RenderAs);
 
         entourageGroupRepository.Update(group);
