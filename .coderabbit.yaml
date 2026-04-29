@@ -1,0 +1,285 @@
+language: en-US
+tone_instructions: "This is a Philippine wedding platform backend (Eternelle) built as a modular monolith using .NET 10, Clean Architecture, and Domain-Driven Design. Be precise about DDD terminology - aggregate roots, value objects, domain events, owned entities, repositories. Enforce Clean Architecture layer boundaries strictly. Prefer concise, actionable feedback over lengthy explanations."
+early_access: false
+enable_free_tier: true
+
+reviews:
+  profile: assertive
+  request_changes_workflow: true
+  high_level_summary: true
+  high_level_summary_in_walkthrough: false
+  review_status: true
+  commit_status: true
+  fail_commit_status: false
+  collapse_walkthrough: false
+  changed_files_summary: true
+  sequence_diagrams: true
+  estimate_code_review_effort: true
+  assess_linked_issues: true
+  related_issues: true
+  related_prs: true
+  suggested_labels: true
+  auto_apply_labels: false
+  suggested_reviewers: true
+  auto_assign_reviewers: false
+  poem: false
+  enable_prompt_for_ai_agents: true
+  abort_on_close: true
+  disable_cache: false
+
+  path_instructions:
+    - path: "src/Modules/**/**.Domain/**/*.cs"
+      instructions: >
+        Domain layer. Must have zero references to Application, Infrastructure,
+        or any framework (EF Core, MediatR, Dapper, ASP.NET). Aggregates expose
+        behaviour through methods only — no public setters outside the aggregate.
+        Value objects must be immutable (sealed record or sealed class with private
+        constructor and static Create() factory). Domain errors must use the Error
+        type from Eternelle.Common.Domain. String length limits must be defined as
+        public static readonly int constants on the owning type (e.g.
+        Partner.MaxFirstNameLength), not magic numbers.
+
+    - path: "src/Modules/**/**.Application/**/*.cs"
+      instructions: >
+        Application layer. Must not reference Infrastructure or EF Core.
+        Commands implement ICommand or ICommand<TResponse>; queries implement
+        IQuery<TResponse>. All handlers are internal sealed classes.
+        Every command must have a matching FluentValidation AbstractValidator.
+        Query handlers use Dapper via IDbConnectionFactory with CommandDefinition
+        (including cancellationToken) — never EF Core.
+        Command handlers use domain repository interfaces and IUnitOfWork.
+        String MaximumLength rules must reference domain constants, not hardcoded
+        numbers. Reorder handlers must validate completeness and duplicates via
+        HashSet comparison before iterating.
+
+    - path: "src/Modules/**/**.Infrastructure/**/*.cs"
+      instructions: >
+        Infrastructure layer. EF Core configurations go in IEntityTypeConfiguration
+        classes, one per aggregate root. All strongly-typed ID value objects must
+        have a ValueConverter registered globally in ConfigureConventions — not
+        per-property. UseSnakeCaseNamingConvention() is active; explicit
+        HasColumnName() is only needed when the snake_case default is wrong.
+        String length constants from the domain (e.g. Partner.MaxFirstNameLength)
+        must be referenced in HasMaxLength() — no magic numbers.
+        Repositories are internal sealed classes implementing domain interfaces.
+
+    - path: "src/Modules/**/**.Presentation/**/*.cs"
+      instructions: >
+        Presentation layer. Endpoints implement IEndpoint and are registered via
+        MapEndpoints(). Endpoints must not contain business logic — they map HTTP
+        input to commands/queries and dispatch via ISender. HTTP responses follow
+        the TypedResults / Results pattern. No direct references to domain types
+        in endpoint request/response models.
+
+    - path: "src/API/**/*.cs"
+      instructions: >
+        API entry point. Program.cs wires modules, middleware, and health checks.
+        Module registrations go through AddWeddingsModule() (or equivalent) —
+        no direct Infrastructure or Domain references from the API project.
+        ApplyMigrations() is called only in Development. Health checks must cover
+        all external dependencies (DB, Redis).
+
+    - path: "**/Database/Migrations/**/*.cs"
+      instructions: >
+        EF Core migration files. Only review hand-edited content: preflight SQL
+        guards (DO $$ RAISE EXCEPTION blocks before destructive AlterColumn calls),
+        data migrations, or seed data. Do not flag auto-generated
+        CreateTable / AlterColumn / CreateIndex / AddForeignKey calls unless
+        there is a clear bug such as a missing schema, wrong column type, or
+        absent unique index that the EF config implies.
+
+    - path: "**/*.sql"
+      instructions: >
+        All tables live in the 'wedding' schema. Column names use snake_case.
+        UUIDs use gen_random_uuid() or are application-generated (UUIDv7).
+        Prefer text columns with application-level length enforcement unless a
+        DB constraint is explicitly required.
+
+  slop_detection:
+    enabled: true
+
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    auto_pause_after_reviewed_commits: 5
+    drafts: false
+    base_branches:
+      - main
+      - develop
+    ignore_usernames: []
+
+  finishing_touches:
+    docstrings:
+      enabled: true
+    unit_tests:
+      enabled: true
+    simplify:
+      enabled: true
+
+  pre_merge_checks:
+    override_requested_reviewers_only: false
+    docstrings:
+      mode: warning
+      threshold: 80
+    title:
+      mode: warning
+    description:
+      mode: warning
+    issue_assessment:
+      mode: warning
+
+  tools:
+    # ── Relevant to this project ────────────────────────────────────────────
+    ast-grep:
+      essential_rules: true
+      rule_dirs: []
+      util_dirs: []
+      packages: []
+    github-checks:
+      enabled: true
+      timeout_ms: 90000
+    languagetool:
+      enabled: true
+      level: default
+    markdownlint:
+      enabled: true
+    yamllint:
+      enabled: true
+    hadolint:
+      enabled: true      # Dockerfile present
+    actionlint:
+      enabled: true      # GitHub Actions workflows
+    shellcheck:
+      enabled: true
+    gitleaks:
+      enabled: true      # Secrets scanning
+    trufflehog:
+      enabled: true      # Secrets scanning
+    semgrep:
+      enabled: true      # Security patterns
+    opengrep:
+      enabled: true
+    trivy:
+      enabled: true      # Vulnerability scanning
+    osvScanner:
+      enabled: true      # NuGet dependency CVEs
+    checkov:
+      enabled: true      # IaC / docker-compose security
+    sqlfluff:
+      enabled: true      # Raw SQL in migrations and Dapper queries
+    dotenvLint:
+      enabled: true
+    psscriptanalyzer:
+      enabled: true      # PowerShell scripts (PMC, CI scripts)
+    fortitudeLint:
+      enabled: true      # .NET / Roslyn static analysis
+
+    # ── Disabled — not applicable to a .NET/C# project ─────────────────────
+    ruff:
+      enabled: false
+    flake8:
+      enabled: false
+    pylint:
+      enabled: false
+    phpstan:
+      enabled: false
+    phpmd:
+      enabled: false
+    phpcs:
+      enabled: false
+    golangci-lint:
+      enabled: false
+    swiftlint:
+      enabled: false
+    detekt:
+      enabled: false
+    rubocop:
+      enabled: false
+    regal:
+      enabled: false
+    pmd:
+      enabled: false
+    clang:
+      enabled: false
+    cppcheck:
+      enabled: false
+    circleci:
+      enabled: false
+    clippy:
+      enabled: false
+    prismaLint:
+      enabled: false
+    oxc:
+      enabled: false
+    biome:
+      enabled: false
+    eslint:
+      enabled: false
+    stylelint:
+      enabled: false
+    htmlhint:
+      enabled: false
+    shopifyThemeCheck:
+      enabled: false
+    luacheck:
+      enabled: false
+    brakeman:
+      enabled: false
+    blinter:
+      enabled: false
+    smartyLint:
+      enabled: false
+    emberTemplateLint:
+      enabled: false
+    buf:
+      enabled: false
+    tflint:
+      enabled: false
+    checkmake:
+      enabled: false
+
+chat:
+  art: true
+  allow_non_org_members: true
+  auto_reply: true
+  integrations:
+    jira:
+      usage: auto
+    linear:
+      usage: auto
+
+knowledge_base:
+  opt_out: false
+  web_search:
+    enabled: true
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "**/*.cs"
+      - "**/*.yaml"
+      - "**/*.yml"
+  learnings:
+    scope: auto
+  issues:
+    scope: auto
+  pull_requests:
+    scope: auto
+  mcp:
+    usage: auto
+
+code_generation:
+  docstrings:
+    language: en-US
+  unit_tests:
+    path_instructions: []
+
+issue_enrichment:
+  auto_enrich:
+    enabled: true
+  planning:
+    enabled: true
+    auto_planning:
+      enabled: true
+      labels: []
+  labeling:
+    auto_apply_labels: false

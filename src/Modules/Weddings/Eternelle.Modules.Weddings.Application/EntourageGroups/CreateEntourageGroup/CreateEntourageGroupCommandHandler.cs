@@ -12,7 +12,7 @@ internal sealed class CreateEntourageGroupCommandHandler(
 {
     public async Task<Result<Guid>> Handle(CreateEntourageGroupCommand command, CancellationToken cancellationToken)
     {
-        EntourageGroup group = EntourageGroup.Create(
+        var group = EntourageGroup.Create(
             new WeddingId(command.WeddingId),
             command.Label,
             command.Subtitle,
