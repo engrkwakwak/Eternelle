@@ -23,6 +23,8 @@ public sealed class EntourageCouple : Entity
     {
     }
 
+    public static readonly int MaxNoteLength = 200;
+
     public EntourageCoupleId Id { get; private set; }
 
     public EntourageGroupId GroupId { get; private set; }
