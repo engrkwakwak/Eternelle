@@ -26,8 +26,10 @@ internal sealed class PairEntourageCoupleCommandHandler(
             ? (command.MemberAId, command.MemberBId)
             : (command.MemberBId, command.MemberAId);
 
-        // Append the new couple at the end of the existing ordered list.
-        int displayOrder = group.Couples.Count;
+        // Append after the highest existing DisplayOrder so removals never cause collisions.
+        int displayOrder = group.Couples.Count == 0
+            ? 0
+            : group.Couples.Max(c => c.DisplayOrder) + 1;
 
         Result<EntourageCouple> result = group.PairMembers(
             new EntourageMemberId(canonicalA),
