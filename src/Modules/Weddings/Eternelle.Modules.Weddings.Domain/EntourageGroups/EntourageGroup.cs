@@ -48,6 +48,9 @@ public sealed class EntourageGroup : Entity
     {
     }
 
+    public static readonly int MaxLabelLength = 150;
+    public static readonly int MaxSubtitleLength = 200;
+
     public EntourageGroupId Id { get; private set; }
 
     /// <summary>

@@ -1,0 +1,29 @@
+using Eternelle.Common.Application.Messaging;
+using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Application.Abstractions.Data;
+using Eternelle.Modules.Weddings.Domain.EntourageGroups;
+
+namespace Eternelle.Modules.Weddings.Application.EntourageGroups.DeleteEntourageGroup;
+
+internal sealed class DeleteEntourageGroupCommandHandler(
+    IEntourageGroupRepository entourageGroupRepository,
+    IUnitOfWork unitOfWork) : ICommandHandler<DeleteEntourageGroupCommand>
+{
+    public async Task<Result> Handle(DeleteEntourageGroupCommand command, CancellationToken cancellationToken)
+    {
+        var groupId = new EntourageGroupId(command.EntourageGroupId);
+
+        EntourageGroup? group = await entourageGroupRepository.GetAsync(groupId, cancellationToken);
+
+        if (group is null)
+        {
+            return Result.Failure(EntourageGroupErrors.NotFound(groupId));
+        }
+
+        entourageGroupRepository.Delete(group);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
+    }
+}
