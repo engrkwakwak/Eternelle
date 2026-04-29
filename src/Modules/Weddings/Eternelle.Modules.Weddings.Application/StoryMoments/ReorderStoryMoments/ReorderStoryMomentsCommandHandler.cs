@@ -18,6 +18,12 @@ internal sealed class ReorderStoryMomentsCommandHandler(
 
         var storyMomentsById = storyMoments.ToDictionary(s => s.Id.Value);
 
+        var providedIds = command.StoryMomentIds.ToHashSet();
+        if (providedIds.Count != storyMoments.Count || !providedIds.SetEquals(storyMomentsById.Keys))
+        {
+            return Result.Failure(StoryMomentErrors.ReorderListMismatch());
+        }
+
         for (int i = 0; i < command.StoryMomentIds.Count; i++)
         {
             Guid id = command.StoryMomentIds[i];
