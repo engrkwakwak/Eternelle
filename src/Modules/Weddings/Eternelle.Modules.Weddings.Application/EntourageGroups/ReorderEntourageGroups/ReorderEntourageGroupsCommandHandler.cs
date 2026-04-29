@@ -24,7 +24,7 @@ internal sealed class ReorderEntourageGroupsCommandHandler(
             providedIds.Count != groups.Count ||
             !providedIds.SetEquals(groupsById.Keys))
         {
-            return Result.Failure(EntourageGroupErrors.ReorderListMismatch());
+            return Result.Failure(EntourageGroupErrors.ReorderListMismatch);
         }
 
         for (int i = 0; i < command.EntourageGroupIds.Count; i++)

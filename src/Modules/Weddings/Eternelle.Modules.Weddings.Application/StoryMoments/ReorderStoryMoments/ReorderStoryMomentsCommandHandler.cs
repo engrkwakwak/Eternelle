@@ -24,7 +24,7 @@ internal sealed class ReorderStoryMomentsCommandHandler(
             providedIds.Count != storyMoments.Count ||
             !providedIds.SetEquals(storyMomentsById.Keys))
         {
-            return Result.Failure(StoryMomentErrors.ReorderListMismatch());
+            return Result.Failure(StoryMomentErrors.ReorderListMismatch);
         }
 
         for (int i = 0; i < command.StoryMomentIds.Count; i++)
