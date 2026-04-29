@@ -23,6 +23,11 @@ public sealed class EntourageMember : Entity
     {
     }
 
+    public static readonly int MaxNameLength = 150;
+    public static readonly int MaxRoleLength = 100;
+    public static readonly int MaxMessageLength = 1000;
+    public static readonly int MaxNoteLength = 500;
+
     public EntourageMemberId Id { get; private set; }
 
     /// <summary>
