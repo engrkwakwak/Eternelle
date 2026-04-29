@@ -1,5 +1,5 @@
 language: en-US
-tone_instructions: "This is a Philippine wedding platform backend (Eternelle) built as a modular monolith using .NET 10, Clean Architecture, and Domain-Driven Design. Be precise about DDD terminology - aggregate roots, value objects, domain events, owned entities, repositories. Enforce Clean Architecture layer boundaries strictly. Prefer concise, actionable feedback over lengthy explanations."
+tone_instructions: ".NET 10 modular monolith, DDD, Philippine wedding platform. Use precise DDD terms: aggregates, value objects, domain events, repositories. Enforce Clean Architecture boundaries strictly. Concise, actionable feedback only."
 early_access: false
 enable_free_tier: true
 
