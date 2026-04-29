@@ -1,0 +1,12 @@
+using Eternelle.Common.Application.Messaging;
+
+namespace Eternelle.Modules.Weddings.Application.EntourageGroups.UpdateEntourageMember;
+
+public sealed record UpdateEntourageMemberCommand(
+    Guid EntourageMemberId,
+    string Name,
+    string Role,
+    string? ImageUrl,
+    string? Message,
+    string? Note,
+    int? Seed) : ICommand;

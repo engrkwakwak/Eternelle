@@ -12,6 +12,13 @@ public interface IEntourageGroupRepository
     /// </summary>
     Task<EntourageGroup?> GetWithMembersAsync(EntourageGroupId id, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Returns the group with its Members and Couples collections fully loaded,
+    /// looked up by a member ID. Use this when the caller only has a member ID
+    /// (Update / Remove member flows) and needs the owning aggregate.
+    /// </summary>
+    Task<EntourageGroup?> GetWithMembersByMemberIdAsync(EntourageMemberId memberId, CancellationToken cancellationToken = default);
+
     Task<IReadOnlyList<EntourageGroup>> GetByWeddingIdAsync(WeddingId weddingId, CancellationToken cancellationToken = default);
 
     /// <summary>

@@ -38,4 +38,9 @@ public static class EntourageGroupErrors
         Error.Conflict(
             "EntourageGroups.ReorderListMismatch",
             "The provided ID list must contain every entourage group for this wedding exactly once");
+
+    public static Error MemberReorderListMismatch() =>
+        Error.Conflict(
+            "EntourageGroups.MemberReorderListMismatch",
+            "The provided ID list must contain every entourage member in this group exactly once");
 }
