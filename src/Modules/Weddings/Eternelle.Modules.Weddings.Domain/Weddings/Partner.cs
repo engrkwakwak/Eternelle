@@ -13,6 +13,9 @@ public sealed class Partner : Entity
     {
     }
 
+    public static readonly int MaxFirstNameLength = 100;
+    public static readonly int MaxLastNameLength = 100;
+
     public PartnerId Id { get; private set; }
 
     public WeddingId WeddingId { get; private set; }
