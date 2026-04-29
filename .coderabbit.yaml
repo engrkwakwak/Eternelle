@@ -1,5 +1,5 @@
 language: en-US
-tone_instructions: "This is a Philippine wedding platform backend (Eternelle) built as a modular monolith using .NET 10, Clean Architecture, and Domain-Driven Design. Be precise about DDD terminology - aggregate roots, value objects, domain events, owned entities, repositories. Enforce Clean Architecture layer boundaries strictly. Prefer concise, actionable feedback over lengthy explanations."
+tone_instructions: ".NET 10 modular monolith, DDD, Philippine wedding platform. Use precise DDD terms: aggregates, value objects, domain events, repositories. Enforce Clean Architecture boundaries strictly. Concise, actionable feedback only."
 early_access: false
 enable_free_tier: true
 
@@ -146,33 +146,33 @@ reviews:
     yamllint:
       enabled: true
     hadolint:
-      enabled: true      # Dockerfile present
+      enabled: true # Dockerfile present
     actionlint:
-      enabled: true      # GitHub Actions workflows
+      enabled: true # GitHub Actions workflows
     shellcheck:
       enabled: true
     gitleaks:
-      enabled: true      # Secrets scanning
+      enabled: true # Secrets scanning
     trufflehog:
-      enabled: true      # Secrets scanning
+      enabled: true # Secrets scanning
     semgrep:
-      enabled: true      # Security patterns
+      enabled: true # Security patterns
     opengrep:
       enabled: true
     trivy:
-      enabled: true      # Vulnerability scanning
+      enabled: true # Vulnerability scanning
     osvScanner:
-      enabled: true      # NuGet dependency CVEs
+      enabled: true # NuGet dependency CVEs
     checkov:
-      enabled: true      # IaC / docker-compose security
+      enabled: true # IaC / docker-compose security
     sqlfluff:
-      enabled: true      # Raw SQL in migrations and Dapper queries
+      enabled: true # Raw SQL in migrations and Dapper queries
     dotenvLint:
       enabled: true
     psscriptanalyzer:
-      enabled: true      # PowerShell scripts (PMC, CI scripts)
+      enabled: true # PowerShell scripts (PMC, CI scripts)
     fortitudeLint:
-      enabled: true      # .NET / Roslyn static analysis
+      enabled: true # .NET / Roslyn static analysis
 
     # ── Disabled — not applicable to a .NET/C# project ─────────────────────
     ruff:
