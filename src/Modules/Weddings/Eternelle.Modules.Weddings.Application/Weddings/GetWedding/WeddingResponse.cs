@@ -6,6 +6,8 @@ public sealed record WeddingResponse(
     DateOnly WeddingDate,
     string? Hashtag,
     DateTime CreatedAtUtc,
-    DateTime UpdatedAtUtc,
-    IReadOnlyList<PartnerResponse> Partners,
-    SnapShareResponse? SnapShare);
+    DateTime UpdatedAtUtc)
+{
+    public List<PartnerResponse> Partners { get; } = [];
+    public SnapShareResponse? SnapShare { get; set; }
+}
