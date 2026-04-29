@@ -11,5 +11,8 @@ internal sealed class ReorderEntourageMembersCommandValidator : AbstractValidato
 
         RuleFor(c => c.EntourageMemberIds)
             .NotEmpty();
+
+        RuleForEach(c => c.EntourageMemberIds)
+            .NotEmpty();
     }
 }
