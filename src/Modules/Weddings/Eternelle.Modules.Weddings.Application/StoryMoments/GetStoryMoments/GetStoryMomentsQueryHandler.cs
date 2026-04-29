@@ -31,7 +31,8 @@ internal sealed class GetStoryMomentsQueryHandler(IDbConnectionFactory dbConnect
              """;
 
         IEnumerable<StoryMomentResponse> storyMoments =
-            await connection.QueryAsync<StoryMomentResponse>(sql, query);
+            await connection.QueryAsync<StoryMomentResponse>(
+                new CommandDefinition(sql, query, cancellationToken: cancellationToken));
 
         return storyMoments.ToList();
     }
