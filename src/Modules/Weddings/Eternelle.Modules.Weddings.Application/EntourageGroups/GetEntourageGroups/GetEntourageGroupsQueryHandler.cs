@@ -1,3 +1,4 @@
+using System.Data;
 using System.Data.Common;
 using Dapper;
 using Eternelle.Common.Application.Data;
@@ -64,21 +65,28 @@ internal sealed class GetEntourageGroupsQueryHandler(IDbConnectionFactory dbConn
 
         var param = new { query.WeddingId };
 
+        // RepeatableRead ensures all three reads see the same committed snapshot —
+        // a member or couple added between queries will not appear in one set but not
+        // the other, preventing orphaned rows in the assembled tree.
+        await using DbTransaction transaction =
+            await connection.BeginTransactionAsync(IsolationLevel.RepeatableRead, cancellationToken);
+
         List<EntourageGroupResponse> groups =
         [
             .. await connection.QueryAsync<EntourageGroupResponse>(
-                new CommandDefinition(groupsSql, param, cancellationToken: cancellationToken))
+                new CommandDefinition(groupsSql, param, transaction, cancellationToken: cancellationToken))
         ];
 
         if (groups.Count == 0)
         {
+            await transaction.CommitAsync(cancellationToken);
             return new List<EntourageGroupResponse>();
         }
 
         var groupsById = groups.ToDictionary(g => g.GroupId);
 
         IEnumerable<EntourageMemberResponse> members = await connection.QueryAsync<EntourageMemberResponse>(
-            new CommandDefinition(membersSql, param, cancellationToken: cancellationToken));
+            new CommandDefinition(membersSql, param, transaction, cancellationToken: cancellationToken));
 
         foreach (EntourageMemberResponse member in members)
         {
@@ -89,7 +97,7 @@ internal sealed class GetEntourageGroupsQueryHandler(IDbConnectionFactory dbConn
         }
 
         IEnumerable<EntourageCoupleResponse> couples = await connection.QueryAsync<EntourageCoupleResponse>(
-            new CommandDefinition(couplesSql, param, cancellationToken: cancellationToken));
+            new CommandDefinition(couplesSql, param, transaction, cancellationToken: cancellationToken));
 
         foreach (EntourageCoupleResponse couple in couples)
         {
@@ -98,6 +106,8 @@ internal sealed class GetEntourageGroupsQueryHandler(IDbConnectionFactory dbConn
                 group.Couples.Add(couple);
             }
         }
+
+        await transaction.CommitAsync(cancellationToken);
 
         return groups;
     }
