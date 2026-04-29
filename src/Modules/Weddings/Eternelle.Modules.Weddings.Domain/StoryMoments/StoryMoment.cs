@@ -19,6 +19,9 @@ public sealed class StoryMoment : Entity
     {
     }
 
+    public static readonly int MaxTitleLength = 200;
+    public static readonly int MaxDescriptionLength = 2000;
+
     public StoryMomentId Id { get; private set; }
 
     /// <summary>
