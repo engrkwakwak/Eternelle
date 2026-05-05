@@ -4,6 +4,7 @@ using Eternelle.Modules.Weddings.Domain.GiftOptions;
 namespace Eternelle.Modules.Weddings.Application.GiftOptions.UpdateGiftOption;
 
 public sealed record UpdateGiftOptionCommand(
+    Guid WeddingId,
     Guid GiftOptionId,
     string Title,
     string? Description,

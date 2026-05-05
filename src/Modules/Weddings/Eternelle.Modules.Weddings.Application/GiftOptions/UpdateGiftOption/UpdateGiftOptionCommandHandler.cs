@@ -15,7 +15,7 @@ internal sealed class UpdateGiftOptionCommandHandler(
 
         GiftOption? giftOption = await giftOptionRepository.GetAsync(giftOptionId, cancellationToken);
 
-        if (giftOption is null)
+        if (giftOption is null || giftOption.WeddingId.Value != command.WeddingId)
         {
             return Result.Failure(GiftOptionErrors.NotFound(giftOptionId));
         }

@@ -7,6 +7,9 @@ internal sealed class UpdateGiftOptionCommandValidator : AbstractValidator<Updat
 {
     public UpdateGiftOptionCommandValidator()
     {
+        RuleFor(c => c.WeddingId)
+            .NotEmpty();
+
         RuleFor(c => c.GiftOptionId)
             .NotEmpty();
 

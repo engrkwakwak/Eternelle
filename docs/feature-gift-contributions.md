@@ -45,7 +45,7 @@ public sealed class GiftContribution : Entity
     public bool     IsAcknowledged { get; private set; }
 
     public static GiftContribution Record(...) { }
-    public void    Acknowledge()               { }   // IsAcknowledged → true
+    public void    SetAcknowledged(bool isAcknowledged) { }   // flips the flag both ways
     public void    Update(...)                 { }
 }
 ```
@@ -71,6 +71,7 @@ Index: `(wedding_id, gift_option_id)` — feeds the per-gift-option contribution
 Index: `(wedding_id, is_acknowledged)` — feeds the pending thank-you queue.
 
 ### String constants
+
 - `MaxSenderNameLength = 150`
 - `MaxNoteLength = 500`
 - `MaxCurrencyLength = 3`
@@ -84,8 +85,15 @@ Index: `(wedding_id, is_acknowledged)` — feeds the pending thank-you queue.
 | `RecordGiftContributionCommand(WeddingId, GiftOptionId, GuestId?, SenderName?, Amount?, Currency?, Note?, ReceivedAt)` | Couple (JWT) | Either `GuestId` or `SenderName` should be provided — validate at application layer (not domain invariant) |
 | `UpdateGiftContributionCommand(ContributionId, SenderName?, Amount?, Currency?, Note?, ReceivedAt)` | Couple (JWT) | `GiftOptionId` is immutable after creation |
 | `DeleteGiftContributionCommand(ContributionId)` | Couple (JWT) | Hard delete |
-| `AcknowledgeGiftContributionCommand(ContributionId)` | Couple (JWT) | Sets `is_acknowledged = true` |
+| `SetAcknowledgedGiftContributionCommand(ContributionId, bool IsAcknowledged)` | Couple (JWT) | Flips `is_acknowledged` either way — reversible |
 | `BulkAcknowledgeGiftContributionsCommand(WeddingId, IReadOnlyList<ContributionId>)` | Couple (JWT) | Batch version for the thank-you queue UI |
+
+> **Validation note — `RecordGiftContributionCommandValidator`:** at least one of `GuestId` or `SenderName` must be provided. Implement as a `Must` rule on `GuestId`:
+> ```csharp
+> RuleFor(c => c.GuestId)
+>     .Must((cmd, guestId) => guestId.HasValue || !string.IsNullOrWhiteSpace(cmd.SenderName))
+>     .WithMessage("Either GuestId or SenderName must be provided.");
+> ```
 
 ---
 
@@ -104,7 +112,7 @@ Index: `(wedding_id, is_acknowledged)` — feeds the pending thank-you queue.
 - **Is `Amount` required?** Some couples only want to record who gave without showing money figures. If optional, the UI should make this clear.
 - **Currency.** Philippines weddings are almost always PHP. Hard-code the default to "PHP" on the UI and treat it as an optional override field.
 - **Export.** A CSV export (sender name, amount, gift type, received date, acknowledged) would be useful for thank-you card preparation. This is a presentation-layer feature — no domain changes needed, just a streaming endpoint.
-- **Acknowledgment flow.** Should `Acknowledge` be reversible? Simple flag flip is probably fine — no state machine needed.
+- **Acknowledgment flow.** Decided: use `SetAcknowledged(bool isAcknowledged)` — flag is reversible, no state machine needed.
 
 ---
 
