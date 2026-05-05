@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Eternelle.Modules.Weddings.Domain\Eternelle.Modules.Weddings.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Common\Eternelle.Common.Application\Eternelle.Common.Application.csproj" />
+  </ItemGroup>
+
+</Project>

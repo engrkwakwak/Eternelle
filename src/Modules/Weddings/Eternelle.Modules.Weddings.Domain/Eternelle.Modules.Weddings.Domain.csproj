@@ -4,8 +4,5 @@
 		<ProjectReference Include="..\..\..\Common\Eternelle.Common.Domain\Eternelle.Common.Domain.csproj" />
 	</ItemGroup>
 
-	<PropertyGroup>
-		<NoWarn>$(NoWarn);CA1054</NoWarn>
-	</PropertyGroup>
 
 </Project>

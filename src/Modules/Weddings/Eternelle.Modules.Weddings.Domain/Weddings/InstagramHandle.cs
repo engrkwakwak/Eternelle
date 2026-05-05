@@ -60,4 +60,11 @@ public sealed record InstagramHandle
     public string ToDisplayString() => $"@{Value}";
 
     public override string ToString() => Value;
+
+    /// <summary>
+    /// Bypasses validation and constructs an InstagramHandle directly from a persisted value.
+    /// Only for use by EF Core value converters — the value is assumed already valid
+    /// because it passed Create() before it was ever written to the database.
+    /// </summary>
+    internal static InstagramHandle FromPersistence(string value) => new(value);
 }

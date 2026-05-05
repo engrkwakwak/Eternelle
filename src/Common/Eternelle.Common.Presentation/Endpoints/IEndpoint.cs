@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Routing;
 
-namespace Evently.Common.Presentation.Endpoints;
+namespace Eternelle.Common.Presentation.Endpoints;
 
 public interface IEndpoint
 {

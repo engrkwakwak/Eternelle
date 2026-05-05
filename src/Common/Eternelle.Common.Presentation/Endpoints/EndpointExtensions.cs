@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Evently.Common.Presentation.Endpoints;
+namespace Eternelle.Common.Presentation.Endpoints;
 
 public static class EndpointExtensions
 {
