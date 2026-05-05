@@ -30,6 +30,8 @@ public sealed class DressCodeConfig : Entity
     {
     }
 
+    public static readonly int MaxDescriptionLength = 2000;
+
     public DressCodeConfigId Id { get; private set; }
 
     /// <summary>

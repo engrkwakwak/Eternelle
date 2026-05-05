@@ -23,4 +23,14 @@ public static class DressCodeConfigErrors
         Error.NotFound(
             "DressCodeConfigs.ImageNotFound",
             $"The dress code image with the identifier {imageId.Value} was not found");
+
+    public static readonly Error ReorderColorsListMismatch =
+        Error.Problem(
+            "DressCodeConfigs.ReorderColorsListMismatch",
+            "The provided color IDs do not match the existing colors for this dress code config");
+
+    public static readonly Error ReorderImagesListMismatch =
+        Error.Problem(
+            "DressCodeConfigs.ReorderImagesListMismatch",
+            "The provided image IDs do not match the existing images for this dress code config");
 }
