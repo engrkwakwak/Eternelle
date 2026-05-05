@@ -35,7 +35,11 @@ internal sealed class ReorderDressCodeColorsCommandHandler(
 
         for (int i = 0; i < command.DressCodeColorIds.Count; i++)
         {
-            config.ReorderColor(new DressCodeColorId(command.DressCodeColorIds[i]), i);
+            Result reorderResult = config.ReorderColor(new DressCodeColorId(command.DressCodeColorIds[i]), i);
+            if (reorderResult.IsFailure)
+            {
+                return reorderResult;
+            }
         }
 
         dressCodeConfigRepository.Update(config);

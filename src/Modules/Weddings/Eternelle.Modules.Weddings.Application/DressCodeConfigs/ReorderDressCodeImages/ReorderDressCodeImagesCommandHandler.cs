@@ -35,7 +35,11 @@ internal sealed class ReorderDressCodeImagesCommandHandler(
 
         for (int i = 0; i < command.DressCodeImageIds.Count; i++)
         {
-            config.ReorderImage(new DressCodeImageId(command.DressCodeImageIds[i]), i);
+            Result reorderResult = config.ReorderImage(new DressCodeImageId(command.DressCodeImageIds[i]), i);
+            if (reorderResult.IsFailure)
+            {
+                return reorderResult;
+            }
         }
 
         dressCodeConfigRepository.Update(config);
