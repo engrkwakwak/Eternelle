@@ -22,6 +22,12 @@ public sealed class GiftOption : Entity
     {
     }
 
+    public static readonly int MaxTitleLength         = 200;
+    public static readonly int MaxDescriptionLength   = 1000;
+    public static readonly int MaxAccountNameLength   = 100;
+    public static readonly int MaxAccountNumberLength = 50;
+    public static readonly int MaxAccountTypeLength   = 100;
+
     public GiftOptionId Id { get; private set; }
 
     /// <summary>
