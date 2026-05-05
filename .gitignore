@@ -51,3 +51,6 @@ efbundle.exe
 *.env
 appsettings.Local.json
 appsettings.local.json
+/create-issues-guest-photos-retry.sh
+/create-issues-guest-photos.sh
+/create-issues.sh
