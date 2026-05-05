@@ -21,6 +21,9 @@ public sealed class GalleryImage : Entity
     {
     }
 
+    public static readonly int MaxAltTextLength = 300;
+    public static readonly int MaxCaptionLength = 500;
+
     public GalleryImageId Id { get; private set; }
 
     /// <summary>
@@ -91,11 +94,13 @@ public sealed class GalleryImage : Entity
     // ─── Behaviour ──────────────────────────────────────────────────────────────
 
     public void Update(
+        string srcUrl,
         string altText,
         int? widthPx,
         int? heightPx,
         string? caption)
     {
+        SrcUrl = srcUrl;
         AltText = altText;
         WidthPx = widthPx;
         HeightPx = heightPx;

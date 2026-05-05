@@ -34,12 +34,12 @@ public static class EntourageGroupErrors
             "EntourageGroups.CouplesNotAllowed",
             $"The group type '{groupType}' does not support couple pairings");
 
-    public static Error ReorderListMismatch() =>
+    public static readonly Error ReorderListMismatch =
         Error.Conflict(
             "EntourageGroups.ReorderListMismatch",
             "The provided ID list must contain every entourage group for this wedding exactly once");
 
-    public static Error MemberReorderListMismatch() =>
+    public static readonly Error MemberReorderListMismatch =
         Error.Conflict(
             "EntourageGroups.MemberReorderListMismatch",
             "The provided ID list must contain every entourage member in this group exactly once");

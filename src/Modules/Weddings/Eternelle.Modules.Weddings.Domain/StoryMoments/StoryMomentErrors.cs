@@ -9,7 +9,7 @@ public static class StoryMomentErrors
             "StoryMoments.NotFound",
             $"The story moment with the identifier {id.Value} was not found");
 
-    public static Error ReorderListMismatch() =>
+    public static readonly Error ReorderListMismatch =
         Error.Conflict(
             "StoryMoments.ReorderListMismatch",
             "The provided ID list must contain every story moment for this wedding exactly once");

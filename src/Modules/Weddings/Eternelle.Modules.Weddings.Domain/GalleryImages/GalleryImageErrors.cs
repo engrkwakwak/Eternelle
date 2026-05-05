@@ -8,4 +8,9 @@ public static class GalleryImageErrors
         Error.NotFound(
             "GalleryImages.NotFound",
             $"The gallery image with the identifier {id.Value} was not found");
+
+    public static readonly Error ReorderListMismatch =
+        Error.Conflict(
+            "GalleryImages.ReorderListMismatch",
+            "The provided ID list must contain every gallery image for this wedding exactly once");
 }
