@@ -10,8 +10,8 @@ internal sealed class DressCodeConfigRepository(WeddingsDbContext context) : IDr
     public async Task<DressCodeConfig?> GetAsync(DressCodeConfigId id, CancellationToken cancellationToken = default)
     {
         return await context.DressCodeConfigs
-            .Include(d => d.Colors)
-            .Include(d => d.Images)
+            .Include(d => d.Colors.OrderBy(c => c.DisplayOrder))
+            .Include(d => d.Images.OrderBy(i => i.DisplayOrder))
             .AsSplitQuery()
             .SingleOrDefaultAsync(d => d.Id == id, cancellationToken);
     }
@@ -19,8 +19,8 @@ internal sealed class DressCodeConfigRepository(WeddingsDbContext context) : IDr
     public async Task<DressCodeConfig?> GetWithDetailsAsync(DressCodeConfigId id, CancellationToken cancellationToken = default)
     {
         return await context.DressCodeConfigs
-            .Include(d => d.Colors)
-            .Include(d => d.Images)
+            .Include(d => d.Colors.OrderBy(c => c.DisplayOrder))
+            .Include(d => d.Images.OrderBy(i => i.DisplayOrder))
             .AsSplitQuery()
             .SingleOrDefaultAsync(d => d.Id == id, cancellationToken);
     }
@@ -28,8 +28,8 @@ internal sealed class DressCodeConfigRepository(WeddingsDbContext context) : IDr
     public async Task<DressCodeConfig?> GetWithDetailsByColorIdAsync(DressCodeColorId colorId, CancellationToken cancellationToken = default)
     {
         return await context.DressCodeConfigs
-            .Include(d => d.Colors)
-            .Include(d => d.Images)
+            .Include(d => d.Colors.OrderBy(c => c.DisplayOrder))
+            .Include(d => d.Images.OrderBy(i => i.DisplayOrder))
             .AsSplitQuery()
             .SingleOrDefaultAsync(d => d.Colors.Any(c => c.Id == colorId), cancellationToken);
     }
@@ -37,8 +37,8 @@ internal sealed class DressCodeConfigRepository(WeddingsDbContext context) : IDr
     public async Task<DressCodeConfig?> GetWithDetailsByImageIdAsync(DressCodeImageId imageId, CancellationToken cancellationToken = default)
     {
         return await context.DressCodeConfigs
-            .Include(d => d.Colors)
-            .Include(d => d.Images)
+            .Include(d => d.Colors.OrderBy(c => c.DisplayOrder))
+            .Include(d => d.Images.OrderBy(i => i.DisplayOrder))
             .AsSplitQuery()
             .SingleOrDefaultAsync(d => d.Images.Any(i => i.Id == imageId), cancellationToken);
     }
@@ -46,8 +46,8 @@ internal sealed class DressCodeConfigRepository(WeddingsDbContext context) : IDr
     public async Task<DressCodeConfig?> GetByWeddingIdAsync(WeddingId weddingId, CancellationToken cancellationToken = default)
     {
         return await context.DressCodeConfigs
-            .Include(d => d.Colors)
-            .Include(d => d.Images)
+            .Include(d => d.Colors.OrderBy(c => c.DisplayOrder))
+            .Include(d => d.Images.OrderBy(i => i.DisplayOrder))
             .AsSplitQuery()
             .SingleOrDefaultAsync(d => d.WeddingId == weddingId, cancellationToken);
     }
