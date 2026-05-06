@@ -24,8 +24,8 @@ internal sealed class EntourageCoupleConfiguration
         couple.Property(c => c.DisplayOrder).IsRequired();
 
         // FK from member_a_id → entourage_members.id.
-        // Restrict: domain already handles cleanup in EntourageGroup.RemoveMember(),
-        // so Restrict acts as a safety net for any bypass of the aggregate root.
+        // Deletion is restricted: the domain must remove all couple entries referencing
+        // a member via EntourageGroup.RemoveMember() before the member itself is deleted.
         couple.HasOne<EntourageMember>()
             .WithMany()
             .HasForeignKey(c => c.MemberAId)
@@ -34,6 +34,7 @@ internal sealed class EntourageCoupleConfiguration
             .HasConstraintName("fk_entourage_couples_member_a");
 
         // FK from member_b_id → entourage_members.id.
+        // Same restriction applies — caller must clean up couple rows first.
         couple.HasOne<EntourageMember>()
             .WithMany()
             .HasForeignKey(c => c.MemberBId)
