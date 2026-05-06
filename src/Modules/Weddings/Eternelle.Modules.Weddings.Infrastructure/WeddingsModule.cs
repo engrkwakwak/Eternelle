@@ -3,12 +3,14 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Infrastructure.Outbox;
 using Eternelle.Common.Presentation.Endpoints;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
+using Eternelle.Modules.Weddings.Domain.DressCodeConfigs;
 using Eternelle.Modules.Weddings.Domain.EntourageGroups;
 using Eternelle.Modules.Weddings.Domain.GalleryImages;
 using Eternelle.Modules.Weddings.Domain.GiftOptions;
 using Eternelle.Modules.Weddings.Domain.StoryMoments;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 using Eternelle.Modules.Weddings.Infrastructure.Database;
+using Eternelle.Modules.Weddings.Infrastructure.DressCodeConfigs;
 using Eternelle.Modules.Weddings.Infrastructure.EntourageGroups;
 using Eternelle.Modules.Weddings.Infrastructure.GalleryImages;
 using Eternelle.Modules.Weddings.Infrastructure.GiftOptions;
@@ -59,6 +61,7 @@ public static class WeddingsModule
         services.AddScoped<IStoryMomentRepository, StoryMomentRepository>();
         services.AddScoped<IGalleryImageRepository, GalleryImageRepository>();
         services.AddScoped<IGiftOptionRepository, GiftOptionRepository>();
+        services.AddScoped<IDressCodeConfigRepository, DressCodeConfigRepository>();
 
         services.Configure<OutboxOptions>(configuration.GetSection("Weddings:Outbox"));
 
