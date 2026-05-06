@@ -28,7 +28,7 @@ internal sealed class GetVendorCreditsQueryHandler(IDbConnectionFactory dbConnec
                  v.display_order    AS {nameof(VendorCreditResponse.DisplayOrder)}
              FROM wedding.vendor_credits v
              WHERE v.wedding_id = @WeddingId
-             ORDER BY v.display_order ASC
+             ORDER BY v.display_order ASC, v.id ASC
              """;
 
         IEnumerable<VendorCreditResponse> credits =
