@@ -107,21 +107,35 @@ public sealed class GuestPhoto : Entity
 
     /// <summary>
     /// Moves the photo to Approved and records the review timestamp.
-    /// Intended for Pending photos — callers should guard the state before calling.
+    /// Returns a failure if the photo has already been reviewed.
     /// </summary>
-    public void Approve(DateTime utcNow)
+    public Result Approve(DateTime utcNow)
     {
+        if (Status != GuestPhotoStatus.Pending)
+        {
+            return Result.Failure(GuestPhotoErrors.AlreadyReviewed);
+        }
+
         Status = GuestPhotoStatus.Approved;
         ReviewedAt = utcNow;
+
+        return Result.Success();
     }
 
     /// <summary>
     /// Moves the photo to Rejected and records the review timestamp.
-    /// Intended for Pending photos — callers should guard the state before calling.
+    /// Returns a failure if the photo has already been reviewed.
     /// </summary>
-    public void Reject(DateTime utcNow)
+    public Result Reject(DateTime utcNow)
     {
+        if (Status != GuestPhotoStatus.Pending)
+        {
+            return Result.Failure(GuestPhotoErrors.AlreadyReviewed);
+        }
+
         Status = GuestPhotoStatus.Rejected;
         ReviewedAt = utcNow;
+
+        return Result.Success();
     }
 }
