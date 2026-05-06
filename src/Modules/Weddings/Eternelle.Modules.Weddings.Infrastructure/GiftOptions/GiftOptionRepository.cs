@@ -17,6 +17,8 @@ internal sealed class GiftOptionRepository(WeddingsDbContext context) : IGiftOpt
     {
         return await context.GiftOptions
             .Where(g => g.WeddingId == weddingId)
+            .OrderBy(g => g.DisplayOrder)
+            .ThenBy(g => g.Id)
             .ToListAsync(cancellationToken);
     }
 

@@ -17,6 +17,8 @@ internal sealed class GalleryImageRepository(WeddingsDbContext context) : IGalle
     {
         return await context.GalleryImages
             .Where(g => g.WeddingId == weddingId)
+            .OrderBy(g => g.DisplayOrder)
+            .ThenBy(g => g.Id)
             .ToListAsync(cancellationToken);
     }
 

@@ -14,8 +14,11 @@ internal sealed class GiftOptionConfiguration : IEntityTypeConfiguration<GiftOpt
         // WeddingId — cross-aggregate reference.
         // Converter registered globally in WeddingsDbContext.ConfigureConventions.
         builder.Property(g => g.WeddingId).IsRequired();
-        builder.HasIndex(g => g.WeddingId)
-            .HasDatabaseName("ix_gift_options_wedding_id");
+
+        // Composite index supports GetByWeddingIdAsync ordered reads.
+        // Covers the WHERE wedding_id = ? ORDER BY display_order, id pattern efficiently.
+        builder.HasIndex(g => new { g.WeddingId, g.DisplayOrder, g.Id })
+            .HasDatabaseName("ix_gift_options_wedding_id_display_order");
 
         builder.Property(g => g.Title)
             .IsRequired()
