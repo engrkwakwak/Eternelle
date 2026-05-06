@@ -1,16 +1,26 @@
-using Eternelle.Modules.Weddings.Application.Abstractions.Data;
-using Eternelle.Common.Infrastructure.Outbox;
 using Eternelle.Common.Infrastructure.Inbox;
+using Eternelle.Common.Infrastructure.Outbox;
+using Eternelle.Modules.Weddings.Application.Abstractions.Data;
+using Eternelle.Modules.Weddings.Domain.CeremonyActs;
+using Eternelle.Modules.Weddings.Domain.DressCodeConfigs;
 using Eternelle.Modules.Weddings.Domain.EntourageGroups;
 using Eternelle.Modules.Weddings.Domain.GalleryImages;
 using Eternelle.Modules.Weddings.Domain.GiftOptions;
+using Eternelle.Modules.Weddings.Domain.GuestPhotos;
+using Eternelle.Modules.Weddings.Domain.Reminders;
 using Eternelle.Modules.Weddings.Domain.StoryMoments;
+using Eternelle.Modules.Weddings.Domain.VendorCredits;
 using Eternelle.Modules.Weddings.Domain.Weddings;
+using Eternelle.Modules.Weddings.Infrastructure.CeremonyActs;
 using Eternelle.Modules.Weddings.Infrastructure.Database.Converters;
+using Eternelle.Modules.Weddings.Infrastructure.DressCodeConfigs;
 using Eternelle.Modules.Weddings.Infrastructure.EntourageGroups;
 using Eternelle.Modules.Weddings.Infrastructure.GalleryImages;
 using Eternelle.Modules.Weddings.Infrastructure.GiftOptions;
+using Eternelle.Modules.Weddings.Infrastructure.GuestPhotos;
+using Eternelle.Modules.Weddings.Infrastructure.Reminders;
 using Eternelle.Modules.Weddings.Infrastructure.StoryMoments;
+using Eternelle.Modules.Weddings.Infrastructure.VendorCredits;
 using Eternelle.Modules.Weddings.Infrastructure.Weddings;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +34,11 @@ public sealed class WeddingsDbContext(DbContextOptions<WeddingsDbContext> option
     internal DbSet<StoryMoment> StoryMoments { get; set; }
     internal DbSet<GalleryImage> GalleryImages { get; set; }
     internal DbSet<GiftOption> GiftOptions { get; set; }
+    internal DbSet<DressCodeConfig> DressCodeConfigs { get; set; }
+    internal DbSet<GuestPhoto> GuestPhotos { get; set; }
+    internal DbSet<CeremonyAct> CeremonyActs { get; set; }
+    internal DbSet<VendorCredit> VendorCredits { get; set; }
+    internal DbSet<Reminder> Reminders { get; set; }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
@@ -53,6 +68,27 @@ public sealed class WeddingsDbContext(DbContextOptions<WeddingsDbContext> option
 
         configurationBuilder.Properties<GiftOptionId>()
             .HaveConversion<GiftOptionIdConverter>();
+
+        configurationBuilder.Properties<GuestPhotoId>()
+            .HaveConversion<GuestPhotoIdConverter>();
+
+        configurationBuilder.Properties<DressCodeConfigId>()
+            .HaveConversion<DressCodeConfigIdConverter>();
+
+        configurationBuilder.Properties<DressCodeColorId>()
+            .HaveConversion<DressCodeColorIdConverter>();
+
+        configurationBuilder.Properties<DressCodeImageId>()
+            .HaveConversion<DressCodeImageIdConverter>();
+
+        configurationBuilder.Properties<CeremonyActId>()
+            .HaveConversion<CeremonyActIdConverter>();
+
+        configurationBuilder.Properties<VendorCreditId>()
+            .HaveConversion<VendorCreditIdConverter>();
+
+        configurationBuilder.Properties<ReminderId>()
+            .HaveConversion<ReminderIdConverter>();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -69,5 +105,10 @@ public sealed class WeddingsDbContext(DbContextOptions<WeddingsDbContext> option
         modelBuilder.ApplyConfiguration(new StoryMomentConfiguration());
         modelBuilder.ApplyConfiguration(new GalleryImageConfiguration());
         modelBuilder.ApplyConfiguration(new GiftOptionConfiguration());
+        modelBuilder.ApplyConfiguration(new GuestPhotoConfiguration());
+        modelBuilder.ApplyConfiguration(new DressCodeConfigConfiguration());
+        modelBuilder.ApplyConfiguration(new CeremonyActConfiguration());
+        modelBuilder.ApplyConfiguration(new VendorCreditConfiguration());
+        modelBuilder.ApplyConfiguration(new ReminderConfiguration());
     }
 }
