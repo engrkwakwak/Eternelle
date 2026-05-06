@@ -13,8 +13,11 @@ internal sealed class ReminderConfiguration : IEntityTypeConfiguration<Reminder>
         builder.HasKey(r => r.Id);
 
         builder.Property(r => r.WeddingId).IsRequired();
-        builder.HasIndex(r => r.WeddingId)
-            .HasDatabaseName("ix_reminders_wedding_id");
+
+        // Composite index supports GetByWeddingIdAsync ordered reads.
+        // Covers the WHERE wedding_id = ? ORDER BY display_order, id pattern efficiently.
+        builder.HasIndex(r => new { r.WeddingId, r.DisplayOrder, r.Id })
+            .HasDatabaseName("ix_reminders_wedding_id_display_order");
 
         builder.Property(r => r.Icon)
             .IsRequired()

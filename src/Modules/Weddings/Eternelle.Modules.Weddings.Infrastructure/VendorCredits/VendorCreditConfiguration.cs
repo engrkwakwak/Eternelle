@@ -14,8 +14,11 @@ internal sealed class VendorCreditConfiguration : IEntityTypeConfiguration<Vendo
         builder.HasKey(v => v.Id);
 
         builder.Property(v => v.WeddingId).IsRequired();
-        builder.HasIndex(v => v.WeddingId)
-            .HasDatabaseName("ix_vendor_credits_wedding_id");
+
+        // Composite index supports GetByWeddingIdAsync ordered reads.
+        // Covers the WHERE wedding_id = ? ORDER BY display_order, id pattern efficiently.
+        builder.HasIndex(v => new { v.WeddingId, v.DisplayOrder, v.Id })
+            .HasDatabaseName("ix_vendor_credits_wedding_id_display_order");
 
         builder.Property(v => v.Name)
             .IsRequired()
