@@ -24,12 +24,9 @@ internal sealed class GiftOptionConfiguration : IEntityTypeConfiguration<GiftOpt
         builder.Property(g => g.Description)
             .HasMaxLength(GiftOption.MaxDescriptionLength);
 
-        // GiftDisplayMode — stored as snake_case string to match the PostgreSQL ENUM.
+        // GiftDisplayMode — stored as int. C# enum default ordinal values.
         builder.Property(g => g.DisplayMode)
-            .HasConversion(
-                v => DisplayModeToString(v),
-                v => StringToDisplayMode(v))
-            .HasColumnName("display_mode")
+            .HasConversion<int>()
             .IsRequired();
 
         builder.Property(g => g.LinkUrl);
@@ -48,21 +45,5 @@ internal sealed class GiftOptionConfiguration : IEntityTypeConfiguration<GiftOpt
         builder.Property(g => g.DisplayOrder).IsRequired();
     }
 
-    // ─── Enum ↔ string helpers ───────────────────────────────────────────────────
 
-    private static string DisplayModeToString(GiftDisplayMode value) => value switch
-    {
-        GiftDisplayMode.Link          => "link",
-        GiftDisplayMode.ModalDetails  => "modal_details",
-        GiftDisplayMode.InlineDetails => "inline_details",
-        _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
-    };
-
-    private static GiftDisplayMode StringToDisplayMode(string value) => value switch
-    {
-        "link"           => GiftDisplayMode.Link,
-        "modal_details"  => GiftDisplayMode.ModalDetails,
-        "inline_details" => GiftDisplayMode.InlineDetails,
-        _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
-    };
 }
