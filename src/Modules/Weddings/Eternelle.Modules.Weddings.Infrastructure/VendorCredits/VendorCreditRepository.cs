@@ -17,6 +17,8 @@ internal sealed class VendorCreditRepository(WeddingsDbContext context) : IVendo
     {
         return await context.VendorCredits
             .Where(v => v.WeddingId == weddingId)
+            .OrderBy(v => v.DisplayOrder)
+            .ThenBy(v => v.Id)
             .ToListAsync(cancellationToken);
     }
 

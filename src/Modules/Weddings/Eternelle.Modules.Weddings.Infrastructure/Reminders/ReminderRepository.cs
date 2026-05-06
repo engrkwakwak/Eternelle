@@ -17,6 +17,8 @@ internal sealed class ReminderRepository(WeddingsDbContext context) : IReminderR
     {
         return await context.Reminders
             .Where(r => r.WeddingId == weddingId)
+            .OrderBy(r => r.DisplayOrder)
+            .ThenBy(r => r.Id)
             .ToListAsync(cancellationToken);
     }
 
