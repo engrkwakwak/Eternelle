@@ -44,6 +44,7 @@ internal sealed class EntourageGroupRepository(WeddingsDbContext context) : IEnt
     {
         return await context.EntourageGroups
             .Where(g => g.WeddingId == weddingId)
+            .OrderBy(g => g.DisplayOrder)
             .ToListAsync(cancellationToken);
     }
 
@@ -54,6 +55,7 @@ internal sealed class EntourageGroupRepository(WeddingsDbContext context) : IEnt
             .Include(g => g.Couples)
             .AsSplitQuery()
             .Where(g => g.WeddingId == weddingId)
+            .OrderBy(g => g.DisplayOrder)
             .ToListAsync(cancellationToken);
     }
 
