@@ -16,6 +16,10 @@ namespace Eternelle.Modules.Weddings.Domain.Reminders;
 /// </summary>
 public sealed class Reminder : Entity
 {
+    public static readonly int MaxIconLength  = 50;
+    public static readonly int MaxTitleLength = 200;
+    public static readonly int MaxBodyLength  = 2000;
+
     private Reminder()
     {
     }
