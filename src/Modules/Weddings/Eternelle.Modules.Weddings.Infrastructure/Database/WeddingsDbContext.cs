@@ -2,9 +2,15 @@ using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Common.Infrastructure.Outbox;
 using Eternelle.Common.Infrastructure.Inbox;
 using Eternelle.Modules.Weddings.Domain.EntourageGroups;
+using Eternelle.Modules.Weddings.Domain.GalleryImages;
+using Eternelle.Modules.Weddings.Domain.GiftOptions;
+using Eternelle.Modules.Weddings.Domain.StoryMoments;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 using Eternelle.Modules.Weddings.Infrastructure.Database.Converters;
 using Eternelle.Modules.Weddings.Infrastructure.EntourageGroups;
+using Eternelle.Modules.Weddings.Infrastructure.GalleryImages;
+using Eternelle.Modules.Weddings.Infrastructure.GiftOptions;
+using Eternelle.Modules.Weddings.Infrastructure.StoryMoments;
 using Eternelle.Modules.Weddings.Infrastructure.Weddings;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +21,9 @@ public sealed class WeddingsDbContext(DbContextOptions<WeddingsDbContext> option
 {
     internal DbSet<Wedding> Weddings { get; set; }
     internal DbSet<EntourageGroup> EntourageGroups { get; set; }
+    internal DbSet<StoryMoment> StoryMoments { get; set; }
+    internal DbSet<GalleryImage> GalleryImages { get; set; }
+    internal DbSet<GiftOption> GiftOptions { get; set; }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
@@ -35,6 +44,15 @@ public sealed class WeddingsDbContext(DbContextOptions<WeddingsDbContext> option
 
         configurationBuilder.Properties<EntourageCoupleId>()
             .HaveConversion<EntourageCoupleIdConverter>();
+
+        configurationBuilder.Properties<StoryMomentId>()
+            .HaveConversion<StoryMomentIdConverter>();
+
+        configurationBuilder.Properties<GalleryImageId>()
+            .HaveConversion<GalleryImageIdConverter>();
+
+        configurationBuilder.Properties<GiftOptionId>()
+            .HaveConversion<GiftOptionIdConverter>();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -48,5 +66,8 @@ public sealed class WeddingsDbContext(DbContextOptions<WeddingsDbContext> option
 
         modelBuilder.ApplyConfiguration(new WeddingConfiguration());
         modelBuilder.ApplyConfiguration(new EntourageGroupConfiguration());
+        modelBuilder.ApplyConfiguration(new StoryMomentConfiguration());
+        modelBuilder.ApplyConfiguration(new GalleryImageConfiguration());
+        modelBuilder.ApplyConfiguration(new GiftOptionConfiguration());
     }
 }

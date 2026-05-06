@@ -18,6 +18,7 @@ internal sealed class EntourageGroupRepository(WeddingsDbContext context) : IEnt
         return await context.EntourageGroups
             .Include(g => g.Members)
             .Include(g => g.Couples)
+            .AsSplitQuery()
             .SingleOrDefaultAsync(g => g.Id == id, cancellationToken);
     }
 
@@ -26,6 +27,7 @@ internal sealed class EntourageGroupRepository(WeddingsDbContext context) : IEnt
         return await context.EntourageGroups
             .Include(g => g.Members)
             .Include(g => g.Couples)
+            .AsSplitQuery()
             .SingleOrDefaultAsync(g => g.Members.Any(m => m.Id == memberId), cancellationToken);
     }
 
@@ -34,6 +36,7 @@ internal sealed class EntourageGroupRepository(WeddingsDbContext context) : IEnt
         return await context.EntourageGroups
             .Include(g => g.Members)
             .Include(g => g.Couples)
+            .AsSplitQuery()
             .SingleOrDefaultAsync(g => g.Couples.Any(c => c.Id == coupleId), cancellationToken);
     }
 
@@ -49,6 +52,7 @@ internal sealed class EntourageGroupRepository(WeddingsDbContext context) : IEnt
         return await context.EntourageGroups
             .Include(g => g.Members)
             .Include(g => g.Couples)
+            .AsSplitQuery()
             .Where(g => g.WeddingId == weddingId)
             .ToListAsync(cancellationToken);
     }
