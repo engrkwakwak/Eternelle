@@ -11,11 +11,10 @@ internal sealed class UploadGuestPhotoCommandValidator : AbstractValidator<Uploa
             .NotEmpty();
 
         RuleFor(c => c.SrcUrl)
-            .NotEmpty()
-            .MaximumLength(2048);
+            .NotEmpty();
 
         RuleFor(c => c.ThumbnailUrl)
-            .MaximumLength(2048)
+            .NotEmpty()
             .When(c => c.ThumbnailUrl is not null);
 
         RuleFor(c => c.UploaderName)
