@@ -17,6 +17,8 @@ internal sealed class StoryMomentRepository(WeddingsDbContext context) : IStoryM
     {
         return await context.StoryMoments
             .Where(s => s.WeddingId == weddingId)
+            .OrderBy(s => s.DisplayOrder)
+            .ThenBy(s => s.Id)
             .ToListAsync(cancellationToken);
     }
 
