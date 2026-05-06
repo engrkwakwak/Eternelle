@@ -26,7 +26,6 @@ internal sealed class DressCodeColorConfiguration
             .HasConversion(
                 h => h.Value,
                 v => HexColor.Create(v).Value)
-            .HasColumnName("color_hex")
             .IsRequired()
             .HasMaxLength(HexColor.MaxLength);
 
