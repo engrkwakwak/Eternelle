@@ -3,8 +3,10 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Infrastructure.Outbox;
 using Eternelle.Common.Presentation.Endpoints;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
+using Eternelle.Modules.Weddings.Domain.EntourageGroups;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 using Eternelle.Modules.Weddings.Infrastructure.Database;
+using Eternelle.Modules.Weddings.Infrastructure.EntourageGroups;
 using Eternelle.Modules.Weddings.Infrastructure.Inbox;
 using Eternelle.Modules.Weddings.Infrastructure.Outbox;
 using Eternelle.Modules.Weddings.Infrastructure.Weddings;
@@ -47,6 +49,7 @@ public static class WeddingsModule
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<WeddingsDbContext>());
 
         services.AddScoped<IWeddingRepository, WeddingRepository>();
+        services.AddScoped<IEntourageGroupRepository, EntourageGroupRepository>();
 
         services.Configure<OutboxOptions>(configuration.GetSection("Weddings:Outbox"));
 
