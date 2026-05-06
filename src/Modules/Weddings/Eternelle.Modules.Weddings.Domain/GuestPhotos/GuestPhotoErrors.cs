@@ -1,0 +1,16 @@
+using Eternelle.Common.Domain;
+
+namespace Eternelle.Modules.Weddings.Domain.GuestPhotos;
+
+public static class GuestPhotoErrors
+{
+    public static readonly Error NotFound =
+        Error.NotFound(
+            "GuestPhotos.NotFound",
+            "The guest photo was not found.");
+
+    public static readonly Error AlreadyReviewed =
+        Error.Conflict(
+            "GuestPhotos.AlreadyReviewed",
+            "The guest photo has already been reviewed.");
+}
