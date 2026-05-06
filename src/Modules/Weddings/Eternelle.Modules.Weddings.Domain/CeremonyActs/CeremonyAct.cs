@@ -19,6 +19,10 @@ namespace Eternelle.Modules.Weddings.Domain.CeremonyActs;
 /// </summary>
 public sealed class CeremonyAct : Entity
 {
+    public static readonly int MaxNameLength        = 200;
+    public static readonly int MaxDescriptionLength = 1000;
+    public static readonly int MaxIconLength        = 50;
+
     private CeremonyAct()
     {
     }
