@@ -166,19 +166,30 @@ public sealed class Wedding : Entity
         InstagramHandle? instagramHandle,
         string? ctaText,
         bool enabled,
+        SnapShareModerationMode moderationMode,
         DateTime utcNow)
     {
         if (SnapShare is null)
         {
-            SnapShare = SnapShareConfig.Create(Id, instagramHandle, ctaText, enabled);
+            SnapShare = SnapShareConfig.Create(Id, instagramHandle, ctaText, enabled, moderationMode);
         }
         else
         {
-            SnapShare.Update(instagramHandle, ctaText, enabled);
+            SnapShare.Update(instagramHandle, ctaText, enabled, moderationMode);
         }
 
         UpdatedAtUtc = utcNow;
 
         Raise(new WeddingSnapShareUpdatedDomainEvent(Id));
+    }
+
+    /// <summary>
+    /// Rotates the guest photo upload token, invalidating all previously distributed
+    /// QR codes. Safe to call at any time — the new token takes effect immediately.
+    /// Raises no domain event (stateless rotate — no downstream consumers need to react).
+    /// </summary>
+    public void RegenerateUploadToken()
+    {
+        SnapShare?.RegenerateToken();
     }
 }
