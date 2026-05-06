@@ -24,23 +24,13 @@ internal sealed class EntourageGroupConfiguration : IEntityTypeConfiguration<Ent
         builder.Property(g => g.Subtitle)
             .HasMaxLength(EntourageGroup.MaxSubtitleLength);
 
-        // GroupType — nullable text column. Serialized to/from a snake_case string via
-        // HasConversion(GroupTypeToString, StringToGroupType). Not a native PostgreSQL enum —
-        // the mapping is handled entirely in .NET by the switch expressions below.
+        // GroupType — nullable int column. C# enum default ordinal values.
         builder.Property(g => g.GroupType)
-            .HasConversion(
-                v => v.HasValue ? GroupTypeToString(v.Value) : null,
-                v => v != null ? StringToGroupType(v) : (EntourageGroupType?)null)
-            .HasColumnName("group_type");
+            .HasConversion<int?>();
 
-        // RenderAs — non-nullable text column. Serialized to/from a snake_case string via
-        // HasConversion(RenderModeToString, StringToRenderMode). Not a native PostgreSQL enum —
-        // the mapping is handled entirely in .NET by the switch expressions below.
+        // RenderAs — non-nullable int column. C# enum default ordinal values.
         builder.Property(g => g.RenderAs)
-            .HasConversion(
-                v => RenderModeToString(v),
-                v => StringToRenderMode(v))
-            .HasColumnName("render_as")
+            .HasConversion<int>()
             .IsRequired();
 
         builder.Property(g => g.DisplayOrder).IsRequired();
@@ -59,52 +49,4 @@ internal sealed class EntourageGroupConfiguration : IEntityTypeConfiguration<Ent
             .HasField("_couples")
             .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
-
-    // ─── Enum ↔ string helpers ───────────────────────────────────────────────────
-
-    private static string GroupTypeToString(EntourageGroupType value) => value switch
-    {
-        EntourageGroupType.Parents            => "parents",
-        EntourageGroupType.PrincipalSponsors  => "principal_sponsors",
-        EntourageGroupType.SecondarySponsors  => "secondary_sponsors",
-        EntourageGroupType.Bridesmaids        => "bridesmaids",
-        EntourageGroupType.Groomsmen          => "groomsmen",
-        EntourageGroupType.FlowerGirls        => "flower_girls",
-        EntourageGroupType.RingBearers        => "ring_bearers",
-        EntourageGroupType.CoinBearers        => "coin_bearers",
-        EntourageGroupType.BibleReaders       => "bible_readers",
-        EntourageGroupType.LittleOnes         => "little_ones",
-        EntourageGroupType.Other              => "other",
-        _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
-    };
-
-    private static EntourageGroupType StringToGroupType(string value) => value switch
-    {
-        "parents"             => EntourageGroupType.Parents,
-        "principal_sponsors"  => EntourageGroupType.PrincipalSponsors,
-        "secondary_sponsors"  => EntourageGroupType.SecondarySponsors,
-        "bridesmaids"         => EntourageGroupType.Bridesmaids,
-        "groomsmen"           => EntourageGroupType.Groomsmen,
-        "flower_girls"        => EntourageGroupType.FlowerGirls,
-        "ring_bearers"        => EntourageGroupType.RingBearers,
-        "coin_bearers"        => EntourageGroupType.CoinBearers,
-        "bible_readers"       => EntourageGroupType.BibleReaders,
-        "little_ones"         => EntourageGroupType.LittleOnes,
-        "other"               => EntourageGroupType.Other,
-        _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
-    };
-
-    private static string RenderModeToString(EntourageRenderMode value) => value switch
-    {
-        EntourageRenderMode.Cards => "cards",
-        EntourageRenderMode.List  => "list",
-        _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
-    };
-
-    private static EntourageRenderMode StringToRenderMode(string value) => value switch
-    {
-        "cards" => EntourageRenderMode.Cards,
-        "list"  => EntourageRenderMode.List,
-        _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
-    };
 }

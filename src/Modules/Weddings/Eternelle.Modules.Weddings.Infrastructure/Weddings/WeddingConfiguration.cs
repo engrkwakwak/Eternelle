@@ -66,26 +66,7 @@ internal sealed class WeddingConfiguration : IEntityTypeConfiguration<Wedding>
         // Optional 1:1 owned entity in its own table (wedding.snap_share_configs).
         // Null until ConfigureSnapShare() is called for the first time.
 
-        builder.OwnsOne(w => w.SnapShare, snapShare =>
-        {
-            snapShare.ToTable("snap_share_configs");
-            snapShare.HasKey(s => s.Id);
-            snapShare.WithOwner().HasForeignKey(s => s.WeddingId);
-
-            snapShare.Property(s => s.WeddingId).HasColumnName("wedding_id");
-
-            snapShare.Property(s => s.InstagramHandle)
-                .HasConversion(
-                    h => h != null ? h.Value : null,
-                    v => v != null ? InstagramHandle.FromPersistence(v) : null)
-                .HasColumnName("instagram_handle");
-
-            snapShare.Property(s => s.CtaText).HasColumnName("cta_text");
-            snapShare.Property(s => s.Enabled).IsRequired();
-
-            snapShare.HasIndex(s => s.WeddingId).IsUnique()
-                .HasDatabaseName("ix_snap_share_configs_wedding_id");
-        });
+        builder.OwnsOne(w => w.SnapShare, SnapShareConfigConfiguration.Configure);
 
         builder.Navigation(w => w.SnapShare).IsRequired(false);
     }
