@@ -13,8 +13,11 @@ internal sealed class CeremonyActConfiguration : IEntityTypeConfiguration<Ceremo
         builder.HasKey(c => c.Id);
 
         builder.Property(c => c.WeddingId).IsRequired();
-        builder.HasIndex(c => c.WeddingId)
-            .HasDatabaseName("ix_ceremony_acts_wedding_id");
+
+        // Composite index supports GetByWeddingIdAsync ordered reads.
+        // Covers the WHERE wedding_id = ? ORDER BY display_order, id pattern efficiently.
+        builder.HasIndex(c => new { c.WeddingId, c.DisplayOrder, c.Id })
+            .HasDatabaseName("ix_ceremony_acts_wedding_id_display_order");
 
         builder.Property(c => c.Name)
             .IsRequired()
