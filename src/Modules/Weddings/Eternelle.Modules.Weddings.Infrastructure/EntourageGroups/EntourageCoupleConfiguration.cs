@@ -23,9 +23,9 @@ internal sealed class EntourageCoupleConfiguration
         couple.Property(c => c.Note).HasMaxLength(EntourageCouple.MaxNoteLength);
         couple.Property(c => c.DisplayOrder).IsRequired();
 
-        // FK from member_a_id → entourage_members.id with cascade delete.
-        // Cascade ensures couple rows are removed when either referenced member is deleted,
-        // mirroring the domain's manual cleanup in EntourageGroup.RemoveMember().
+        // FK from member_a_id → entourage_members.id.
+        // Deletion is restricted: the domain must remove all couple entries referencing
+        // a member via EntourageGroup.RemoveMember() before the member itself is deleted.
         couple.HasOne<EntourageMember>()
             .WithMany()
             .HasForeignKey(c => c.MemberAId)
@@ -33,7 +33,8 @@ internal sealed class EntourageCoupleConfiguration
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("fk_entourage_couples_member_a");
 
-        // FK from member_b_id → entourage_members.id with cascade delete.
+        // FK from member_b_id → entourage_members.id.
+        // Same restriction applies — caller must clean up couple rows first.
         couple.HasOne<EntourageMember>()
             .WithMany()
             .HasForeignKey(c => c.MemberBId)

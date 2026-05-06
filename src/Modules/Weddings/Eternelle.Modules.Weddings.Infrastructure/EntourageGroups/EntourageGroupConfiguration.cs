@@ -24,14 +24,18 @@ internal sealed class EntourageGroupConfiguration : IEntityTypeConfiguration<Ent
         builder.Property(g => g.Subtitle)
             .HasMaxLength(EntourageGroup.MaxSubtitleLength);
 
-        // GroupType — nullable, stored as snake_case string to match the PostgreSQL ENUM.
+        // GroupType — nullable text column. Serialized to/from a snake_case string via
+        // HasConversion(GroupTypeToString, StringToGroupType). Not a native PostgreSQL enum —
+        // the mapping is handled entirely in .NET by the switch expressions below.
         builder.Property(g => g.GroupType)
             .HasConversion(
                 v => v.HasValue ? GroupTypeToString(v.Value) : null,
                 v => v != null ? StringToGroupType(v) : (EntourageGroupType?)null)
             .HasColumnName("group_type");
 
-        // RenderAs — non-nullable, stored as snake_case string to match the PostgreSQL ENUM.
+        // RenderAs — non-nullable text column. Serialized to/from a snake_case string via
+        // HasConversion(RenderModeToString, StringToRenderMode). Not a native PostgreSQL enum —
+        // the mapping is handled entirely in .NET by the switch expressions below.
         builder.Property(g => g.RenderAs)
             .HasConversion(
                 v => RenderModeToString(v),
