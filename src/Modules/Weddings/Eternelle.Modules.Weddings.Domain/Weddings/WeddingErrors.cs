@@ -23,4 +23,9 @@ public static class WeddingErrors
         Error.NotFound(
             "Weddings.PartnerNotFound",
             $"The partner with the identifier {partnerId.Value} was not found");
+
+    public static readonly Error SnapShareNotConfigured =
+        Error.Problem(
+            "Weddings.SnapShareNotConfigured",
+            "The snap-share section has not been configured for this wedding.");
 }
