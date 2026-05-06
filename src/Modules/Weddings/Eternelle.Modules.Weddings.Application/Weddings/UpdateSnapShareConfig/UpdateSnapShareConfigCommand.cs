@@ -1,4 +1,5 @@
 using Eternelle.Common.Application.Messaging;
+using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Application.Weddings.UpdateSnapShareConfig;
 
@@ -6,4 +7,5 @@ public sealed record UpdateSnapShareConfigCommand(
     Guid WeddingId,
     string? InstagramHandle,
     string? CtaText,
-    bool Enabled) : ICommand;
+    bool Enabled,
+    SnapShareModerationMode ModerationMode) : ICommand;

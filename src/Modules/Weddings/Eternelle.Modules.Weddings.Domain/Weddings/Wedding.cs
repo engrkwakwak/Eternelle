@@ -185,11 +185,19 @@ public sealed class Wedding : Entity
 
     /// <summary>
     /// Rotates the guest photo upload token, invalidating all previously distributed
-    /// QR codes. Safe to call at any time — the new token takes effect immediately.
+    /// QR codes. SnapShare must be configured first — returns a failure otherwise.
     /// Raises no domain event (stateless rotate — no downstream consumers need to react).
     /// </summary>
-    public void RegenerateUploadToken()
+    public Result RegenerateUploadToken(DateTime utcNow)
     {
-        SnapShare?.RegenerateToken();
+        if (SnapShare is null)
+        {
+            return Result.Failure(WeddingErrors.SnapShareNotConfigured);
+        }
+
+        SnapShare.RegenerateToken();
+        UpdatedAtUtc = utcNow;
+
+        return Result.Success();
     }
 }
