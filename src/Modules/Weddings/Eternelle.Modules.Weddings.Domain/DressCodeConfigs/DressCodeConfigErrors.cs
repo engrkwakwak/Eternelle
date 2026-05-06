@@ -24,6 +24,11 @@ public static class DressCodeConfigErrors
             "DressCodeConfigs.ImageNotFound",
             $"The dress code image with the identifier {imageId.Value} was not found");
 
+    public static readonly Error AlreadyExistsForWedding =
+        Error.Conflict(
+            "DressCodeConfigs.AlreadyExistsForWedding",
+            "A dress code config already exists for this wedding.");
+
     public static readonly Error ReorderColorsListMismatch =
         Error.Problem(
             "DressCodeConfigs.ReorderColorsListMismatch",

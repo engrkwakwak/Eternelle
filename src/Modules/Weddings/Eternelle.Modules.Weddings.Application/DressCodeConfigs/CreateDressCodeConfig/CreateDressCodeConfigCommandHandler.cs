@@ -14,9 +14,18 @@ internal sealed class CreateDressCodeConfigCommandHandler(
         CreateDressCodeConfigCommand command,
         CancellationToken cancellationToken)
     {
-        DressCodeConfig config = DressCodeConfig.Create(
-            new WeddingId(command.WeddingId),
-            command.Description);
+        var weddingId = new WeddingId(command.WeddingId);
+
+        DressCodeConfig? existing = await dressCodeConfigRepository.GetByWeddingIdAsync(
+            weddingId,
+            cancellationToken);
+
+        if (existing is not null)
+        {
+            return Result.Failure<Guid>(DressCodeConfigErrors.AlreadyExistsForWedding);
+        }
+
+        var config = DressCodeConfig.Create(weddingId, command.Description);
 
         dressCodeConfigRepository.Insert(config);
 

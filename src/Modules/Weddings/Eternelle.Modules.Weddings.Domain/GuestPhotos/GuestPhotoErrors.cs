@@ -13,4 +13,9 @@ public static class GuestPhotoErrors
         Error.Conflict(
             "GuestPhotos.AlreadyReviewed",
             "The guest photo has already been reviewed.");
+
+    public static readonly Error PlanLimitReached =
+        Error.Problem(
+            "GuestPhotos.PlanLimitReached",
+            "The photo upload limit for this wedding's plan has been reached.");
 }
