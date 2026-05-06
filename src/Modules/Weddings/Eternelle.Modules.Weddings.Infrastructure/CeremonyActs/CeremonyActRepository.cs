@@ -17,6 +17,8 @@ internal sealed class CeremonyActRepository(WeddingsDbContext context) : ICeremo
     {
         return await context.CeremonyActs
             .Where(c => c.WeddingId == weddingId)
+            .OrderBy(c => c.DisplayOrder)
+            .ThenBy(c => c.Id)
             .ToListAsync(cancellationToken);
     }
 

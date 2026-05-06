@@ -35,7 +35,9 @@ internal sealed class DressCodeColorConfiguration
 
         color.Property(c => c.DisplayOrder).IsRequired();
 
-        color.HasIndex(c => c.DressCodeConfigId)
-            .HasDatabaseName("ix_dress_code_colors_dress_code_config_id");
+        // Composite index supports ordered loads via Include on DressCodeConfigRepository.
+        // Covers the WHERE dress_code_config_id = ? ORDER BY display_order, id pattern efficiently.
+        color.HasIndex(c => new { c.DressCodeConfigId, c.DisplayOrder, c.Id })
+            .HasDatabaseName("ix_dress_code_colors_dress_code_config_id_display_order");
     }
 }

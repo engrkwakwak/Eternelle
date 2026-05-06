@@ -10,6 +10,9 @@ internal sealed class DressCodeConfigRepository(WeddingsDbContext context) : IDr
     public async Task<DressCodeConfig?> GetAsync(DressCodeConfigId id, CancellationToken cancellationToken = default)
     {
         return await context.DressCodeConfigs
+            .Include(d => d.Colors)
+            .Include(d => d.Images)
+            .AsSplitQuery()
             .SingleOrDefaultAsync(d => d.Id == id, cancellationToken);
     }
 
@@ -43,6 +46,9 @@ internal sealed class DressCodeConfigRepository(WeddingsDbContext context) : IDr
     public async Task<DressCodeConfig?> GetByWeddingIdAsync(WeddingId weddingId, CancellationToken cancellationToken = default)
     {
         return await context.DressCodeConfigs
+            .Include(d => d.Colors)
+            .Include(d => d.Images)
+            .AsSplitQuery()
             .SingleOrDefaultAsync(d => d.WeddingId == weddingId, cancellationToken);
     }
 

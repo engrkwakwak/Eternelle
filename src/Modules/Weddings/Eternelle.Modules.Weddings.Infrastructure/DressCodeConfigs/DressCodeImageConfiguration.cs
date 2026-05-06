@@ -17,7 +17,9 @@ internal sealed class DressCodeImageConfiguration
         image.Property(i => i.ImageUrl).IsRequired();
         image.Property(i => i.DisplayOrder).IsRequired();
 
-        image.HasIndex(i => i.DressCodeConfigId)
-            .HasDatabaseName("ix_dress_code_images_dress_code_config_id");
+        // Composite index supports ordered loads via Include on DressCodeConfigRepository.
+        // Covers the WHERE dress_code_config_id = ? ORDER BY display_order, id pattern efficiently.
+        image.HasIndex(i => new { i.DressCodeConfigId, i.DisplayOrder, i.Id })
+            .HasDatabaseName("ix_dress_code_images_dress_code_config_id_display_order");
     }
 }
