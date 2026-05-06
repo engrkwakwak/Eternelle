@@ -8,4 +8,9 @@ public static class ReminderErrors
         Error.NotFound(
             "Reminders.NotFound",
             $"The reminder with the identifier {id.Value} was not found");
+
+    public static readonly Error ReorderListMismatch =
+        Error.Problem(
+            "Reminders.ReorderListMismatch",
+            "The provided reminder list does not match the existing reminders for this wedding.");
 }
