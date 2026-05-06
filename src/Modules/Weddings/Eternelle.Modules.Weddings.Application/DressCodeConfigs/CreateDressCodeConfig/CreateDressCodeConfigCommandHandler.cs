@@ -14,7 +14,7 @@ internal sealed class CreateDressCodeConfigCommandHandler(
         CreateDressCodeConfigCommand command,
         CancellationToken cancellationToken)
     {
-        DressCodeConfig config = DressCodeConfig.Create(
+        var config = DressCodeConfig.Create(
             new WeddingId(command.WeddingId),
             command.Description);
 
