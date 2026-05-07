@@ -13,6 +13,15 @@ internal sealed class GuestPhotoRepository(WeddingsDbContext context) : IGuestPh
             .SingleOrDefaultAsync(p => p.Id == id, ct);
     }
 
+    public async Task<IReadOnlyList<GuestPhoto>> GetManyAsync(
+        IReadOnlyList<GuestPhotoId> ids,
+        CancellationToken ct = default)
+    {
+        return await context.GuestPhotos
+            .Where(p => ids.Contains(p.Id))
+            .ToListAsync(ct);
+    }
+
     public async Task<IReadOnlyList<GuestPhoto>> GetByWeddingIdAsync(
         WeddingId weddingId,
         GuestPhotoStatus? status = null,

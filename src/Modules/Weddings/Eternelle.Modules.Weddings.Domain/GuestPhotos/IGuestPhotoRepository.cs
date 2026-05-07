@@ -6,6 +6,8 @@ public interface IGuestPhotoRepository
 {
     Task<GuestPhoto?> GetAsync(GuestPhotoId id, CancellationToken ct = default);
 
+    Task<IReadOnlyList<GuestPhoto>> GetManyAsync(IReadOnlyList<GuestPhotoId> ids, CancellationToken ct = default);
+
     Task<IReadOnlyList<GuestPhoto>> GetByWeddingIdAsync(
         WeddingId weddingId,
         GuestPhotoStatus? status = null,
