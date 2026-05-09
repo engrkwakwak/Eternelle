@@ -23,24 +23,22 @@ internal sealed class EntourageCoupleConfiguration
         couple.Property(c => c.Note).HasMaxLength(EntourageCouple.MaxNoteLength);
         couple.Property(c => c.DisplayOrder).IsRequired();
 
-        // FK (group_id, member_a_id) → entourage_members.(group_id, id).
-        // The composite FK enforces at the DB level that member A belongs to the same group
-        // as the couple. Deletion is restricted: the domain must remove couple rows first
-        // via EntourageGroup.RemoveMember() before the member itself is deleted.
+        // FK member_a_id → entourage_members.id.
+        // A composite (group_id, member_a_id) FK is not expressible via EF Core's fluent
+        // API for owned-to-owned relationships — HasPrincipalKey is non-generic and
+        // HasAlternateKey is unavailable on OwnedNavigationBuilder. Group-membership
+        // is enforced at the domain level inside EntourageGroup.PairMembers().
         couple.HasOne<EntourageMember>()
             .WithMany()
-            .HasForeignKey(c => new { c.GroupId, c.MemberAId })
-            .HasPrincipalKey<EntourageMember>(m => new { m.GroupId, m.Id })
+            .HasForeignKey(c => c.MemberAId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("fk_entourage_couples_member_a");
 
-        // FK (group_id, member_b_id) → entourage_members.(group_id, id).
-        // Same group-membership enforcement and deletion restriction applies.
+        // FK member_b_id → entourage_members.id. Same rationale as member A above.
         couple.HasOne<EntourageMember>()
             .WithMany()
-            .HasForeignKey(c => new { c.GroupId, c.MemberBId })
-            .HasPrincipalKey<EntourageMember>(m => new { m.GroupId, m.Id })
+            .HasForeignKey(c => c.MemberBId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("fk_entourage_couples_member_b");

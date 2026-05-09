@@ -11,7 +11,7 @@ internal sealed class BulkDeleteGuestPhotosCommandHandler(
 {
     public async Task<Result> Handle(BulkDeleteGuestPhotosCommand command, CancellationToken cancellationToken)
     {
-        IReadOnlyList<GuestPhotoId> ids = command.GuestPhotoIds
+        var ids = command.GuestPhotoIds
             .Select(id => new GuestPhotoId(id))
             .Distinct()
             .ToList();

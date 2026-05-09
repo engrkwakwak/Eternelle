@@ -10,6 +10,12 @@ public interface IWeddingRepository
     /// </summary>
     Task<Wedding?> GetWithPartnersAsync(WeddingId id, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Loads the Wedding aggregate together with its SnapShare configuration.
+    /// Used when SnapShare mutations are needed (e.g. token rotation).
+    /// </summary>
+    Task<Wedding?> GetWithSnapShareAsync(WeddingId id, CancellationToken cancellationToken = default);
+
     Task<Wedding?> GetByTenantIdAsync(Guid tenantId, CancellationToken cancellationToken = default);
 
     /// <summary>

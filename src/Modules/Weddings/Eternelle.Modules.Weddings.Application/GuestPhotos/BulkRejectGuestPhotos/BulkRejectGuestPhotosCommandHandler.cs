@@ -13,7 +13,7 @@ internal sealed class BulkRejectGuestPhotosCommandHandler(
 {
     public async Task<Result> Handle(BulkRejectGuestPhotosCommand command, CancellationToken cancellationToken)
     {
-        IReadOnlyList<GuestPhotoId> ids = command.GuestPhotoIds
+        var ids = command.GuestPhotoIds
             .Select(id => new GuestPhotoId(id))
             .Distinct()
             .ToList();
