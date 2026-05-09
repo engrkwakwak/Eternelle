@@ -26,6 +26,10 @@ internal sealed class EntourageMemberConfiguration
         member.Property(m => m.Seed);
         member.Property(m => m.DisplayOrder).IsRequired();
 
+        // Alternate key used as the principal key for EntourageCouple FK relationships,
+        // so the DB enforces that coupled members both belong to the same group.
+        member.HasAlternateKey(m => new { m.GroupId, m.Id });
+
         member.HasIndex(m => m.GroupId)
             .HasDatabaseName("ix_entourage_members_group_id");
 

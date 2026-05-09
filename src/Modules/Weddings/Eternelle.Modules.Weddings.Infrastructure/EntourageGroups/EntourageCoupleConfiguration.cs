@@ -23,21 +23,24 @@ internal sealed class EntourageCoupleConfiguration
         couple.Property(c => c.Note).HasMaxLength(EntourageCouple.MaxNoteLength);
         couple.Property(c => c.DisplayOrder).IsRequired();
 
-        // FK from member_a_id → entourage_members.id.
-        // Deletion is restricted: the domain must remove all couple entries referencing
-        // a member via EntourageGroup.RemoveMember() before the member itself is deleted.
+        // FK (group_id, member_a_id) → entourage_members.(group_id, id).
+        // The composite FK enforces at the DB level that member A belongs to the same group
+        // as the couple. Deletion is restricted: the domain must remove couple rows first
+        // via EntourageGroup.RemoveMember() before the member itself is deleted.
         couple.HasOne<EntourageMember>()
             .WithMany()
-            .HasForeignKey(c => c.MemberAId)
+            .HasForeignKey(c => new { c.GroupId, c.MemberAId })
+            .HasPrincipalKey<EntourageMember>(m => new { m.GroupId, m.Id })
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("fk_entourage_couples_member_a");
 
-        // FK from member_b_id → entourage_members.id.
-        // Same restriction applies — caller must clean up couple rows first.
+        // FK (group_id, member_b_id) → entourage_members.(group_id, id).
+        // Same group-membership enforcement and deletion restriction applies.
         couple.HasOne<EntourageMember>()
             .WithMany()
-            .HasForeignKey(c => c.MemberBId)
+            .HasForeignKey(c => new { c.GroupId, c.MemberBId })
+            .HasPrincipalKey<EntourageMember>(m => new { m.GroupId, m.Id })
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("fk_entourage_couples_member_b");
