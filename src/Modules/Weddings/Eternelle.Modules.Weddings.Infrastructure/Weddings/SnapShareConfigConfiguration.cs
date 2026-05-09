@@ -37,5 +37,9 @@ internal static class SnapShareConfigConfiguration
         snapShare.HasIndex(s => s.WeddingId)
             .IsUnique()
             .HasDatabaseName("ix_snap_share_configs_wedding_id");
+
+        // Lookup by upload token on every public guest-photo upload request.
+        snapShare.HasIndex(s => s.UploadToken)
+            .HasDatabaseName("ix_snap_share_configs_upload_token");
     }
 }
