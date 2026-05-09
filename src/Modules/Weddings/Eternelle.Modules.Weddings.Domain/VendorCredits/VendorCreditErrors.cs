@@ -8,4 +8,9 @@ public static class VendorCreditErrors
         Error.NotFound(
             "VendorCredits.NotFound",
             $"The vendor credit with the identifier {id.Value} was not found");
+
+    public static readonly Error ReorderListMismatch =
+        Error.Problem(
+            "VendorCredits.ReorderListMismatch",
+            "The provided vendor credit list does not match the existing credits for this wedding.");
 }

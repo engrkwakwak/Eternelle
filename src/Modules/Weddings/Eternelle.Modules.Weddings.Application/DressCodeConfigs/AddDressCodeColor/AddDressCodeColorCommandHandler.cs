@@ -1,0 +1,44 @@
+using Eternelle.Common.Application.Messaging;
+using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Application.Abstractions.Data;
+using Eternelle.Modules.Weddings.Domain.DressCodeConfigs;
+
+namespace Eternelle.Modules.Weddings.Application.DressCodeConfigs.AddDressCodeColor;
+
+internal sealed class AddDressCodeColorCommandHandler(
+    IDressCodeConfigRepository dressCodeConfigRepository,
+    IUnitOfWork unitOfWork) : ICommandHandler<AddDressCodeColorCommand, Guid>
+{
+    public async Task<Result<Guid>> Handle(
+        AddDressCodeColorCommand command,
+        CancellationToken cancellationToken)
+    {
+        var configId = new DressCodeConfigId(command.DressCodeConfigId);
+
+        DressCodeConfig? config = await dressCodeConfigRepository.GetWithDetailsAsync(configId, cancellationToken);
+
+        if (config is null)
+        {
+            return Result.Failure<Guid>(DressCodeConfigErrors.NotFound(configId));
+        }
+
+        Result<HexColor> hexResult = HexColor.Create(command.ColorHex);
+
+        if (hexResult.IsFailure)
+        {
+            return Result.Failure<Guid>(hexResult.Error);
+        }
+
+        int displayOrder = config.Colors.Count == 0
+            ? 0
+            : config.Colors.Max(c => c.DisplayOrder) + 1;
+
+        DressCodeColor color = config.AddColor(hexResult.Value, command.ColorName, displayOrder);
+
+        dressCodeConfigRepository.Update(config);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return color.Id.Value;
+    }
+}

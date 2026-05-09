@@ -17,6 +17,8 @@ public sealed class DressCodeColor : Entity
     {
     }
 
+    public static readonly int MaxColorNameLength = 100;
+
     public DressCodeColorId Id { get; private set; }
 
     public DressCodeConfigId DressCodeConfigId { get; private set; }

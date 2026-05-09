@@ -18,6 +18,9 @@ namespace Eternelle.Modules.Weddings.Domain.VendorCredits;
 /// </summary>
 public sealed class VendorCredit : Entity
 {
+    public static readonly int MaxNameLength = 200;
+    public static readonly int MaxRoleLength = 100;
+
     private VendorCredit()
     {
     }

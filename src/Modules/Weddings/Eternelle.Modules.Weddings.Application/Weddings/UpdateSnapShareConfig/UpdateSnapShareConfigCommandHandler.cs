@@ -38,6 +38,7 @@ internal sealed class UpdateSnapShareConfigCommandHandler(
             instagramHandle,
             command.CtaText,
             command.Enabled,
+            command.ModerationMode,
             dateTimeProvider.UtcNow);
 
         weddingRepository.Update(wedding);

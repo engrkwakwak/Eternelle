@@ -13,4 +13,9 @@ public static class GiftOptionErrors
         Error.Problem(
             "GiftOptions.LinkUrlRequired",
             "A link URL is required when the display mode is 'Link'");
+
+    public static readonly Error ReorderListMismatch =
+        Error.Problem(
+            "GiftOptions.ReorderListMismatch",
+            "The provided gift option IDs do not match the existing gift options for this wedding");
 }
