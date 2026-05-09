@@ -51,7 +51,9 @@ internal sealed class UploadGuestPhotoCommandHandler(
             ? GuestPhotoStatus.Approved
             : GuestPhotoStatus.Pending;
 
-        // 4. Insert — no lock, concurrent uploads proceed in parallel.
+        // 4. Insert and enforce atomically.
+        //    Capped plans use a single transaction so no committed photo can exist
+        //    outside the limit window. Unlimited plans skip enforcement entirely.
         var photo = GuestPhoto.Create(
             wedding.Id,
             command.SrcUrl,
@@ -62,15 +64,15 @@ internal sealed class UploadGuestPhotoCommandHandler(
             initialStatus,
             dateTimeProvider.UtcNow);
 
-        guestPhotoRepository.Insert(photo);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-
-        // 5. Mark any photos beyond the plan cap as OverLimit (earliest uploads win).
-        //    No-op for unlimited plans and weddings within their cap.
         if (planLimit is not null)
         {
-            await guestPhotoRepository.EnforcePhotoLimitAsync(
-                wedding.Id, planLimit.Value, cancellationToken);
+            await guestPhotoRepository.InsertAndEnforceAsync(
+                photo, wedding.Id, planLimit.Value, cancellationToken);
+        }
+        else
+        {
+            guestPhotoRepository.Insert(photo);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
         return Result.Success(photo.Id.Value);

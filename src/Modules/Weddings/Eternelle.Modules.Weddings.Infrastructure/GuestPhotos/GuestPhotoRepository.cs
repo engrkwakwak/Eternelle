@@ -2,6 +2,7 @@ using Eternelle.Modules.Weddings.Domain.GuestPhotos;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 using Eternelle.Modules.Weddings.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Eternelle.Modules.Weddings.Infrastructure.GuestPhotos;
 
@@ -63,11 +64,35 @@ internal sealed class GuestPhotoRepository(WeddingsDbContext context) : IGuestPh
                      FROM wedding.guest_photos
                     WHERE wedding_id = {weddingId.Value}
                       AND status     != {overLimit}
-                    ORDER BY uploaded_at ASC
+                    ORDER BY uploaded_at ASC, id ASC
                     LIMIT {limit}
                )
             """,
             ct);
+    }
+
+    public async Task InsertAndEnforceAsync(
+        GuestPhoto photo,
+        WeddingId weddingId,
+        int planLimit,
+        CancellationToken ct = default)
+    {
+        await using IDbContextTransaction tx = await context.Database.BeginTransactionAsync(ct);
+
+        try
+        {
+            context.GuestPhotos.Add(photo);
+            await context.SaveChangesAsync(ct);
+
+            await EnforcePhotoLimitAsync(weddingId, planLimit, ct);
+
+            await tx.CommitAsync(ct);
+        }
+        catch
+        {
+            await tx.RollbackAsync(ct);
+            throw;
+        }
     }
 
     public void Insert(GuestPhoto photo)
