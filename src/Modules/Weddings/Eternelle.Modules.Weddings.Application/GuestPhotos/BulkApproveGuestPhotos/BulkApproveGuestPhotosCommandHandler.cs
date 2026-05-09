@@ -9,13 +9,29 @@ namespace Eternelle.Modules.Weddings.Application.GuestPhotos.BulkApproveGuestPho
 internal sealed class BulkApproveGuestPhotosCommandHandler(
     IGuestPhotoRepository guestPhotoRepository,
     IDateTimeProvider dateTimeProvider,
-    IUnitOfWork unitOfWork) : ICommandHandler<BulkApproveGuestPhotosCommand>
+    IUnitOfWork unitOfWork) : ICommandHandler<BulkApproveGuestPhotosCommand, BulkApproveGuestPhotosResponse>
 {
-    public async Task<Result> Handle(BulkApproveGuestPhotosCommand command, CancellationToken cancellationToken)
+    public async Task<Result<BulkApproveGuestPhotosResponse>> Handle(
+        BulkApproveGuestPhotosCommand command,
+        CancellationToken cancellationToken)
     {
         IReadOnlyList<GuestPhotoId> ids = [.. command.GuestPhotoIds.Select(id => new GuestPhotoId(id))];
 
         IReadOnlyList<GuestPhoto> photos = await guestPhotoRepository.GetManyAsync(ids, cancellationToken);
+
+        HashSet<Guid> fetchedIds = [.. photos.Select(p => p.Id.Value)];
+
+        var approvedIds = new List<Guid>();
+        var skippedIds = new List<Guid>();
+
+        // IDs not found in DB
+        foreach (Guid requestedId in command.GuestPhotoIds)
+        {
+            if (!fetchedIds.Contains(requestedId))
+            {
+                skippedIds.Add(requestedId);
+            }
+        }
 
         DateTime utcNow = dateTimeProvider.UtcNow;
 
@@ -26,11 +42,16 @@ internal sealed class BulkApproveGuestPhotosCommandHandler(
             if (result.IsSuccess)
             {
                 guestPhotoRepository.Update(photo);
+                approvedIds.Add(photo.Id.Value);
+            }
+            else
+            {
+                skippedIds.Add(photo.Id.Value);
             }
         }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Result.Success(new BulkApproveGuestPhotosResponse(approvedIds, skippedIds));
     }
 }

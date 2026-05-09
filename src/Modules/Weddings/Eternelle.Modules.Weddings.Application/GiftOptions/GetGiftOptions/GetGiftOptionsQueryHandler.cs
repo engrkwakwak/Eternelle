@@ -32,7 +32,7 @@ internal sealed class GetGiftOptionsQueryHandler(IDbConnectionFactory dbConnecti
                  g.display_order  AS {nameof(GiftOptionResponse.DisplayOrder)}
              FROM wedding.gift_options g
              WHERE g.wedding_id = @WeddingId
-             ORDER BY g.display_order ASC
+             ORDER BY g.display_order ASC, g.id ASC
              """;
 
         IEnumerable<GiftOptionResponse> giftOptions =

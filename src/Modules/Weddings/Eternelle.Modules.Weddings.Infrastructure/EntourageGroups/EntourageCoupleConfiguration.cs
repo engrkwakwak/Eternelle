@@ -46,5 +46,12 @@ internal sealed class EntourageCoupleConfiguration
         couple.HasIndex(c => new { c.GroupId, c.MemberAId, c.MemberBId })
             .IsUnique()
             .HasDatabaseName("ix_entourage_couples_group_member_pair");
+
+        // Single-column indexes on FK columns for fast FK lookups (avoids full-table scans on restrict deletes).
+        couple.HasIndex(c => c.MemberAId)
+            .HasDatabaseName("ix_entourage_couples_member_a");
+
+        couple.HasIndex(c => c.MemberBId)
+            .HasDatabaseName("ix_entourage_couples_member_b");
     }
 }

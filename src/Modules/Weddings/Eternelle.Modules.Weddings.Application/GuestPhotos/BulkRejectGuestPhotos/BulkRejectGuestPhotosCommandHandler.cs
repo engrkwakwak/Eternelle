@@ -15,20 +15,38 @@ internal sealed class BulkRejectGuestPhotosCommandHandler(
     {
         IReadOnlyList<GuestPhotoId> ids = command.GuestPhotoIds
             .Select(id => new GuestPhotoId(id))
+            .Distinct()
             .ToList();
 
         IReadOnlyList<GuestPhoto> photos = await guestPhotoRepository.GetManyAsync(ids, cancellationToken);
 
+        if (photos.Count != ids.Count)
+        {
+            return Result.Failure(GuestPhotoErrors.NotFound);
+        }
+
         DateTime utcNow = dateTimeProvider.UtcNow;
+
+        bool hasFailures = false;
 
         foreach (GuestPhoto photo in photos)
         {
             Result result = photo.Reject(utcNow);
 
-            if (result.IsSuccess)
+            if (!result.IsSuccess)
             {
-                guestPhotoRepository.Update(photo);
+                hasFailures = true;
             }
+        }
+
+        if (hasFailures)
+        {
+            return Result.Failure(GuestPhotoErrors.AlreadyReviewed);
+        }
+
+        foreach (GuestPhoto photo in photos)
+        {
+            guestPhotoRepository.Update(photo);
         }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);

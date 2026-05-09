@@ -9,7 +9,7 @@ internal sealed class DressCodeConfigRepository(WeddingsDbContext context) : IDr
 {
     public async Task<DressCodeConfig?> GetAsync(DressCodeConfigId id, CancellationToken cancellationToken = default)
     {
-        return await GetBaseQuery()
+        return await context.DressCodeConfigs
             .SingleOrDefaultAsync(d => d.Id == id, cancellationToken);
     }
 

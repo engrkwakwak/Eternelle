@@ -15,6 +15,14 @@ public interface IGuestPhotoRepository
 
     Task<int> CountByWeddingIdAsync(WeddingId weddingId, CancellationToken ct = default);
 
+    Task EnforcePhotoLimitAsync(WeddingId weddingId, int limit, CancellationToken ct = default);
+
+    /// <summary>
+    /// Inserts <paramref name="photo"/> and enforces the plan cap in a single transaction,
+    /// so no committed photo can exist outside the limit window.
+    /// </summary>
+    Task InsertAndEnforceAsync(GuestPhoto photo, WeddingId weddingId, int planLimit, CancellationToken ct = default);
+
     void Insert(GuestPhoto photo);
 
     void Update(GuestPhoto photo);

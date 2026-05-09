@@ -2,6 +2,7 @@ using Eternelle.Modules.Weddings.Domain.GuestPhotos;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 using Eternelle.Modules.Weddings.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Eternelle.Modules.Weddings.Infrastructure.GuestPhotos;
 
@@ -19,6 +20,7 @@ internal sealed class GuestPhotoRepository(WeddingsDbContext context) : IGuestPh
     {
         return await context.GuestPhotos
             .Where(p => ids.Contains(p.Id))
+            .OrderBy(p => p.Id)
             .ToListAsync(ct);
     }
 
@@ -35,13 +37,54 @@ internal sealed class GuestPhotoRepository(WeddingsDbContext context) : IGuestPh
             query = query.Where(p => p.Status == status.Value);
         }
 
-        return await query.ToListAsync(ct);
+        return await query.OrderBy(p => p.Id).ToListAsync(ct);
     }
 
     public async Task<int> CountByWeddingIdAsync(WeddingId weddingId, CancellationToken ct = default)
     {
         return await context.GuestPhotos
             .CountAsync(p => p.WeddingId == weddingId, ct);
+    }
+
+    public async Task EnforcePhotoLimitAsync(
+        WeddingId weddingId,
+        int limit,
+        CancellationToken ct = default)
+    {
+        int overLimit = (int)GuestPhotoStatus.OverLimit;
+
+        await context.Database.ExecuteSqlAsync(
+            $"""
+            UPDATE wedding.guest_photos
+               SET status = {overLimit}
+             WHERE wedding_id = {weddingId.Value}
+               AND status     != {overLimit}
+               AND id NOT IN (
+                   SELECT id
+                     FROM wedding.guest_photos
+                    WHERE wedding_id = {weddingId.Value}
+                      AND status     != {overLimit}
+                    ORDER BY uploaded_at ASC, id ASC
+                    LIMIT {limit}
+               )
+            """,
+            ct);
+    }
+
+    public async Task InsertAndEnforceAsync(
+        GuestPhoto photo,
+        WeddingId weddingId,
+        int planLimit,
+        CancellationToken ct = default)
+    {
+        await using IDbContextTransaction tx = await context.Database.BeginTransactionAsync(ct);
+
+        context.GuestPhotos.Add(photo);
+        await context.SaveChangesAsync(ct);
+
+        await EnforcePhotoLimitAsync(weddingId, planLimit, ct);
+
+        await tx.CommitAsync(ct);
     }
 
     public void Insert(GuestPhoto photo)

@@ -138,4 +138,9 @@ public sealed class GuestPhoto : Entity
 
         return Result.Success();
     }
+
+    public void MarkOverLimit()
+    {
+        Status = GuestPhotoStatus.OverLimit;
+    }
 }

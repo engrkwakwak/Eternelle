@@ -13,9 +13,15 @@ internal sealed class BulkDeleteGuestPhotosCommandHandler(
     {
         IReadOnlyList<GuestPhotoId> ids = command.GuestPhotoIds
             .Select(id => new GuestPhotoId(id))
+            .Distinct()
             .ToList();
 
         IReadOnlyList<GuestPhoto> photos = await guestPhotoRepository.GetManyAsync(ids, cancellationToken);
+
+        if (photos.Count != ids.Count)
+        {
+            return Result.Failure(GuestPhotoErrors.NotFound);
+        }
 
         foreach (GuestPhoto photo in photos)
         {
