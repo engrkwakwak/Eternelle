@@ -35,12 +35,15 @@ internal sealed class GuestPhotoConfiguration : IEntityTypeConfiguration<GuestPh
 
         builder.Property(p => p.ReviewedAt);
 
-        // Composite index covering the two most common query shapes:
-        //   - couple dashboard: WHERE wedding_id = ? [AND status = ?] ORDER BY uploaded_at DESC
-        //   - public feed:      WHERE wedding_id = ? AND status = 'approved' ORDER BY uploaded_at DESC
+        // (wedding_id, status, uploaded_at DESC) — status-filtered reads (feed, moderation queue).
         builder.HasIndex(p => new { p.WeddingId, p.Status, p.UploadedAt })
             .HasDatabaseName("idx_guest_photos_wedding_status_uploaded")
             .IsDescending(false, false, true);
+
+        // (wedding_id, uploaded_at DESC) — unfiltered reads; status column blocks ordered tail above.
+        builder.HasIndex(p => new { p.WeddingId, p.UploadedAt })
+            .HasDatabaseName("idx_guest_photos_wedding_uploaded")
+            .IsDescending(false, true);
     }
 }
 
