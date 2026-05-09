@@ -79,20 +79,12 @@ internal sealed class GuestPhotoRepository(WeddingsDbContext context) : IGuestPh
     {
         await using IDbContextTransaction tx = await context.Database.BeginTransactionAsync(ct);
 
-        try
-        {
-            context.GuestPhotos.Add(photo);
-            await context.SaveChangesAsync(ct);
+        context.GuestPhotos.Add(photo);
+        await context.SaveChangesAsync(ct);
 
-            await EnforcePhotoLimitAsync(weddingId, planLimit, ct);
+        await EnforcePhotoLimitAsync(weddingId, planLimit, ct);
 
-            await tx.CommitAsync(ct);
-        }
-        catch
-        {
-            await tx.RollbackAsync(ct);
-            throw;
-        }
+        await tx.CommitAsync(ct);
     }
 
     public void Insert(GuestPhoto photo)
