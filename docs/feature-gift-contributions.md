@@ -83,7 +83,7 @@ Index: `(wedding_id, is_acknowledged)` — feeds the pending thank-you queue.
 | Command | Actor | Notes |
 |---|---|---|
 | `RecordGiftContributionCommand(WeddingId, GiftOptionId, GuestId?, SenderName?, Amount?, Currency?, Note?, ReceivedAt)` | Couple (JWT) | Either `GuestId` or `SenderName` should be provided — validate at application layer (not domain invariant) |
-| `UpdateGiftContributionCommand(ContributionId, SenderName?, Amount?, Currency?, Note?, ReceivedAt)` | Couple (JWT) | `GiftOptionId` is immutable after creation. `GuestId` is also immutable after creation — it is intentionally absent from `UpdateGiftContributionCommand` and cannot be changed post-record. |
+| `UpdateGiftContributionCommand(ContributionId, SenderName?, Amount?, Currency?, Note?, ReceivedAt)` | Couple (JWT) | `GiftOptionId` and `GuestId` are both immutable after creation and are intentionally absent from this command. Immutability preserves the audit trail and ensures each contribution remains tied to its original gift option and guest; changing either would silently rewrite history. To re-link a contribution, delete and re-record it. |
 | `DeleteGiftContributionCommand(ContributionId)` | Couple (JWT) | Hard delete |
 | `SetAcknowledgedGiftContributionCommand(ContributionId, bool IsAcknowledged)` | Couple (JWT) | Flips `is_acknowledged` either way — reversible |
 
