@@ -33,7 +33,7 @@ internal sealed class DressCodeConfigRepository(WeddingsDbContext context) : IDr
 
     public async Task<DressCodeConfig?> GetByWeddingIdAsync(WeddingId weddingId, CancellationToken cancellationToken = default)
     {
-        return await GetBaseQuery()
+        return await context.DressCodeConfigs
             .SingleOrDefaultAsync(d => d.WeddingId == weddingId, cancellationToken);
     }
 

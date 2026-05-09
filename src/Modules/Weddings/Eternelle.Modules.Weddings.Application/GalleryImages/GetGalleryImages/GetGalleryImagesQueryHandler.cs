@@ -36,6 +36,6 @@ internal sealed class GetGalleryImagesQueryHandler(IDbConnectionFactory dbConnec
             await connection.QueryAsync<GalleryImageResponse>(
                 new CommandDefinition(sql, query, cancellationToken: cancellationToken));
 
-        return images.ToList();
+        return Result.Success<IReadOnlyList<GalleryImageResponse>>([.. images]);
     }
 }

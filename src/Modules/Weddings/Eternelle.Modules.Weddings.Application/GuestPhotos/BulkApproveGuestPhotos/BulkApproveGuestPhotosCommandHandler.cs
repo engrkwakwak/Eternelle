@@ -15,7 +15,8 @@ internal sealed class BulkApproveGuestPhotosCommandHandler(
         BulkApproveGuestPhotosCommand command,
         CancellationToken cancellationToken)
     {
-        IReadOnlyList<GuestPhotoId> ids = [.. command.GuestPhotoIds.Select(id => new GuestPhotoId(id))];
+        IReadOnlyList<Guid> uniqueRawIds = command.GuestPhotoIds.Distinct().ToList();
+        IReadOnlyList<GuestPhotoId> ids = [.. uniqueRawIds.Select(id => new GuestPhotoId(id))];
 
         IReadOnlyList<GuestPhoto> photos = await guestPhotoRepository.GetManyAsync(ids, cancellationToken);
 
@@ -25,7 +26,7 @@ internal sealed class BulkApproveGuestPhotosCommandHandler(
         var skippedIds = new List<Guid>();
 
         // IDs not found in DB
-        foreach (Guid requestedId in command.GuestPhotoIds)
+        foreach (Guid requestedId in uniqueRawIds)
         {
             if (!fetchedIds.Contains(requestedId))
             {

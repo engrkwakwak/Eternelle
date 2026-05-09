@@ -83,7 +83,7 @@ Index: `(wedding_id, is_acknowledged)` — feeds the pending thank-you queue.
 | Command | Actor | Notes |
 |---|---|---|
 | `RecordGiftContributionCommand(WeddingId, GiftOptionId, GuestId?, SenderName?, Amount?, Currency?, Note?, ReceivedAt)` | Couple (JWT) | Either `GuestId` or `SenderName` should be provided — validate at application layer (not domain invariant) |
-| `UpdateGiftContributionCommand(ContributionId, SenderName?, Amount?, Currency?, Note?, ReceivedAt)` | Couple (JWT) | `GiftOptionId` is immutable after creation |
+| `UpdateGiftContributionCommand(ContributionId, SenderName?, Amount?, Currency?, Note?, ReceivedAt)` | Couple (JWT) | `GiftOptionId` is immutable after creation. `GuestId` is also immutable after creation — it is intentionally absent from `UpdateGiftContributionCommand` and cannot be changed post-record. |
 | `DeleteGiftContributionCommand(ContributionId)` | Couple (JWT) | Hard delete |
 | `SetAcknowledgedGiftContributionCommand(ContributionId, bool IsAcknowledged)` | Couple (JWT) | Flips `is_acknowledged` either way — reversible |
 

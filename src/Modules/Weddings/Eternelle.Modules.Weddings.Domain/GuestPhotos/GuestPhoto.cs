@@ -139,6 +139,13 @@ public sealed class GuestPhoto : Entity
         return Result.Success();
     }
 
+    /// <summary>
+    /// Marks this photo as <see cref="GuestPhotoStatus.OverLimit"/> directly on the in-memory entity.
+    /// Unlike <see cref="Approve"/> and <see cref="Reject"/>, no transition guard is applied here
+    /// because bulk enforcement is performed by <c>IGuestPhotoRepository.EnforcePhotoLimitAsync</c>
+    /// via a raw SQL UPDATE — the domain method is kept as a companion for completeness and
+    /// single-entity scenarios, not as the primary enforcement path.
+    /// </summary>
     public void MarkOverLimit()
     {
         Status = GuestPhotoStatus.OverLimit;
