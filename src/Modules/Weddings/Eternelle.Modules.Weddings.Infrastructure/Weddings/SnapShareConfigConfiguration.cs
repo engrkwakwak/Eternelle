@@ -28,10 +28,11 @@ internal static class SnapShareConfigConfiguration
 
         snapShare.Property(s => s.UploadToken);
 
-        // SnapShareModerationMode — stored as int. C# enum default ordinal values.
+        // SnapShareModerationMode — stored as int. Auto = 0, Manual = 1.
         snapShare.Property(s => s.ModerationMode)
             .HasConversion<int>()
-            .IsRequired();
+            .IsRequired()
+            .HasDefaultValue(SnapShareModerationMode.Auto);
 
         snapShare.HasIndex(s => s.WeddingId)
             .IsUnique()
