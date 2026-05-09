@@ -3,6 +3,7 @@ using Dapper;
 using Eternelle.Common.Application.Data;
 using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Domain.GuestPhotos;
 
 namespace Eternelle.Modules.Weddings.Application.GuestPhotos.GetPublicGuestPhotos;
 
@@ -15,7 +16,7 @@ internal sealed class GetPublicGuestPhotosQueryHandler(IDbConnectionFactory dbCo
     {
         await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync();
 
-        const string sql =
+        string sql =
             $"""
              SELECT
                  p.id             AS {nameof(GuestPhotoResponse.Id)},
@@ -24,12 +25,12 @@ internal sealed class GetPublicGuestPhotosQueryHandler(IDbConnectionFactory dbCo
                  p.width_px       AS {nameof(GuestPhotoResponse.WidthPx)},
                  p.height_px      AS {nameof(GuestPhotoResponse.HeightPx)},
                  p.uploader_name  AS {nameof(GuestPhotoResponse.UploaderName)},
-                 'Approved'       AS {nameof(GuestPhotoResponse.Status)},
+                 '{nameof(GuestPhotoStatus.Approved)}' AS {nameof(GuestPhotoResponse.Status)},
                  p.uploaded_at    AS {nameof(GuestPhotoResponse.UploadedAt)},
                  p.reviewed_at    AS {nameof(GuestPhotoResponse.ReviewedAt)}
              FROM wedding.guest_photos p
              WHERE p.wedding_id = @WeddingId
-               AND p.status = 1
+               AND p.status = {(int)GuestPhotoStatus.Approved}
              ORDER BY p.uploaded_at DESC
              """;
 

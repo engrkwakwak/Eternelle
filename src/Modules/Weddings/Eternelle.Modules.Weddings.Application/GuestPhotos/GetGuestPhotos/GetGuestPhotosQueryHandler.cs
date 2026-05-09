@@ -3,6 +3,7 @@ using Dapper;
 using Eternelle.Common.Application.Data;
 using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Domain.GuestPhotos;
 
 namespace Eternelle.Modules.Weddings.Application.GuestPhotos.GetGuestPhotos;
 
@@ -15,7 +16,7 @@ internal sealed class GetGuestPhotosQueryHandler(IDbConnectionFactory dbConnecti
     {
         await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync();
 
-        const string sql =
+        string sql =
             $"""
              SELECT
                  p.id             AS {nameof(GuestPhotoResponse.Id)},
@@ -25,10 +26,10 @@ internal sealed class GetGuestPhotosQueryHandler(IDbConnectionFactory dbConnecti
                  p.height_px      AS {nameof(GuestPhotoResponse.HeightPx)},
                  p.uploader_name  AS {nameof(GuestPhotoResponse.UploaderName)},
                  CASE p.status
-                     WHEN 0 THEN 'Pending'
-                     WHEN 1 THEN 'Approved'
-                     WHEN 2 THEN 'Rejected'
-                     WHEN 3 THEN 'OverLimit'
+                     WHEN {(int)GuestPhotoStatus.Pending}  THEN '{nameof(GuestPhotoStatus.Pending)}'
+                     WHEN {(int)GuestPhotoStatus.Approved} THEN '{nameof(GuestPhotoStatus.Approved)}'
+                     WHEN {(int)GuestPhotoStatus.Rejected} THEN '{nameof(GuestPhotoStatus.Rejected)}'
+                     WHEN {(int)GuestPhotoStatus.OverLimit} THEN '{nameof(GuestPhotoStatus.OverLimit)}'
                      ELSE 'Unknown'
                  END              AS {nameof(GuestPhotoResponse.Status)},
                  p.uploaded_at    AS {nameof(GuestPhotoResponse.UploadedAt)},
