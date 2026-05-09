@@ -8,7 +8,8 @@ namespace Eternelle.Modules.Weddings.Application.Abstractions.Subscriptions;
 public interface ISubscriptionPlanService
 {
     /// <summary>
-    /// Returns the maximum number of guest photos allowed for the tenant's current plan.
+    /// Returns the maximum number of guest photos allowed for the tenant's current plan,
+    /// or <c>null</c> if the plan has no photo limit (unlimited).
     /// </summary>
-    int GetPhotoLimit(Guid tenantId);
+    Task<int?> GetPhotoLimitAsync(Guid tenantId, CancellationToken cancellationToken);
 }

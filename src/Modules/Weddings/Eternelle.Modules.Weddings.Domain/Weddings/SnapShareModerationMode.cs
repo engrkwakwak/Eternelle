@@ -2,6 +2,6 @@ namespace Eternelle.Modules.Weddings.Domain.Weddings;
 
 public enum SnapShareModerationMode
 {
-    Auto,
-    Manual
+    Auto   = 0,
+    Manual = 1
 }

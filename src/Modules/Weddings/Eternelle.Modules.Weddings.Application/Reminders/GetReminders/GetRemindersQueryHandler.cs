@@ -26,7 +26,7 @@ internal sealed class GetRemindersQueryHandler(IDbConnectionFactory dbConnection
                  r.display_order AS {nameof(ReminderResponse.DisplayOrder)}
              FROM wedding.reminders r
              WHERE r.wedding_id = @WeddingId
-             ORDER BY r.display_order ASC
+             ORDER BY r.display_order ASC, r.id ASC
              """;
 
         IEnumerable<ReminderResponse> reminders =

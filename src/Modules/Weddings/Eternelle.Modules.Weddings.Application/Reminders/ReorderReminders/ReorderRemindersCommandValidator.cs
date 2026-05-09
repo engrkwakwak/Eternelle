@@ -10,6 +10,7 @@ internal sealed class ReorderRemindersCommandValidator : AbstractValidator<Reord
             .NotEmpty();
 
         RuleFor(c => c.ReminderIds)
+            .Cascade(CascadeMode.Stop)
             .NotEmpty()
             .Must(ids => ids.Distinct().Count() == ids.Count)
             .WithMessage("ReminderIds contains duplicate ids.");

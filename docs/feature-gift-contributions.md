@@ -25,23 +25,23 @@ Couples currently track received gifts in a spreadsheet or group chat. This feat
 ```csharp
 public sealed class GiftContribution : Entity
 {
-    public GiftContributionId Id         { get; }
-    public WeddingId          WeddingId  { get; }
-    public GiftOptionId       GiftOptionId { get; }
+    public GiftContributionId Id           { get; private set; }
+    public WeddingId          WeddingId    { get; private set; }
+    public GiftOptionId       GiftOptionId { get; private set; }
 
     /// Cross-module reference to rsvp.guests — stored as plain UUID, never joined.
     /// Null when the contributor cannot be matched to a guest (anonymous envelope, unknown transfer).
-    public Guid?    GuestId      { get; }
+    public Guid?    GuestId      { get; private set; }
 
     /// Free-text fallback when GuestId is null or when the name on the transfer differs.
-    public string?  SenderName   { get; }
+    public string?  SenderName   { get; private set; }
 
     /// Optional — some couples prefer not to record amounts.
-    public decimal? Amount       { get; }
-    public string?  Currency     { get; }   // ISO 4217, e.g. "PHP"
+    public decimal? Amount       { get; private set; }
+    public string?  Currency     { get; private set; }   // ISO 4217, e.g. "PHP"
 
-    public string?  Note         { get; }
-    public DateTime ReceivedAt   { get; }
+    public string?  Note         { get; private set; }
+    public DateTime ReceivedAt   { get; private set; }
     public bool     IsAcknowledged { get; private set; }
 
     public static GiftContribution Record(...) { }
@@ -57,7 +57,7 @@ public sealed class GiftContribution : Entity
 | Column           | Type          | Constraints                        | Notes |
 |---|---|---|---|
 | `id`             | `uuid`        | PK                                 | UUIDv7 |
-| `wedding_id`     | `uuid`        | NOT NULL, FK → profiles            | Denormalized for direct queries |
+| `wedding_id`     | `uuid`        | NOT NULL, FK → weddings            | Denormalized for direct queries |
 | `gift_option_id` | `uuid`        | NOT NULL, FK → gift_options        | |
 | `guest_id`       | `uuid`        | —                                  | Cross-module ref to rsvp.guests — no FK constraint |
 | `sender_name`    | `text`        | —                                  | Free-text fallback |
@@ -86,9 +86,11 @@ Index: `(wedding_id, is_acknowledged)` — feeds the pending thank-you queue.
 | `UpdateGiftContributionCommand(ContributionId, SenderName?, Amount?, Currency?, Note?, ReceivedAt)` | Couple (JWT) | `GiftOptionId` is immutable after creation |
 | `DeleteGiftContributionCommand(ContributionId)` | Couple (JWT) | Hard delete |
 | `SetAcknowledgedGiftContributionCommand(ContributionId, bool IsAcknowledged)` | Couple (JWT) | Flips `is_acknowledged` either way — reversible |
-| `BulkAcknowledgeGiftContributionsCommand(WeddingId, IReadOnlyList<ContributionId>)` | Couple (JWT) | Batch version for the thank-you queue UI |
+
+> **Future / deferred:** `BulkAcknowledgeGiftContributionsCommand(WeddingId, IReadOnlyList<ContributionId>)` — batch version for the thank-you queue UI. Not part of the initial implementation; add once the four core commands above are shipped.
 
 > **Validation note — `RecordGiftContributionCommandValidator`:** at least one of `GuestId` or `SenderName` must be provided. Implement as a `Must` rule on `GuestId`:
+>
 > ```csharp
 > RuleFor(c => c.GuestId)
 >     .Must((cmd, guestId) => guestId.HasValue || !string.IsNullOrWhiteSpace(cmd.SenderName))

@@ -27,7 +27,7 @@ internal sealed class GetCeremonyActsQueryHandler(IDbConnectionFactory dbConnect
                  a.display_order AS {nameof(CeremonyActResponse.DisplayOrder)}
              FROM wedding.ceremony_acts a
              WHERE a.wedding_id = @WeddingId
-             ORDER BY a.display_order ASC
+             ORDER BY a.display_order ASC, a.id ASC
              """;
 
         IEnumerable<CeremonyActResponse> acts =

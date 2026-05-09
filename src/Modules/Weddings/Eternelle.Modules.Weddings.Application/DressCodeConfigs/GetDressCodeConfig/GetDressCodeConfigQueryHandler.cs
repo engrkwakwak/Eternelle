@@ -33,7 +33,7 @@ internal sealed class GetDressCodeConfigQueryHandler(IDbConnectionFactory dbConn
              FROM wedding.dress_code_colors c
              INNER JOIN wedding.dress_code_configs dc ON dc.id = c.dress_code_config_id
              WHERE dc.wedding_id = @WeddingId
-             ORDER BY c.display_order ASC;
+             ORDER BY c.display_order ASC, c.id ASC;
 
              SELECT
                  i.id            AS {nameof(DressCodeImageResponse.Id)},
@@ -42,7 +42,7 @@ internal sealed class GetDressCodeConfigQueryHandler(IDbConnectionFactory dbConn
              FROM wedding.dress_code_images i
              INNER JOIN wedding.dress_code_configs dc ON dc.id = i.dress_code_config_id
              WHERE dc.wedding_id = @WeddingId
-             ORDER BY i.display_order ASC;
+             ORDER BY i.display_order ASC, i.id ASC;
              """;
 
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(

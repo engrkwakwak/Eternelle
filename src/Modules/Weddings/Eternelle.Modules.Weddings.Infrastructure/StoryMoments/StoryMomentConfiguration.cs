@@ -14,8 +14,8 @@ internal sealed class StoryMomentConfiguration : IEntityTypeConfiguration<StoryM
         // WeddingId — cross-aggregate reference.
         // Converter registered globally in WeddingsDbContext.ConfigureConventions.
         builder.Property(s => s.WeddingId).IsRequired();
-        builder.HasIndex(s => s.WeddingId)
-            .HasDatabaseName("ix_story_moments_wedding_id");
+        builder.HasIndex(s => new { s.WeddingId, s.DisplayOrder, s.Id })
+            .HasDatabaseName("ix_story_moments_wedding_id_display_order_id");
 
         builder.Property(s => s.Title)
             .IsRequired()

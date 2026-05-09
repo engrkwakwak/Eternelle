@@ -30,16 +30,20 @@ internal sealed class UploadGuestPhotoCommandHandler(
             return Result.Failure<Guid>(WeddingErrors.NotFound(new WeddingId(Guid.Empty)));
         }
 
-        // 2. Plan limit check.
-        int count = await guestPhotoRepository.CountByWeddingIdAsync(
-            wedding.Id,
-            cancellationToken);
+        // 2. Fast-path limit check — blocks clearly-over-cap weddings without locking.
+        //    A small burst of concurrent uploads may slip past; step 5 corrects them.
+        int? planLimit = await subscriptionPlanService.GetPhotoLimitAsync(
+            wedding.TenantId, cancellationToken);
 
-        int planLimit = subscriptionPlanService.GetPhotoLimit(wedding.TenantId);
-
-        if (count >= planLimit)
+        if (planLimit is not null)
         {
-            return Result.Failure<Guid>(GuestPhotoErrors.PlanLimitReached);
+            int count = await guestPhotoRepository.CountByWeddingIdAsync(
+                wedding.Id, cancellationToken);
+
+            if (count >= planLimit.Value)
+            {
+                return Result.Failure<Guid>(GuestPhotoErrors.PlanLimitReached);
+            }
         }
 
         // 3. Determine initial status based on the couple's moderation preference.
@@ -47,7 +51,7 @@ internal sealed class UploadGuestPhotoCommandHandler(
             ? GuestPhotoStatus.Approved
             : GuestPhotoStatus.Pending;
 
-        // 4. Create and persist.
+        // 4. Insert — no lock, concurrent uploads proceed in parallel.
         var photo = GuestPhoto.Create(
             wedding.Id,
             command.SrcUrl,
@@ -59,8 +63,15 @@ internal sealed class UploadGuestPhotoCommandHandler(
             dateTimeProvider.UtcNow);
 
         guestPhotoRepository.Insert(photo);
-
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        // 5. Mark any photos beyond the plan cap as OverLimit (earliest uploads win).
+        //    No-op for unlimited plans and weddings within their cap.
+        if (planLimit is not null)
+        {
+            await guestPhotoRepository.EnforcePhotoLimitAsync(
+                wedding.Id, planLimit.Value, cancellationToken);
+        }
 
         return Result.Success(photo.Id.Value);
     }

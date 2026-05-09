@@ -29,7 +29,7 @@ internal sealed class GetGalleryImagesQueryHandler(IDbConnectionFactory dbConnec
                  g.created_at     AS {nameof(GalleryImageResponse.CreatedAtUtc)}
              FROM wedding.gallery_images g
              WHERE g.wedding_id = @WeddingId
-             ORDER BY g.display_order ASC
+             ORDER BY g.display_order ASC, g.id ASC
              """;
 
         IEnumerable<GalleryImageResponse> images =

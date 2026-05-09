@@ -19,6 +19,7 @@ internal sealed class GuestPhotoRepository(WeddingsDbContext context) : IGuestPh
     {
         return await context.GuestPhotos
             .Where(p => ids.Contains(p.Id))
+            .OrderBy(p => p.Id)
             .ToListAsync(ct);
     }
 
@@ -35,13 +36,38 @@ internal sealed class GuestPhotoRepository(WeddingsDbContext context) : IGuestPh
             query = query.Where(p => p.Status == status.Value);
         }
 
-        return await query.ToListAsync(ct);
+        return await query.OrderBy(p => p.Id).ToListAsync(ct);
     }
 
     public async Task<int> CountByWeddingIdAsync(WeddingId weddingId, CancellationToken ct = default)
     {
         return await context.GuestPhotos
             .CountAsync(p => p.WeddingId == weddingId, ct);
+    }
+
+    public async Task EnforcePhotoLimitAsync(
+        WeddingId weddingId,
+        int limit,
+        CancellationToken ct = default)
+    {
+        int overLimit = (int)GuestPhotoStatus.OverLimit;
+
+        await context.Database.ExecuteSqlAsync(
+            $"""
+            UPDATE wedding.guest_photos
+               SET status = {overLimit}
+             WHERE wedding_id = {weddingId.Value}
+               AND status     != {overLimit}
+               AND id NOT IN (
+                   SELECT id
+                     FROM wedding.guest_photos
+                    WHERE wedding_id = {weddingId.Value}
+                      AND status     != {overLimit}
+                    ORDER BY uploaded_at ASC
+                    LIMIT {limit}
+               )
+            """,
+            ct);
     }
 
     public void Insert(GuestPhoto photo)

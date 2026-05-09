@@ -11,11 +11,14 @@ internal sealed class BulkDeleteGuestPhotosCommandHandler(
 {
     public async Task<Result> Handle(BulkDeleteGuestPhotosCommand command, CancellationToken cancellationToken)
     {
-        IReadOnlyList<GuestPhotoId> ids = command.GuestPhotoIds
-            .Select(id => new GuestPhotoId(id))
-            .ToList();
+        IReadOnlyList<GuestPhotoId> ids = [.. command.GuestPhotoIds.Select(id => new GuestPhotoId(id))];
 
         IReadOnlyList<GuestPhoto> photos = await guestPhotoRepository.GetManyAsync(ids, cancellationToken);
+
+        if (photos.Count != ids.Count)
+        {
+            return Result.Failure(GuestPhotoErrors.NotFound);
+        }
 
         foreach (GuestPhoto photo in photos)
         {
