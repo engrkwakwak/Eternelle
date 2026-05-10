@@ -23,25 +23,12 @@ internal sealed class EntourageCoupleConfiguration
         couple.Property(c => c.Note).HasMaxLength(EntourageCouple.MaxNoteLength);
         couple.Property(c => c.DisplayOrder).IsRequired();
 
-        // FK member_a_id → entourage_members.id.
-        // A composite (group_id, member_a_id) FK is not expressible via EF Core's fluent
-        // API for owned-to-owned relationships — HasPrincipalKey is non-generic and
-        // HasAlternateKey is unavailable on OwnedNavigationBuilder. Group-membership
-        // is enforced at the domain level inside EntourageGroup.PairMembers().
-        couple.HasOne<EntourageMember>()
-            .WithMany()
-            .HasForeignKey(c => c.MemberAId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Restrict)
-            .HasConstraintName("fk_entourage_couples_member_a");
-
-        // FK member_b_id → entourage_members.id. Same rationale as member A above.
-        couple.HasOne<EntourageMember>()
-            .WithMany()
-            .HasForeignKey(c => c.MemberBId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Restrict)
-            .HasConstraintName("fk_entourage_couples_member_b");
+        // MemberAId / MemberBId are plain FK columns referencing entourage_members.id.
+        // EF Core does not support HasOne<OwnedType> from within another owned entity
+        // (both EntourageMember and EntourageCouple are owned by EntourageGroup), so
+        // FK constraints are omitted from the fluent model and enforced via raw SQL
+        // added to the migration instead. Group-membership is enforced at the domain
+        // level inside EntourageGroup.PairMembers().
 
         // Unique pair within a group — prevents duplicate pairings at the DB level.
         couple.HasIndex(c => new { c.GroupId, c.MemberAId, c.MemberBId })
