@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(WeddingsDbContext))]
-    [Migration("20260510053001_AddWeddingAggregates")]
+    [Migration("20260510061053_AddWeddingAggregates")]
     partial class AddWeddingAggregates
     {
         /// <inheritdoc />
@@ -880,7 +880,9 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                                 .HasName("pk_snap_share_configs");
 
                             b1.HasIndex("UploadToken")
-                                .HasDatabaseName("ix_snap_share_configs_upload_token");
+                                .IsUnique()
+                                .HasDatabaseName("ix_snap_share_configs_upload_token")
+                                .HasFilter("upload_token IS NOT NULL");
 
                             b1.HasIndex("WeddingId")
                                 .IsUnique()
