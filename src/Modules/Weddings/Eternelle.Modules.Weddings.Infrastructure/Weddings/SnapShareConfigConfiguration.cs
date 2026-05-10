@@ -44,7 +44,11 @@ internal static class SnapShareConfigConfiguration
             .HasDatabaseName("ix_snap_share_configs_wedding_id");
 
         // Lookup by upload token on every public guest-photo upload request.
+        // Partial + unique: skips NULL rows (SnapShare not yet activated) and
+        // enforces that no two weddings share the same active token.
         snapShare.HasIndex(s => s.UploadToken)
+            .IsUnique()
+            .HasFilter("upload_token IS NOT NULL")
             .HasDatabaseName("ix_snap_share_configs_upload_token");
     }
 }
