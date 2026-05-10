@@ -778,6 +778,10 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                             b1.HasIndex("WeddingId")
                                 .HasDatabaseName("ix_entourage_members_wedding_id");
 
+                            b1.HasIndex("GroupId", "Id")
+                                .IsUnique()
+                                .HasDatabaseName("uq_entourage_members_group_id_id");
+
                             b1.ToTable("entourage_members", "wedding");
 
                             b1.WithOwner()
