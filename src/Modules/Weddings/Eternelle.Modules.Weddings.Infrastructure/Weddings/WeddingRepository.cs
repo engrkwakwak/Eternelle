@@ -19,6 +19,13 @@ internal sealed class WeddingRepository(WeddingsDbContext context) : IWeddingRep
             .SingleOrDefaultAsync(w => w.Id == id, cancellationToken);
     }
 
+    public async Task<Wedding?> GetWithSnapShareAsync(WeddingId id, CancellationToken cancellationToken = default)
+    {
+        return await context.Weddings
+            .Include(w => w.SnapShare)
+            .SingleOrDefaultAsync(w => w.Id == id, cancellationToken);
+    }
+
     public async Task<Wedding?> GetByTenantIdAsync(Guid tenantId, CancellationToken cancellationToken = default)
     {
         return await context.Weddings

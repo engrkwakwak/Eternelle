@@ -23,27 +23,16 @@ internal sealed class EntourageCoupleConfiguration
         couple.Property(c => c.Note).HasMaxLength(EntourageCouple.MaxNoteLength);
         couple.Property(c => c.DisplayOrder).IsRequired();
 
-        // FK (group_id, member_a_id) → entourage_members.(group_id, id).
-        // The composite FK enforces at the DB level that member A belongs to the same group
-        // as the couple. Deletion is restricted: the domain must remove couple rows first
-        // via EntourageGroup.RemoveMember() before the member itself is deleted.
-        couple.HasOne<EntourageMember>()
-            .WithMany()
-            .HasForeignKey(c => new { c.GroupId, c.MemberAId })
-            .HasPrincipalKey<EntourageMember>(m => new { m.GroupId, m.Id })
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Restrict)
-            .HasConstraintName("fk_entourage_couples_member_a");
-
-        // FK (group_id, member_b_id) → entourage_members.(group_id, id).
-        // Same group-membership enforcement and deletion restriction applies.
-        couple.HasOne<EntourageMember>()
-            .WithMany()
-            .HasForeignKey(c => new { c.GroupId, c.MemberBId })
-            .HasPrincipalKey<EntourageMember>(m => new { m.GroupId, m.Id })
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Restrict)
-            .HasConstraintName("fk_entourage_couples_member_b");
+        // MemberAId / MemberBId: EF Core OwnedNavigationBuilder (EF Core 9) does not
+        // support HasOne<T> relationships to other owned types under the same owner, so
+        // the composite FK constraints
+        //   (group_id, member_a_id) → entourage_members(group_id, id)
+        //   (group_id, member_b_id) → entourage_members(group_id, id)
+        // cannot be expressed in the fluent model.
+        // They are added via migrationBuilder.AddForeignKey() in the next corrective
+        // migration, referencing the uq_entourage_members_group_id_id unique index
+        // declared in EntourageMemberConfiguration.
+        // Group-membership is also enforced at the domain level in EntourageGroup.PairMembers().
 
         // Unique pair within a group — prevents duplicate pairings at the DB level.
         couple.HasIndex(c => new { c.GroupId, c.MemberAId, c.MemberBId })

@@ -8,13 +8,11 @@ internal sealed class GuestPhotoConfiguration : IEntityTypeConfiguration<GuestPh
 {
     public void Configure(EntityTypeBuilder<GuestPhoto> builder)
     {
-        builder.ToTable("guest_photos");
+        builder.ToTable("guest_photos", "wedding");
 
         builder.HasKey(p => p.Id);
 
         builder.Property(p => p.WeddingId).IsRequired();
-        builder.HasIndex(p => p.WeddingId)
-            .HasDatabaseName("ix_guest_photos_wedding_id");
 
         builder.Property(p => p.SrcUrl).IsRequired();
 
@@ -27,13 +25,25 @@ internal sealed class GuestPhotoConfiguration : IEntityTypeConfiguration<GuestPh
         builder.Property(p => p.UploaderName)
             .HasMaxLength(GuestPhoto.MaxUploaderNameLength);
 
-        // GuestPhotoStatus — stored as int. Pending = 0, Approved = 1, Rejected = 2.
+        // GuestPhotoStatus — stored as int. Pending = 0, Approved = 1, Rejected = 2, OverLimit = 3.
         builder.Property(p => p.Status)
             .HasConversion<int>()
-            .IsRequired();
+            .IsRequired()
+            .HasDefaultValue(GuestPhotoStatus.Pending);
 
         builder.Property(p => p.UploadedAt).IsRequired();
 
         builder.Property(p => p.ReviewedAt);
+
+        // (wedding_id, status, uploaded_at DESC) — status-filtered reads (feed, moderation queue).
+        builder.HasIndex(p => new { p.WeddingId, p.Status, p.UploadedAt })
+            .HasDatabaseName("idx_guest_photos_wedding_status_uploaded")
+            .IsDescending(false, false, true);
+
+        // (wedding_id, uploaded_at DESC) — unfiltered reads; status column blocks ordered tail above.
+        builder.HasIndex(p => new { p.WeddingId, p.UploadedAt })
+            .HasDatabaseName("idx_guest_photos_wedding_uploaded")
+            .IsDescending(false, true);
     }
 }
+

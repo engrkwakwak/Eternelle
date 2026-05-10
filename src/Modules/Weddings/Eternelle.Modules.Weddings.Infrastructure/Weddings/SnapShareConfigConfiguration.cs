@@ -22,19 +22,33 @@ internal static class SnapShareConfigConfiguration
                 v => v != null ? InstagramHandle.FromPersistence(v) : null)
             .HasMaxLength(InstagramHandle.MaxLength);
 
+        // Explicitly pin WeddingId to "wedding_id" to prevent EF Core from generating
+        // a shadow property collision (id1) when the owned entity also has its own Id column.
+        snapShare.Property(s => s.WeddingId)
+            .HasColumnName("wedding_id");
+
         snapShare.Property(s => s.CtaText);
 
         snapShare.Property(s => s.Enabled).IsRequired();
 
         snapShare.Property(s => s.UploadToken);
 
-        // SnapShareModerationMode — stored as int. C# enum default ordinal values.
+        // SnapShareModerationMode — stored as int. Auto = 0, Manual = 1.
         snapShare.Property(s => s.ModerationMode)
             .HasConversion<int>()
-            .IsRequired();
+            .IsRequired()
+            .HasDefaultValue(SnapShareModerationMode.Auto);
 
         snapShare.HasIndex(s => s.WeddingId)
             .IsUnique()
             .HasDatabaseName("ix_snap_share_configs_wedding_id");
+
+        // Lookup by upload token on every public guest-photo upload request.
+        // Partial + unique: skips NULL rows (SnapShare not yet activated) and
+        // enforces that no two weddings share the same active token.
+        snapShare.HasIndex(s => s.UploadToken)
+            .IsUnique()
+            .HasFilter("upload_token IS NOT NULL")
+            .HasDatabaseName("ix_snap_share_configs_upload_token");
     }
 }
