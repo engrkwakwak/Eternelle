@@ -79,6 +79,10 @@ public static class WeddingsModule
         services.AddScoped<IVendorCreditRepository, VendorCreditRepository>();
         services.AddScoped<IReminderRepository, ReminderRepository>();
 
+        services.Configure<Application.Weddings.SnapShareOptions>(configuration.GetSection("Weddings:SnapShare"));
+
+        services.Configure<Application.Abstractions.Subscriptions.SubscriptionOptions>(configuration.GetSection(Application.Abstractions.Subscriptions.SubscriptionOptions.SectionName));
+
         services.Configure<OutboxOptions>(configuration.GetSection("Weddings:Outbox"));
 
         services.ConfigureOptions<ConfigureProcessOutboxJob>();
