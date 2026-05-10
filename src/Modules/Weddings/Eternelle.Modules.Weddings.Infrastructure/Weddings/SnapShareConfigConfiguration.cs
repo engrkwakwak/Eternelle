@@ -22,6 +22,11 @@ internal static class SnapShareConfigConfiguration
                 v => v != null ? InstagramHandle.FromPersistence(v) : null)
             .HasMaxLength(InstagramHandle.MaxLength);
 
+        // Explicitly pin WeddingId to "wedding_id" to prevent EF Core from generating
+        // a shadow property collision (id1) when the owned entity also has its own Id column.
+        snapShare.Property(s => s.WeddingId)
+            .HasColumnName("wedding_id");
+
         snapShare.Property(s => s.CtaText);
 
         snapShare.Property(s => s.Enabled).IsRequired();

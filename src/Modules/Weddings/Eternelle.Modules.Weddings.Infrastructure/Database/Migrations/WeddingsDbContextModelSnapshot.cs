@@ -871,7 +871,7 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
 
                             b1.Property<Guid>("WeddingId")
                                 .HasColumnType("uuid")
-                                .HasColumnName("id");
+                                .HasColumnName("wedding_id");
 
                             b1.HasKey("Id")
                                 .HasName("pk_snap_share_configs");
@@ -883,11 +883,7 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                                 .IsUnique()
                                 .HasDatabaseName("ix_snap_share_configs_wedding_id");
 
-                            b1.ToTable("snap_share_configs", "wedding", t =>
-                                {
-                                    t.Property("WeddingId")
-                                        .HasColumnName("id1");
-                                });
+                            b1.ToTable("snap_share_configs", "wedding");
 
                             b1.WithOwner()
                                 .HasForeignKey("WeddingId")

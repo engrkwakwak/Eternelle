@@ -12,12 +12,6 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "wedding_id",
-                schema: "wedding",
-                table: "snap_share_configs",
-                newName: "id1");
-
             migrationBuilder.AlterColumn<string>(
                 name: "instagram_handle",
                 schema: "wedding",
@@ -493,12 +487,6 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                 name: "upload_token",
                 schema: "wedding",
                 table: "snap_share_configs");
-
-            migrationBuilder.RenameColumn(
-                name: "id1",
-                schema: "wedding",
-                table: "snap_share_configs",
-                newName: "wedding_id");
 
             migrationBuilder.AlterColumn<string>(
                 name: "instagram_handle",
