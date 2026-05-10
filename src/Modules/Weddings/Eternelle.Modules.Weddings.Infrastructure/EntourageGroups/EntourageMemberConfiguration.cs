@@ -26,9 +26,16 @@ internal sealed class EntourageMemberConfiguration
         member.Property(m => m.Seed);
         member.Property(m => m.DisplayOrder).IsRequired();
 
-        // Alternate key on (group_id, id) is intentionally omitted:
-        // OwnedNavigationBuilder does not expose HasAlternateKey in EF Core 9.
-        // Group-membership uniqueness is enforced at the domain level.
+        // (group_id, id) unique index — required as the principal-column set for the
+        // composite FKs on entourage_couples.member_a_id / member_b_id.
+        // Because id is already the PK, uniqueness is trivial, but PostgreSQL requires
+        // an explicit unique index on the exact column set referenced by a composite FK.
+        // HasAlternateKey is not exposed on OwnedNavigationBuilder (EF Core 9 limitation),
+        // so HasIndex().IsUnique() is used to produce the same DB-level unique index.
+        member.HasIndex(m => new { m.GroupId, m.Id })
+            .IsUnique()
+            .HasDatabaseName("uq_entourage_members_group_id_id");
+
         member.HasIndex(m => m.GroupId)
             .HasDatabaseName("ix_entourage_members_group_id");
 
