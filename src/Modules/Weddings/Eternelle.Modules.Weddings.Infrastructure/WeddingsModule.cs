@@ -3,6 +3,7 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Infrastructure.Outbox;
 using Eternelle.Common.Presentation.Endpoints;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
+using Eternelle.Modules.Weddings.Application.Abstractions.Subscriptions;
 using Eternelle.Modules.Weddings.Domain.CeremonyActs;
 using Eternelle.Modules.Weddings.Domain.DressCodeConfigs;
 using Eternelle.Modules.Weddings.Domain.EntourageGroups;
@@ -24,6 +25,7 @@ using Eternelle.Modules.Weddings.Infrastructure.Inbox;
 using Eternelle.Modules.Weddings.Infrastructure.Outbox;
 using Eternelle.Modules.Weddings.Infrastructure.Reminders;
 using Eternelle.Modules.Weddings.Infrastructure.StoryMoments;
+using Eternelle.Modules.Weddings.Infrastructure.Subscriptions;
 using Eternelle.Modules.Weddings.Infrastructure.VendorCredits;
 using Eternelle.Modules.Weddings.Infrastructure.Weddings;
 using Microsoft.EntityFrameworkCore;
@@ -63,6 +65,8 @@ public static class WeddingsModule
                 .AddInterceptors(sp.GetRequiredService<InsertOutboxMessagesInterceptor>()));
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<WeddingsDbContext>());
+
+        services.AddScoped<ISubscriptionPlanService, StubSubscriptionPlanService>();
 
         services.AddScoped<IWeddingRepository, WeddingRepository>();
         services.AddScoped<IEntourageGroupRepository, EntourageGroupRepository>();
