@@ -17,12 +17,14 @@ internal sealed class GetGuestPhotosEndpoint : IEndpoint
     {
         app.MapGet("weddings/{weddingId}/photos", async (
             Guid weddingId,
-            GuestPhotoStatus? status,
+            string? status,
             ISender sender,
             CancellationToken ct) =>
         {
+            GuestPhotoStatus? parsedStatus = Enum.TryParse<GuestPhotoStatus>(status, ignoreCase: true, out GuestPhotoStatus s) ? s : null;
+
             Result<IReadOnlyList<GuestPhotoResponse>> result =
-                await sender.Send(new GetGuestPhotosQuery(weddingId, status), ct);
+                await sender.Send(new GetGuestPhotosQuery(weddingId, parsedStatus), ct);
 
             return result.Match(Results.Ok, ApiResults.Problem);
         })

@@ -15,7 +15,7 @@ internal sealed class UpdateGiftOptionEndpoint : IEndpoint
     internal sealed record Request(
         string Title,
         string? Description,
-        GiftDisplayMode DisplayMode,
+        int DisplayMode,
         string? LinkUrl,
         string? ImageUrl,
         string? QrImageUrl,
@@ -37,7 +37,7 @@ internal sealed class UpdateGiftOptionEndpoint : IEndpoint
                 id,
                 request.Title,
                 request.Description,
-                request.DisplayMode,
+                (GiftDisplayMode)request.DisplayMode,
                 request.LinkUrl,
                 request.ImageUrl,
                 request.QrImageUrl,

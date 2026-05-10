@@ -15,7 +15,7 @@ internal sealed class CreateGiftOptionEndpoint : IEndpoint
     internal sealed record Request(
         string Title,
         string? Description,
-        GiftDisplayMode DisplayMode,
+        int DisplayMode,
         string? LinkUrl,
         string? ImageUrl,
         string? QrImageUrl,
@@ -36,7 +36,7 @@ internal sealed class CreateGiftOptionEndpoint : IEndpoint
                 weddingId,
                 request.Title,
                 request.Description,
-                request.DisplayMode,
+                (GiftDisplayMode)request.DisplayMode,
                 request.LinkUrl,
                 request.ImageUrl,
                 request.QrImageUrl,

@@ -37,7 +37,7 @@ internal sealed class CreateEntourageGroupEndpoint : IEndpoint
             Result<Guid> result = await sender.Send(command, ct);
 
             return result.Match(
-                id => Results.Created($"/entourage/groups/{id}", new { id }),
+                id => Results.Created($"/weddings/{weddingId}/entourage/groups/{id}", new { id }),
                 ApiResults.Problem);
         })
         .WithTags(Tags.Entourage)

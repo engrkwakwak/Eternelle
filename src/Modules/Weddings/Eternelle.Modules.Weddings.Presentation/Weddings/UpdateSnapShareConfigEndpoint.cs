@@ -16,7 +16,7 @@ internal sealed class UpdateSnapShareConfigEndpoint : IEndpoint
         string? InstagramHandle,
         string? CtaText,
         bool Enabled,
-        SnapShareModerationMode ModerationMode);
+        int ModerationMode);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -27,7 +27,7 @@ internal sealed class UpdateSnapShareConfigEndpoint : IEndpoint
                 request.InstagramHandle,
                 request.CtaText,
                 request.Enabled,
-                request.ModerationMode);
+                (SnapShareModerationMode)request.ModerationMode);
 
             Result result = await sender.Send(command, ct);
 

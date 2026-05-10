@@ -37,7 +37,7 @@ internal sealed class CreateStoryMomentEndpoint : IEndpoint
             Result<Guid> result = await sender.Send(command, ct);
 
             return result.Match(
-                id => Results.Created($"/story-moments/{id}", new { id }),
+                id => Results.Created($"/weddings/{weddingId}/story-moments/{id}", new { id }),
                 ApiResults.Problem);
         })
         .WithTags(Tags.StoryMoments)
