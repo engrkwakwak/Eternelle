@@ -79,9 +79,15 @@ public static class WeddingsModule
         services.AddScoped<IVendorCreditRepository, VendorCreditRepository>();
         services.AddScoped<IReminderRepository, ReminderRepository>();
 
-        services.Configure<Application.Weddings.SnapShareOptions>(configuration.GetSection("Weddings:SnapShare"));
+        services.AddOptions<Application.Weddings.SnapShareOptions>()
+            .Bind(configuration.GetSection("Weddings:SnapShare"))
+            .Validate(opts => !string.IsNullOrWhiteSpace(opts.UploadBaseUrl), "UploadBaseUrl must be provided")
+            .ValidateOnStart();
 
-        services.Configure<Application.Abstractions.Subscriptions.SubscriptionOptions>(configuration.GetSection(Application.Abstractions.Subscriptions.SubscriptionOptions.SectionName));
+        services.AddOptions<Application.Abstractions.Subscriptions.SubscriptionOptions>()
+            .Bind(configuration.GetSection(Application.Abstractions.Subscriptions.SubscriptionOptions.SectionName))
+            .Validate(opts => opts.PhotoUploadLimit is null || opts.PhotoUploadLimit >= 0, "PhotoUploadLimit must be >= 0")
+            .ValidateOnStart();
 
         services.Configure<OutboxOptions>(configuration.GetSection("Weddings:Outbox"));
 

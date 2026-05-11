@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(WeddingsDbContext))]
-    [Migration("20260510061053_AddWeddingAggregates")]
+    [Migration("20260511093330_AddWeddingAggregates")]
     partial class AddWeddingAggregates
     {
         /// <inheritdoc />

@@ -224,7 +224,7 @@ Modules must never import each other's internal types, query each other's databa
 
 The default for cross-module side effects is an **integration event** published via MassTransit. Domain event handlers inside the originating module raise the event; a consumer in the target module processes it.
 
-```
+```text
 Command Handler → raises Domain Event → Domain Event Handler → publishes Integration Event → MassTransit → Consumer in other module
 ```
 
