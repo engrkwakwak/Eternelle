@@ -19,7 +19,7 @@ internal sealed class RejectGuestPhotoEndpoint : IEndpoint
             ISender sender,
             CancellationToken ct) =>
         {
-            Result result = await sender.Send(new RejectGuestPhotoCommand(photoId), ct);
+            Result result = await sender.Send(new RejectGuestPhotoCommand(weddingId, photoId), ct);
 
             return result.Match(() => Results.Ok(), ApiResults.Problem);
         })
