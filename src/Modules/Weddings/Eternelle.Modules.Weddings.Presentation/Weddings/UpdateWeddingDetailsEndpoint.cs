@@ -15,7 +15,7 @@ internal sealed class UpdateWeddingDetailsEndpoint : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPatch("weddings/{weddingId}/details", async (Guid weddingId, Request request, ISender sender, CancellationToken ct) =>
+        app.MapPut("weddings/{weddingId}/details", async (Guid weddingId, Request request, ISender sender, CancellationToken ct) =>
         {
             var command = new UpdateWeddingDetailsCommand(weddingId, request.WeddingDate, request.Hashtag);
 

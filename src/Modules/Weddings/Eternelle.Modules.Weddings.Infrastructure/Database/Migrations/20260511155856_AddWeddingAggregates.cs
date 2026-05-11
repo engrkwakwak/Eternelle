@@ -12,31 +12,8 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<string>(
-                name: "instagram_handle",
-                schema: "wedding",
-                table: "snap_share_configs",
-                type: "character varying(30)",
-                maxLength: 30,
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "text",
-                oldNullable: true);
-
-            migrationBuilder.AddColumn<int>(
-                name: "moderation_mode",
-                schema: "wedding",
-                table: "snap_share_configs",
-                type: "integer",
-                nullable: false,
-                defaultValue: 0);
-
-            migrationBuilder.AddColumn<Guid>(
-                name: "upload_token",
-                schema: "wedding",
-                table: "snap_share_configs",
-                type: "uuid",
-                nullable: true);
+            migrationBuilder.EnsureSchema(
+                name: "wedding");
 
             migrationBuilder.CreateTable(
                 name: "ceremony_acts",
@@ -150,6 +127,84 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_guest_photos", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "inbox_message_consumers",
+                schema: "wedding",
+                columns: table => new
+                {
+                    inbox_message_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_inbox_message_consumers", x => new { x.inbox_message_id, x.name });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "inbox_messages",
+                schema: "wedding",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    type = table.Column<string>(type: "text", nullable: false),
+                    content = table.Column<string>(type: "jsonb", maxLength: 2000, nullable: false),
+                    occurred_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    processed_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    error = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_inbox_messages", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "outbox_message_consumers",
+                schema: "wedding",
+                columns: table => new
+                {
+                    outbox_message_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_outbox_message_consumers", x => new { x.outbox_message_id, x.name });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "outbox_messages",
+                schema: "wedding",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    type = table.Column<string>(type: "text", nullable: false),
+                    content = table.Column<string>(type: "jsonb", maxLength: 2000, nullable: false),
+                    occurred_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    processed_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    error = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_outbox_messages", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "profiles",
+                schema: "wedding",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    tenant_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    schema_version = table.Column<int>(type: "integer", nullable: false),
+                    wedding_date = table.Column<DateOnly>(type: "date", nullable: false),
+                    hashtag = table.Column<string>(type: "text", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_profiles", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -305,13 +360,55 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "ix_snap_share_configs_upload_token",
+            migrationBuilder.CreateTable(
+                name: "partners",
                 schema: "wedding",
-                table: "snap_share_configs",
-                column: "upload_token",
-                unique: true,
-                filter: "upload_token IS NOT NULL");
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    wedding_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    partner_number = table.Column<int>(type: "integer", nullable: false),
+                    first_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    last_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    bio = table.Column<string>(type: "text", nullable: true),
+                    image_url = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_partners", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_partners_profiles_wedding_id",
+                        column: x => x.wedding_id,
+                        principalSchema: "wedding",
+                        principalTable: "profiles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "snap_share_configs",
+                schema: "wedding",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    wedding_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    instagram_handle = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: true),
+                    cta_text = table.Column<string>(type: "text", nullable: true),
+                    enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    upload_token = table.Column<Guid>(type: "uuid", nullable: true),
+                    moderation_mode = table.Column<int>(type: "integer", nullable: false, defaultValue: 0)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_snap_share_configs", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_snap_share_configs_profiles_id",
+                        column: x => x.wedding_id,
+                        principalSchema: "wedding",
+                        principalTable: "profiles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateIndex(
                 name: "ix_ceremony_acts_wedding_id_display_order",
@@ -409,10 +506,39 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                 descending: new[] { false, true });
 
             migrationBuilder.CreateIndex(
+                name: "ix_partners_wedding_id_partner_number",
+                schema: "wedding",
+                table: "partners",
+                columns: new[] { "wedding_id", "partner_number" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_profiles_tenant_id",
+                schema: "wedding",
+                table: "profiles",
+                column: "tenant_id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "ix_reminders_wedding_id_display_order",
                 schema: "wedding",
                 table: "reminders",
                 columns: new[] { "wedding_id", "display_order", "id" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_snap_share_configs_upload_token",
+                schema: "wedding",
+                table: "snap_share_configs",
+                column: "upload_token",
+                unique: true,
+                filter: "upload_token IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_snap_share_configs_wedding_id",
+                schema: "wedding",
+                table: "snap_share_configs",
+                column: "wedding_id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_story_moments_wedding_id_display_order_id",
@@ -463,7 +589,31 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                 schema: "wedding");
 
             migrationBuilder.DropTable(
+                name: "inbox_message_consumers",
+                schema: "wedding");
+
+            migrationBuilder.DropTable(
+                name: "inbox_messages",
+                schema: "wedding");
+
+            migrationBuilder.DropTable(
+                name: "outbox_message_consumers",
+                schema: "wedding");
+
+            migrationBuilder.DropTable(
+                name: "outbox_messages",
+                schema: "wedding");
+
+            migrationBuilder.DropTable(
+                name: "partners",
+                schema: "wedding");
+
+            migrationBuilder.DropTable(
                 name: "reminders",
+                schema: "wedding");
+
+            migrationBuilder.DropTable(
+                name: "snap_share_configs",
                 schema: "wedding");
 
             migrationBuilder.DropTable(
@@ -482,31 +632,9 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                 name: "entourage_groups",
                 schema: "wedding");
 
-            migrationBuilder.DropIndex(
-                name: "ix_snap_share_configs_upload_token",
-                schema: "wedding",
-                table: "snap_share_configs");
-
-            migrationBuilder.DropColumn(
-                name: "moderation_mode",
-                schema: "wedding",
-                table: "snap_share_configs");
-
-            migrationBuilder.DropColumn(
-                name: "upload_token",
-                schema: "wedding",
-                table: "snap_share_configs");
-
-            migrationBuilder.AlterColumn<string>(
-                name: "instagram_handle",
-                schema: "wedding",
-                table: "snap_share_configs",
-                type: "text",
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "character varying(30)",
-                oldMaxLength: 30,
-                oldNullable: true);
+            migrationBuilder.DropTable(
+                name: "profiles",
+                schema: "wedding");
         }
     }
 }
