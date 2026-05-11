@@ -2,6 +2,7 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Modules.Weddings.Domain.GuestPhotos;
+using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Application.GuestPhotos.DeleteGuestPhoto;
 
@@ -15,7 +16,7 @@ internal sealed class DeleteGuestPhotoCommandHandler(
             new GuestPhotoId(command.GuestPhotoId),
             cancellationToken);
 
-        if (photo is null)
+        if (photo is null || photo.WeddingId != new WeddingId(command.WeddingId))
         {
             return Result.Failure(GuestPhotoErrors.NotFound);
         }

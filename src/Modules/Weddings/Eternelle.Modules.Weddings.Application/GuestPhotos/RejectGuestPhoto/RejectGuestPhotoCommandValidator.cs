@@ -6,6 +6,9 @@ internal sealed class RejectGuestPhotoCommandValidator : AbstractValidator<Rejec
 {
     public RejectGuestPhotoCommandValidator()
     {
+        RuleFor(c => c.WeddingId)
+            .NotEmpty();
+
         RuleFor(c => c.GuestPhotoId)
             .NotEmpty();
     }
