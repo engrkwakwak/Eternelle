@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(WeddingsDbContext))]
-    [Migration("20260511093330_AddWeddingAggregates")]
+    [Migration("20260511155856_AddWeddingAggregates")]
     partial class AddWeddingAggregates
     {
         /// <inheritdoc />
@@ -780,6 +780,10 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
 
                             b1.HasIndex("WeddingId")
                                 .HasDatabaseName("ix_entourage_members_wedding_id");
+
+                            b1.HasIndex("GroupId", "Id")
+                                .IsUnique()
+                                .HasDatabaseName("uq_entourage_members_group_id_id");
 
                             b1.ToTable("entourage_members", "wedding");
 
