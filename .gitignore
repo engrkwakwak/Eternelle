@@ -54,3 +54,4 @@ appsettings.local.json
 /create-issues-guest-photos-retry.sh
 /create-issues-guest-photos.sh
 /create-issues.sh
+/docs/modular-monolith-guidelines.md

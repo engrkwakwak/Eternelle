@@ -12,6 +12,8 @@ namespace Eternelle.Modules.Weddings.Domain.Weddings;
 /// </summary>
 public sealed class SnapShareConfig : Entity
 {
+    public static readonly int MaxCtaTextLength = 200;
+
     private SnapShareConfig()
     {
     }
