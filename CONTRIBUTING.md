@@ -216,6 +216,84 @@ migrationBuilder.Sql("""
 
 ---
 
+## Cross-module communication
+
+Modules must never import each other's internal types, query each other's database schemas, or share a `DbContext`.
+
+### Prefer asynchronous (integration events)
+
+The default for cross-module side effects is an **integration event** published via MassTransit. Domain event handlers inside the originating module raise the event; a consumer in the target module processes it.
+
+```
+Command Handler → raises Domain Event → Domain Event Handler → publishes Integration Event → MassTransit → Consumer in other module
+```
+
+Use **fat events** (event-carried state transfer) when the consumer needs the data to function independently — include all required fields in the event payload rather than forcing a callback query. This avoids runtime coupling to the source module.
+
+### Synchronous (use sparingly)
+
+When a module genuinely needs a synchronous answer from another module (e.g., checking a subscription limit before an insert), define a **public interface** in the consuming module's `Application/Abstractions/` folder and register a stub or real implementation in Infrastructure. The implementation may delegate to a cross-module service without importing internal types.
+
+The current `ISubscriptionPlanService` follows this pattern. When the Subscriptions module ships, a real implementation will be wired up — the interface and all callers stay unchanged.
+
+Synchronous cross-module calls introduce temporal coupling. Prefer integration events whenever eventual consistency is acceptable.
+
+---
+
+## Data ownership and duplication
+
+Each module owns the data it needs to operate independently. When Module B needs data that originates in Module A:
+
+1. Module A publishes an integration event (fat event) when the data is created or changed.
+2. Module B consumes the event and stores a local copy in its own schema.
+3. Module A remains the **source of truth**; Module B's copy is a read-optimised projection.
+
+Never query another module's schema directly, even inside the same process. This keeps module boundaries hard and the deployment story simple when splitting into services later.
+
+---
+
+## Eventual consistency between modules
+
+Within a single module, all changes are **strongly consistent** — everything inside one command handler commits atomically via `IUnitOfWork.SaveChangesAsync`.
+
+Across modules, accept **eventual consistency**. The primary use case (e.g., uploading a guest photo) completes and returns immediately. Side effects in other modules (e.g., incrementing a billing counter) happen asynchronously via integration events. This is a deliberate design trade-off, not a bug.
+
+The outbox + inbox pattern guarantees delivery: outgoing integration events are written to `outbox_messages` in the same transaction as domain changes; `ProcessOutboxJob` publishes them; `ProcessInboxJob` processes them with idempotency tracking on the consumer side.
+
+---
+
+## Sagas (long-lived cross-module transactions)
+
+Use a **MassTransit state machine saga** when a business process spans multiple modules and involves steps that can fail independently (e.g., cancelling a wedding also needs to refund payments in a Billing module and archive records in a Reports module).
+
+Guidelines:
+- Each saga step must be idempotent.
+- Define compensating transactions for rollback scenarios.
+- The saga lives in the module that initiates the business process.
+- Persist saga state via MassTransit's Redis saga repository (already in the stack).
+
+There are no sagas in Eternelle yet. This section is here so the pattern is established before the first one is needed.
+
+---
+
+## Architecture enforcement
+
+### Compiler-level (primary)
+
+Separate assembly-per-layer per module is the first line of defence. The `internal` modifier keeps implementation types from leaking across assembly boundaries. A violation at compile time is better than one found in review.
+
+### Architecture tests
+
+Write `NetArchTest` (or equivalent) tests to verify dependency rules programmatically:
+- Domain does not reference Application, Infrastructure, or any framework.
+- Application does not reference Infrastructure.
+- Presentation does not reference Infrastructure.
+- No module references another module's internal assemblies.
+
+These tests belong in a dedicated `*.ArchitectureTests` project per module and run in CI.
+
+---
+
 ## Observability
 
 - **Structured logging:** Serilog with Seq sink (local: `http://127.0.0.1:8081`). Request logging via `UseSerilogRequestLogging()`. Trace correlation added by `LogContextTraceLoggingMiddleware`.

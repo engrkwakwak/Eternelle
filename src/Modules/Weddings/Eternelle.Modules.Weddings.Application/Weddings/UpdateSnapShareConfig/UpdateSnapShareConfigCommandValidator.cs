@@ -17,5 +17,8 @@ internal sealed class UpdateSnapShareConfigCommandValidator : AbstractValidator<
         RuleFor(c => c.CtaText)
             .MaximumLength(200)
             .When(c => c.CtaText is not null);
+
+        RuleFor(c => c.ModerationMode)
+            .IsInEnum();
     }
 }

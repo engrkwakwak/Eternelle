@@ -1,4 +1,4 @@
-using Eternelle.Common.Domain;
+﻿using Eternelle.Common.Domain;
 using Eternelle.Common.Presentation.Endpoints;
 using Eternelle.Common.Presentation.Results;
 using Eternelle.Modules.Weddings.Application.Weddings.UpdateSnapShareConfig;
@@ -20,7 +20,7 @@ internal sealed class UpdateSnapShareConfigEndpoint : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPatch("weddings/{weddingId}/snap-share", async (Guid weddingId, Request request, ISender sender, CancellationToken ct) =>
+        app.MapPut("weddings/{weddingId}/snap-share", async (Guid weddingId, Request request, ISender sender, CancellationToken ct) =>
         {
             var command = new UpdateSnapShareConfigCommand(
                 weddingId,

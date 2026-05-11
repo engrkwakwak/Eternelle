@@ -1,9 +1,7 @@
 using Eternelle.Common.Domain;
 using Eternelle.Common.Presentation.Endpoints;
 using Eternelle.Common.Presentation.Results;
-using Eternelle.Modules.Weddings.Application.GuestPhotos;
-using Eternelle.Modules.Weddings.Application.GuestPhotos.GetGuestPhotos;
-using Eternelle.Modules.Weddings.Domain.GuestPhotos;
+using Eternelle.Modules.Weddings.Application.GuestPhotos.BulkRejectGuestPhotos;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -11,20 +9,23 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Eternelle.Modules.Weddings.Presentation.GuestPhotos;
 
-internal sealed class GetGuestPhotosEndpoint : IEndpoint
+internal sealed class BulkRejectGuestPhotosEndpoint : IEndpoint
 {
+    internal sealed record Request(IReadOnlyList<Guid> GuestPhotoIds);
+
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("weddings/{weddingId}/photos", async (
+        app.MapPost("weddings/{weddingId}/photos/bulk-reject", async (
             Guid weddingId,
-            GuestPhotoStatus? status,
+            Request request,
             ISender sender,
             CancellationToken ct) =>
         {
-            Result<IReadOnlyList<GuestPhotoResponse>> result =
-                await sender.Send(new GetGuestPhotosQuery(weddingId, status), ct);
+            var command = new BulkRejectGuestPhotosCommand(request.GuestPhotoIds);
 
-            return result.Match(Results.Ok, ApiResults.Problem);
+            Result result = await sender.Send(command, ct);
+
+            return result.Match(() => Results.Ok(), ApiResults.Problem);
         })
         .WithTags(Tags.SnapShare)
         .RequireAuthorization("wedding:edit");
