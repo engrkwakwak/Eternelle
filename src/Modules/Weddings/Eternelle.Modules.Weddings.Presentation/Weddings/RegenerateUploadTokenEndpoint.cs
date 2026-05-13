@@ -27,7 +27,7 @@ internal sealed class RegenerateUploadTokenEndpoint : IEndpoint
                 token => Results.Ok(new
                 {
                     uploadToken = token,
-                    qrUrl = $"{options.Value.UploadBaseUrl}?token={token}"
+                    qrUrl = $"{options.Value.UploadBaseUrl}{(options.Value.UploadBaseUrl.Contains('?') ? '&' : '?')}token={token}"
                 }),
                 ApiResults.Problem);
         })

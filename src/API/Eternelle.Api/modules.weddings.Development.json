@@ -1,5 +1,8 @@
 {
   "Weddings": {
+    "SnapShare": {
+      "UploadBaseUrl": "http://localhost:5173/snap-share"
+    },
     "Outbox": {
       "IntervalInSeconds": 5,
       "BatchSize": 20
