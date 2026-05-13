@@ -3,6 +3,7 @@ using Amazon.S3.Model;
 using Amazon.S3.Util;
 using Eternelle.Common.Application.Clock;
 using Eternelle.Modules.Weddings.Application.Abstractions.Storage;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Eternelle.Modules.Weddings.Infrastructure.Storage;
@@ -25,6 +26,7 @@ internal sealed class S3PhotoStorageService : IPhotoStorageService, IDisposable
     private readonly AmazonS3Client _s3Public;
     private readonly PhotoStorageOptions _options;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly ILogger<S3PhotoStorageService> _logger;
 
     // Guards EnsureBucketExistsAsync against concurrent initialization.
     // S3PhotoStorageService is registered as a Singleton, so multiple requests
@@ -33,10 +35,14 @@ internal sealed class S3PhotoStorageService : IPhotoStorageService, IDisposable
     private readonly SemaphoreSlim _bucketLock = new(1, 1);
     private volatile bool _bucketEnsured;
 
-    public S3PhotoStorageService(IOptions<PhotoStorageOptions> options, IDateTimeProvider dateTimeProvider)
+    public S3PhotoStorageService(
+        IOptions<PhotoStorageOptions> options,
+        IDateTimeProvider dateTimeProvider,
+        ILogger<S3PhotoStorageService> logger)
     {
         _options = options.Value;
         _dateTimeProvider = dateTimeProvider;
+        _logger = logger;
 
         _s3 = new AmazonS3Client(
             _options.AccessKey,
@@ -118,11 +124,26 @@ internal sealed class S3PhotoStorageService : IPhotoStorageService, IDisposable
 
             if (!exists)
             {
-                await _s3.PutBucketAsync(new PutBucketRequest
+                try
                 {
-                    BucketName = _options.BucketName,
-                    UseClientRegion = true
-                }, cancellationToken);
+                    await _s3.PutBucketAsync(new PutBucketRequest
+                    {
+                        BucketName = _options.BucketName,
+                        UseClientRegion = true
+                    }, cancellationToken);
+                }
+                catch (AmazonS3Exception ex)
+                    when (ex.ErrorCode is "BucketAlreadyOwnedByYou" or "BucketAlreadyExists")
+                {
+                    // Another process created the bucket between DoesS3BucketExistV2Async
+                    // and PutBucketAsync — the bucket exists and is usable, so treat this
+                    // as success rather than a fatal error.
+                    _logger.LogWarning(
+                        ex,
+                        "Bucket '{BucketName}' already exists (ErrorCode: {ErrorCode}). Suppressing conflict.",
+                        _options.BucketName,
+                        ex.ErrorCode);
+                }
             }
 
             _bucketEnsured = true;
