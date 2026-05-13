@@ -21,7 +21,8 @@ internal sealed class UpdateEntourageMemberEndpoint : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("entourage/groups/{groupId}/members/{memberId}", async (
+        app.MapPut("weddings/{weddingId}/entourage/groups/{groupId}/members/{memberId}", async (
+            Guid weddingId,
             Guid groupId,
             Guid memberId,
             Request request,
@@ -29,6 +30,7 @@ internal sealed class UpdateEntourageMemberEndpoint : IEndpoint
             CancellationToken ct) =>
         {
             var command = new UpdateEntourageMemberCommand(
+                groupId,
                 memberId,
                 request.Name,
                 request.Role,

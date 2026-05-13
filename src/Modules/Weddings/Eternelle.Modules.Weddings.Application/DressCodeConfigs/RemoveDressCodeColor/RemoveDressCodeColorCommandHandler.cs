@@ -19,7 +19,7 @@ internal sealed class RemoveDressCodeColorCommandHandler(
             colorId,
             cancellationToken);
 
-        if (config is null)
+        if (config is null || config.Id != new DressCodeConfigId(command.DressCodeConfigId))
         {
             return Result.Failure(DressCodeConfigErrors.ColorNotFound(colorId));
         }

@@ -13,7 +13,8 @@ internal sealed class RemoveEntourageCoupleEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapDelete("entourage/groups/{groupId}/couples/{coupleId}", async (
+        app.MapDelete("weddings/{weddingId}/entourage/groups/{groupId}/couples/{coupleId}", async (
+            Guid weddingId,
             Guid groupId,
             Guid coupleId,
             ISender sender,

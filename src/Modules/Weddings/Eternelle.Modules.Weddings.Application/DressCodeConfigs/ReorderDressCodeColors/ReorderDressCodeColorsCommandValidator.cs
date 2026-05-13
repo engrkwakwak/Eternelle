@@ -6,6 +6,9 @@ internal sealed class ReorderDressCodeColorsCommandValidator : AbstractValidator
 {
     public ReorderDressCodeColorsCommandValidator()
     {
+        RuleFor(c => c.WeddingId)
+            .NotEmpty();
+
         RuleFor(c => c.DressCodeConfigId)
             .NotEmpty();
 

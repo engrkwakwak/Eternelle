@@ -6,6 +6,9 @@ internal sealed class AddDressCodeImageCommandValidator : AbstractValidator<AddD
 {
     public AddDressCodeImageCommandValidator()
     {
+        RuleFor(c => c.WeddingId)
+            .NotEmpty();
+
         RuleFor(c => c.DressCodeConfigId)
             .NotEmpty();
 

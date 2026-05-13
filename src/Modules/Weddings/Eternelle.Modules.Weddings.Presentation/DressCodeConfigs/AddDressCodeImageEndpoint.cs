@@ -15,18 +15,19 @@ internal sealed class AddDressCodeImageEndpoint : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("dress-code/{id}/images", async (
+        app.MapPost("weddings/{weddingId}/dress-code/{id}/images", async (
+            Guid weddingId,
             Guid id,
             Request request,
             ISender sender,
             CancellationToken ct) =>
         {
-            var command = new AddDressCodeImageCommand(id, request.ImageUrl);
+            var command = new AddDressCodeImageCommand(weddingId, id, request.ImageUrl);
 
             Result<Guid> result = await sender.Send(command, ct);
 
             return result.Match(
-                imageId => Results.Created($"/dress-code/{id}/images/{imageId}", new { id = imageId }),
+                imageId => Results.Created($"/weddings/{weddingId}/dress-code/{id}/images/{imageId}", new { id = imageId }),
                 ApiResults.Problem);
         })
         .WithTags(Tags.DressCode)

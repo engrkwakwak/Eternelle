@@ -13,7 +13,8 @@ internal sealed class RemoveDressCodeImageEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapDelete("dress-code/{id}/images/{imageId}", async (
+        app.MapDelete("weddings/{weddingId}/dress-code/{id}/images/{imageId}", async (
+            Guid weddingId,
             Guid id,
             Guid imageId,
             ISender sender,

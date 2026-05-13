@@ -15,18 +15,19 @@ internal sealed class AddDressCodeColorEndpoint : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("dress-code/{id}/colors", async (
+        app.MapPost("weddings/{weddingId}/dress-code/{id}/colors", async (
+            Guid weddingId,
             Guid id,
             Request request,
             ISender sender,
             CancellationToken ct) =>
         {
-            var command = new AddDressCodeColorCommand(id, request.ColorHex, request.ColorName);
+            var command = new AddDressCodeColorCommand(weddingId, id, request.ColorHex, request.ColorName);
 
             Result<Guid> result = await sender.Send(command, ct);
 
             return result.Match(
-                colorId => Results.Created($"/dress-code/{id}/colors/{colorId}", new { id = colorId }),
+                colorId => Results.Created($"/weddings/{weddingId}/dress-code/{id}/colors/{colorId}", new { id = colorId }),
                 ApiResults.Problem);
         })
         .WithTags(Tags.DressCode)

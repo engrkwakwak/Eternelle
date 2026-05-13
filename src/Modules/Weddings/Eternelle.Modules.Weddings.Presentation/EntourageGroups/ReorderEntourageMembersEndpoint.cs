@@ -15,13 +15,14 @@ internal sealed class ReorderEntourageMembersEndpoint : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPatch("entourage/groups/{groupId}/members/reorder", async (
+        app.MapPatch("weddings/{weddingId}/entourage/groups/{groupId}/members/reorder", async (
+            Guid weddingId,
             Guid groupId,
             Request request,
             ISender sender,
             CancellationToken ct) =>
         {
-            var command = new ReorderEntourageMembersCommand(groupId, request.Ids);
+            var command = new ReorderEntourageMembersCommand(weddingId, groupId, request.Ids);
 
             Result result = await sender.Send(command, ct);
 
