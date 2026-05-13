@@ -19,7 +19,7 @@ internal sealed class DeleteGiftOptionEndpoint : IEndpoint
             ISender sender,
             CancellationToken ct) =>
         {
-            Result result = await sender.Send(new DeleteGiftOptionCommand(id), ct);
+            Result result = await sender.Send(new DeleteGiftOptionCommand(weddingId, id), ct);
 
             return result.Match(() => Results.NoContent(), ApiResults.Problem);
         })

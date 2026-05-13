@@ -19,7 +19,7 @@ internal sealed class RemoveGalleryImageEndpoint : IEndpoint
             ISender sender,
             CancellationToken ct) =>
         {
-            Result result = await sender.Send(new RemoveGalleryImageCommand(id), ct);
+            Result result = await sender.Send(new RemoveGalleryImageCommand(weddingId, id), ct);
 
             return result.Match(() => Results.NoContent(), ApiResults.Problem);
         })

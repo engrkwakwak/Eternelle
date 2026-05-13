@@ -27,6 +27,7 @@ internal sealed class UpdateCeremonyActEndpoint : IEndpoint
             CancellationToken ct) =>
         {
             var command = new UpdateCeremonyActCommand(
+                weddingId,
                 id,
                 request.Name,
                 request.Description,

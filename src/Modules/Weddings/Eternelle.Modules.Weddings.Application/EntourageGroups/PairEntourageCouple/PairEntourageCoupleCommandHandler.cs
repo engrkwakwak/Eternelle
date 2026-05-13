@@ -2,6 +2,7 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Modules.Weddings.Domain.EntourageGroups;
+using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Application.EntourageGroups.PairEntourageCouple;
 
@@ -15,7 +16,7 @@ internal sealed class PairEntourageCoupleCommandHandler(
 
         EntourageGroup? group = await entourageGroupRepository.GetWithMembersAsync(groupId, cancellationToken);
 
-        if (group is null)
+        if (group is null || group.WeddingId != new WeddingId(command.WeddingId))
         {
             return Result.Failure<Guid>(EntourageGroupErrors.NotFound(groupId));
         }

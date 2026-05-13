@@ -28,6 +28,7 @@ internal sealed class UpdateGalleryImageEndpoint : IEndpoint
             CancellationToken ct) =>
         {
             var command = new UpdateGalleryImageCommand(
+                weddingId,
                 id,
                 request.SrcUrl,
                 request.AltText,

@@ -15,7 +15,7 @@ internal sealed class UpdateEntourageMemberCommandHandler(
 
         EntourageGroup? group = await entourageGroupRepository.GetWithMembersByMemberIdAsync(memberId, cancellationToken);
 
-        if (group is null)
+        if (group is null || group.Id != new EntourageGroupId(command.EntourageGroupId))
         {
             return Result.Failure(EntourageGroupErrors.MemberNotFound(memberId));
         }

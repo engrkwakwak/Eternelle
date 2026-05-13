@@ -22,13 +22,15 @@ internal sealed class AddEntourageMemberEndpoint : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("entourage/groups/{groupId}/members", async (
+        app.MapPost("weddings/{weddingId}/entourage/groups/{groupId}/members", async (
+            Guid weddingId,
             Guid groupId,
             Request request,
             ISender sender,
             CancellationToken ct) =>
         {
             var command = new AddEntourageMemberCommand(
+                weddingId,
                 groupId,
                 request.Name,
                 request.Role,
@@ -41,7 +43,7 @@ internal sealed class AddEntourageMemberEndpoint : IEndpoint
             Result<Guid> result = await sender.Send(command, ct);
 
             return result.Match(
-                memberId => Results.Created($"/entourage/groups/{groupId}/members/{memberId}", new { id = memberId }),
+                memberId => Results.Created($"/weddings/{weddingId}/entourage/groups/{groupId}/members/{memberId}", new { id = memberId }),
                 ApiResults.Problem);
         })
         .WithTags(Tags.Entourage)

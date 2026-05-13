@@ -15,7 +15,7 @@ internal sealed class RemoveEntourageCoupleCommandHandler(
 
         EntourageGroup? group = await entourageGroupRepository.GetWithMembersByCoupleIdAsync(coupleId, cancellationToken);
 
-        if (group is null)
+        if (group is null || group.Id != new EntourageGroupId(command.EntourageGroupId))
         {
             return Result.Failure(EntourageGroupErrors.CoupleNotFound(coupleId));
         }

@@ -15,18 +15,19 @@ internal sealed class PairEntourageCoupleEndpoint : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("entourage/groups/{groupId}/couples", async (
+        app.MapPost("weddings/{weddingId}/entourage/groups/{groupId}/couples", async (
+            Guid weddingId,
             Guid groupId,
             Request request,
             ISender sender,
             CancellationToken ct) =>
         {
-            var command = new PairEntourageCoupleCommand(groupId, request.MemberAId, request.MemberBId, request.Note);
+            var command = new PairEntourageCoupleCommand(weddingId, groupId, request.MemberAId, request.MemberBId, request.Note);
 
             Result<Guid> result = await sender.Send(command, ct);
 
             return result.Match(
-                coupleId => Results.Created($"/entourage/groups/{groupId}/couples/{coupleId}", new { id = coupleId }),
+                coupleId => Results.Created($"/weddings/{weddingId}/entourage/groups/{groupId}/couples/{coupleId}", new { id = coupleId }),
                 ApiResults.Problem);
         })
         .WithTags(Tags.Entourage)

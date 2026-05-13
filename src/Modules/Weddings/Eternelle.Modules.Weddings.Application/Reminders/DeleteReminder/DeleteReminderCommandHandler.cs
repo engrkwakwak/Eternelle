@@ -2,6 +2,7 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Modules.Weddings.Domain.Reminders;
+using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Application.Reminders.DeleteReminder;
 
@@ -17,7 +18,7 @@ internal sealed class DeleteReminderCommandHandler(
 
         Reminder? reminder = await reminderRepository.GetAsync(reminderId, cancellationToken);
 
-        if (reminder is null)
+        if (reminder is null || reminder.WeddingId != new WeddingId(command.WeddingId))
         {
             return Result.Failure(ReminderErrors.NotFound(reminderId));
         }

@@ -13,13 +13,14 @@ internal sealed class RemoveEntourageCoupleEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapDelete("entourage/groups/{groupId}/couples/{coupleId}", async (
+        app.MapDelete("weddings/{weddingId}/entourage/groups/{groupId}/couples/{coupleId}", async (
+            Guid weddingId,
             Guid groupId,
             Guid coupleId,
             ISender sender,
             CancellationToken ct) =>
         {
-            Result result = await sender.Send(new RemoveEntourageCoupleCommand(coupleId), ct);
+            Result result = await sender.Send(new RemoveEntourageCoupleCommand(groupId, coupleId), ct);
 
             return result.Match(() => Results.NoContent(), ApiResults.Problem);
         })

@@ -15,13 +15,14 @@ internal sealed class ReorderDressCodeImagesEndpoint : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPatch("dress-code/{id}/images/reorder", async (
+        app.MapPatch("weddings/{weddingId}/dress-code/{id}/images/reorder", async (
+            Guid weddingId,
             Guid id,
             Request request,
             ISender sender,
             CancellationToken ct) =>
         {
-            var command = new ReorderDressCodeImagesCommand(id, request.Ids);
+            var command = new ReorderDressCodeImagesCommand(weddingId, id, request.Ids);
 
             Result result = await sender.Send(command, ct);
 

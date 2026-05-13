@@ -13,13 +13,14 @@ internal sealed class RemoveDressCodeColorEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapDelete("dress-code/{id}/colors/{colorId}", async (
+        app.MapDelete("weddings/{weddingId}/dress-code/{id}/colors/{colorId}", async (
+            Guid weddingId,
             Guid id,
             Guid colorId,
             ISender sender,
             CancellationToken ct) =>
         {
-            Result result = await sender.Send(new RemoveDressCodeColorCommand(colorId), ct);
+            Result result = await sender.Send(new RemoveDressCodeColorCommand(weddingId, id, colorId), ct);
 
             return result.Match(() => Results.NoContent(), ApiResults.Problem);
         })
