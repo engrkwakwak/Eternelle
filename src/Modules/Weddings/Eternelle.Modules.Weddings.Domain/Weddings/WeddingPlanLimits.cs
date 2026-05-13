@@ -22,7 +22,7 @@ public static class WeddingPlanLimits
         WeddingPlan.Free => FreePhotoLimit,
         WeddingPlan.Pro  => ProPhotoLimit,
         WeddingPlan.Plus => null,
-        _                => FreePhotoLimit
+        _ => throw new ArgumentOutOfRangeException(nameof(plan), plan, "Unhandled wedding plan.")
     };
 
     /// <summary>

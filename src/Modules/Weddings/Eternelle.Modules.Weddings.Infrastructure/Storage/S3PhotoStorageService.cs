@@ -1,6 +1,7 @@
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Util;
+using Eternelle.Common.Application.Clock;
 using Eternelle.Modules.Weddings.Application.Abstractions.Storage;
 using Microsoft.Extensions.Options;
 
@@ -18,6 +19,7 @@ internal sealed class S3PhotoStorageService : IPhotoStorageService, IDisposable
 
     private readonly AmazonS3Client _s3;
     private readonly PhotoStorageOptions _options;
+    private readonly IDateTimeProvider _dateTimeProvider;
 
     // Guards EnsureBucketExistsAsync against concurrent initialization.
     // S3PhotoStorageService is registered as a Singleton, so multiple requests
@@ -26,9 +28,10 @@ internal sealed class S3PhotoStorageService : IPhotoStorageService, IDisposable
     private readonly SemaphoreSlim _bucketLock = new(1, 1);
     private volatile bool _bucketEnsured;
 
-    public S3PhotoStorageService(IOptions<PhotoStorageOptions> options)
+    public S3PhotoStorageService(IOptions<PhotoStorageOptions> options, IDateTimeProvider dateTimeProvider)
     {
         _options = options.Value;
+        _dateTimeProvider = dateTimeProvider;
 
         _s3 = new AmazonS3Client(
             _options.AccessKey,
@@ -55,7 +58,6 @@ internal sealed class S3PhotoStorageService : IPhotoStorageService, IDisposable
             var slotId = Guid.NewGuid();
             string objectKey = $"photos/{slotId}";
 
-            // ExpiresString uses the AWSSDK.S3 v4 API (ISO-8601 UTC string).
             // ContentType is intentionally omitted — including it signs the content-type into
             // the URL, which would force the client to send the exact same value or get a
             // SignatureDoesNotMatch error. Browsers send the actual MIME type on upload.
@@ -64,7 +66,7 @@ internal sealed class S3PhotoStorageService : IPhotoStorageService, IDisposable
                 BucketName = _options.BucketName,
                 Key = objectKey,
                 Verb = HttpVerb.PUT,
-                ExpiresString = DateTime.UtcNow.Add(PresignExpiry).ToString("yyyy-MM-ddTHH:mm:ssZ")
+                Expires = _dateTimeProvider.UtcNow.Add(PresignExpiry)
             });
 
             // The SDK generates the presigned URL using ServiceUrl (internal Docker hostname).
@@ -87,12 +89,18 @@ internal sealed class S3PhotoStorageService : IPhotoStorageService, IDisposable
     /// </summary>
     private async Task EnsureBucketExistsAsync(CancellationToken cancellationToken)
     {
-        if (_bucketEnsured) return;
+        if (_bucketEnsured)
+        {
+            return;
+        }
 
         await _bucketLock.WaitAsync(cancellationToken);
         try
         {
-            if (_bucketEnsured) return;
+            if (_bucketEnsured)
+            {
+                return;
+            }
 
             bool exists = await AmazonS3Util.DoesS3BucketExistV2Async(_s3, _options.BucketName);
 
