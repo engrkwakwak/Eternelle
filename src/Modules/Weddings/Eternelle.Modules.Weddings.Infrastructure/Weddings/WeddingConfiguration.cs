@@ -29,6 +29,16 @@ internal sealed class WeddingConfiguration : IEntityTypeConfiguration<Wedding>
                 v => v != null ? Hashtag.FromPersistence(v) : null)
             .HasColumnName("hashtag");
 
+        // Plan tier stored as a smallint (0=Free, 1=Pro, 2=Plus).
+        // HasConversion<int>() maps the enum to its underlying integer value.
+        // HasDefaultValue must use the CLR enum value, not the raw int — EF Core
+        // applies the converter before comparing, so passing 0 here throws at design time.
+        // HasColumnName is omitted — UseSnakeCaseNamingConvention already maps Plan → "plan".
+        builder.Property(w => w.Plan)
+            .HasConversion<int>()
+            .IsRequired()
+            .HasDefaultValue(WeddingPlan.Free);
+
         // EF Core snake_cases "CreatedAtUtc" → "created_at_utc".
         // The actual DB column is "created_at" — map explicitly.
         builder.Property(w => w.CreatedAtUtc).HasColumnName("created_at").IsRequired();

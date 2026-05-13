@@ -39,6 +39,7 @@ internal sealed class UpdateSnapShareConfigCommandHandler(
             command.CtaText,
             command.Enabled,
             command.ModerationMode,
+            command.UploaderNameRequired,
             dateTimeProvider.UtcNow);
 
         weddingRepository.Update(wedding);

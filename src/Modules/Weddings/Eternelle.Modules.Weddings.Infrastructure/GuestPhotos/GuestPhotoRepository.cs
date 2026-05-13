@@ -87,9 +87,39 @@ internal sealed class GuestPhotoRepository(WeddingsDbContext context) : IGuestPh
         await tx.CommitAsync(ct);
     }
 
+    public async Task InsertManyAndEnforceAsync(
+        IReadOnlyList<GuestPhoto> photos,
+        WeddingId weddingId,
+        int planLimit,
+        CancellationToken ct = default)
+    {
+        // Guard against mixed-wedding batches — EnforcePhotoLimitAsync runs per weddingId,
+        // so a photo from a different wedding would skew the count and potentially mark
+        // the wrong photos as OverLimit.
+        if (photos.Any(p => p.WeddingId != weddingId))
+        {
+            throw new InvalidOperationException(
+                "All photos in a batch must belong to the same wedding as the provided weddingId.");
+        }
+
+        await using IDbContextTransaction tx = await context.Database.BeginTransactionAsync(ct);
+
+        context.GuestPhotos.AddRange(photos);
+        await context.SaveChangesAsync(ct);
+
+        await EnforcePhotoLimitAsync(weddingId, planLimit, ct);
+
+        await tx.CommitAsync(ct);
+    }
+
     public void Insert(GuestPhoto photo)
     {
         context.GuestPhotos.Add(photo);
+    }
+
+    public void InsertMany(IReadOnlyList<GuestPhoto> photos)
+    {
+        context.GuestPhotos.AddRange(photos);
     }
 
     public void Update(GuestPhoto photo)

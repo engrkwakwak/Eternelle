@@ -6,10 +6,13 @@ using Eternelle.Common.Infrastructure;
 using Eternelle.Common.Infrastructure.Configuration;
 using Eternelle.Common.Presentation.Endpoints;
 using Eternelle.Modules.Weddings.Infrastructure;
+using Eternelle.Modules.Weddings.Presentation;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.RateLimiting;
 using Scalar.AspNetCore;
 using Serilog;
+using System.Threading.RateLimiting;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +44,23 @@ builder.Configuration.AddModuleConfiguration(["weddings"]);
 
 builder.Services.AddWeddingsModule(builder.Configuration);
 
+builder.Services.AddRateLimiter(options =>
+{
+    // IP-based fixed-window limiter for the public guest photo upload endpoint.
+    // 10 uploads per minute per IP — protects against spam without a JWT to identify callers.
+    options.AddPolicy(RateLimitingPolicies.GuestPhotoUpload, httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
+
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});
+
 WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -61,6 +81,8 @@ app.UseLogContextTraceLogging();
 app.UseSerilogRequestLogging();
 
 app.UseExceptionHandler();
+
+app.UseRateLimiter();
 
 app.MapEndpoints();
 
