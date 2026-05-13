@@ -17,7 +17,12 @@ internal sealed class S3PhotoStorageService : IPhotoStorageService, IDisposable
     // Presigned PUT URLs expire after 15 minutes — matches the slot store TTL in RedisUploadSlotStore.
     private static readonly TimeSpan PresignExpiry = TimeSpan.FromMinutes(15);
 
+    // Used for bucket management — talks to the internal Docker/service endpoint.
     private readonly AmazonS3Client _s3;
+    // Used for presigning — talks to the public endpoint so the signed host matches
+    // what the browser will send. In production ServiceUrl == PublicUrl so both
+    // clients are equivalent and no URL-rewriting is needed.
+    private readonly AmazonS3Client _s3Public;
     private readonly PhotoStorageOptions _options;
     private readonly IDateTimeProvider _dateTimeProvider;
 
@@ -43,6 +48,15 @@ internal sealed class S3PhotoStorageService : IPhotoStorageService, IDisposable
                 ServiceURL = _options.ServiceUrl,
                 ForcePathStyle = true
             });
+
+        _s3Public = new AmazonS3Client(
+            _options.AccessKey,
+            _options.SecretKey,
+            new AmazonS3Config
+            {
+                ServiceURL = _options.PublicUrl,
+                ForcePathStyle = true
+            });
     }
 
     public async Task<IReadOnlyList<PresignedUploadSlot>> GeneratePresignedSlotsAsync(
@@ -61,7 +75,9 @@ internal sealed class S3PhotoStorageService : IPhotoStorageService, IDisposable
             // ContentType is intentionally omitted — including it signs the content-type into
             // the URL, which would force the client to send the exact same value or get a
             // SignatureDoesNotMatch error. Browsers send the actual MIME type on upload.
-            string presignedUrl = await _s3.GetPreSignedURLAsync(new GetPreSignedUrlRequest
+            // _s3Public is configured with PublicUrl so the signed host already matches
+            // what the browser will send — no post-sign URL rewriting needed.
+            string presignedUrl = await _s3Public.GetPreSignedURLAsync(new GetPreSignedUrlRequest
             {
                 BucketName = _options.BucketName,
                 Key = objectKey,
@@ -69,13 +85,9 @@ internal sealed class S3PhotoStorageService : IPhotoStorageService, IDisposable
                 Expires = _dateTimeProvider.UtcNow.Add(PresignExpiry)
             });
 
-            // The SDK generates the presigned URL using ServiceUrl (internal Docker hostname).
-            // Replace it with PublicUrl so the browser can reach MinIO directly.
-            // In production ServiceUrl == PublicUrl so this is a no-op.
-            string publicPresignedUrl = presignedUrl.Replace(_options.ServiceUrl, _options.PublicUrl);
             string cdnUrl = $"{_options.PublicUrl}/{_options.BucketName}/{objectKey}";
 
-            slots.Add(new PresignedUploadSlot(slotId, publicPresignedUrl, cdnUrl));
+            slots.Add(new PresignedUploadSlot(slotId, presignedUrl, cdnUrl));
         }
 
         return slots;
@@ -124,6 +136,7 @@ internal sealed class S3PhotoStorageService : IPhotoStorageService, IDisposable
     public void Dispose()
     {
         _s3.Dispose();
+        _s3Public.Dispose();
         _bucketLock.Dispose();
     }
 }

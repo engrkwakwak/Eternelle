@@ -28,5 +28,11 @@ public static class WeddingPlanLimits
     /// <summary>
     /// Whether the plan allows bulk ZIP download of all guest photos.
     /// </summary>
-    public static bool BulkDownloadEnabled(WeddingPlan plan) => plan == WeddingPlan.Plus;
+    public static bool BulkDownloadEnabled(WeddingPlan plan) => plan switch
+    {
+        WeddingPlan.Free => false,
+        WeddingPlan.Pro  => false,
+        WeddingPlan.Plus => true,
+        _ => throw new ArgumentOutOfRangeException(nameof(plan), plan, "Unhandled wedding plan.")
+    };
 }
