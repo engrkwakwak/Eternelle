@@ -6,6 +6,9 @@ internal sealed class BulkApproveGuestPhotosCommandValidator : AbstractValidator
 {
     public BulkApproveGuestPhotosCommandValidator()
     {
+        RuleFor(c => c.WeddingId)
+            .NotEmpty();
+
         RuleFor(c => c.GuestPhotoIds)
             .NotEmpty();
 

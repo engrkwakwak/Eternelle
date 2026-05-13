@@ -21,7 +21,7 @@ internal sealed class BulkApproveGuestPhotosEndpoint : IEndpoint
             ISender sender,
             CancellationToken ct) =>
         {
-            var command = new BulkApproveGuestPhotosCommand(request.GuestPhotoIds);
+            var command = new BulkApproveGuestPhotosCommand(weddingId, request.GuestPhotoIds);
 
             Result<BulkApproveGuestPhotosResponse> result = await sender.Send(command, ct);
 

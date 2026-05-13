@@ -9,6 +9,9 @@ internal sealed class UpdateVendorCreditCommandValidator : AbstractValidator<Upd
 {
     public UpdateVendorCreditCommandValidator()
     {
+        RuleFor(c => c.WeddingId)
+            .NotEmpty();
+
         RuleFor(c => c.VendorCreditId)
             .NotEmpty();
 

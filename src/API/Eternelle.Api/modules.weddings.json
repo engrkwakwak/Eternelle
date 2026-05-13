@@ -3,6 +3,16 @@
     "SnapShare": {
       "UploadBaseUrl": ""
     },
+    "Subscription": {
+      "PhotoUploadLimit": null
+    },
+    "PhotoStorage": {
+      "ServiceUrl": "",
+      "PublicUrl": "",
+      "AccessKey": "",
+      "SecretKey": "",
+      "BucketName": ""
+    },
     "Outbox": {
       "IntervalInSeconds": 5,
       "BatchSize": 50

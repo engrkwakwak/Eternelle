@@ -21,7 +21,7 @@ POST /photos/upload/presign?token=  ← request N upload slots from server
        │  returns: [{ slotId, presignedUrl, cdnUrl }]
        │
        ▼
-Upload N files in parallel to CDN   ← browser POSTs each file to its presignedUrl
+Upload N files in parallel to CDN   ← browser PUTs each file to its presignedUrl
        │
        ▼
 POST /photos/upload?token=          ← register all photos in one batch
@@ -102,7 +102,7 @@ Step 1. Request presigned upload slots from the server.
 | Field          | Description                                                                 |
 |----------------|-----------------------------------------------------------------------------|
 | `slotId`       | Server-generated ID. Pass this back in Step 2 to redeem the slot.           |
-| `presignedUrl` | CDN presigned URL. Upload the file here using a `PUT` or `POST` (CDN-specific). |
+| `presignedUrl` | CDN presigned URL. Upload the file here using a `PUT`.                          |
 | `cdnUrl`       | The final URL of the uploaded image. Known at presign time.                  |
 
 Slots expire after **15 minutes**. If the guest doesn't complete the upload within that window, the slot is invalidated and they must start over.

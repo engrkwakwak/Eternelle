@@ -60,7 +60,15 @@ internal sealed class RegisterGuestPhotosCommandHandler(
             cdnUrls[registration.SlotId] = cdnUrl;
         }
 
-        GuestPhotoStatus initialStatus = wedding.SnapShare!.ModerationMode == SnapShareModerationMode.Auto
+        // SnapShare must be configured before photos can be registered via the upload token.
+        // In practice GetByUploadTokenAsync only returns weddings with an active SnapShare,
+        // but we check explicitly to preserve invariants.
+        if (wedding.SnapShare is null)
+        {
+            return Result.Failure<IReadOnlyList<Guid>>(WeddingErrors.SnapShareNotConfigured);
+        }
+
+        GuestPhotoStatus initialStatus = wedding.SnapShare.ModerationMode == SnapShareModerationMode.Auto
             ? GuestPhotoStatus.Approved
             : GuestPhotoStatus.Pending;
 
