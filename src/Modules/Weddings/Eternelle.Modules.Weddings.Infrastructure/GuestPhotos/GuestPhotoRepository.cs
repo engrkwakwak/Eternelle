@@ -87,9 +87,30 @@ internal sealed class GuestPhotoRepository(WeddingsDbContext context) : IGuestPh
         await tx.CommitAsync(ct);
     }
 
+    public async Task InsertManyAndEnforceAsync(
+        IReadOnlyList<GuestPhoto> photos,
+        WeddingId weddingId,
+        int planLimit,
+        CancellationToken ct = default)
+    {
+        await using IDbContextTransaction tx = await context.Database.BeginTransactionAsync(ct);
+
+        context.GuestPhotos.AddRange(photos);
+        await context.SaveChangesAsync(ct);
+
+        await EnforcePhotoLimitAsync(weddingId, planLimit, ct);
+
+        await tx.CommitAsync(ct);
+    }
+
     public void Insert(GuestPhoto photo)
     {
         context.GuestPhotos.Add(photo);
+    }
+
+    public void InsertMany(IReadOnlyList<GuestPhoto> photos)
+    {
+        context.GuestPhotos.AddRange(photos);
     }
 
     public void Update(GuestPhoto photo)

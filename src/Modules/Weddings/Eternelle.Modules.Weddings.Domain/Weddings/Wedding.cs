@@ -52,6 +52,13 @@ public sealed class Wedding : Entity
     /// </summary>
     public Hashtag? Hashtag { get; private set; }
 
+    /// <summary>
+    /// Subscription tier for this wedding.
+    /// Determines guest photo limits and feature access.
+    /// Defaults to <see cref="WeddingPlan.Free"/> at creation.
+    /// </summary>
+    public WeddingPlan Plan { get; private set; }
+
     public DateTime CreatedAtUtc { get; private set; }
 
     public DateTime UpdatedAtUtc { get; private set; }
@@ -82,6 +89,7 @@ public sealed class Wedding : Entity
             SchemaVersion = 1,
             WeddingDate = weddingDate,
             Hashtag = hashtag,
+            Plan = WeddingPlan.Free,
             CreatedAtUtc = utcNow,
             UpdatedAtUtc = utcNow
         };
@@ -105,6 +113,19 @@ public sealed class Wedding : Entity
         Raise(new WeddingDetailsUpdatedDomainEvent(Id));
 
         return Result.Success();
+    }
+
+    // ─── Plan management ─────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Upgrades (or downgrades) the wedding to a new subscription plan.
+    /// Called from the Subscriptions module via an integration event handler —
+    /// never directly by the user.
+    /// </summary>
+    public void ChangePlan(WeddingPlan plan, DateTime utcNow)
+    {
+        Plan = plan;
+        UpdatedAtUtc = utcNow;
     }
 
     // ─── Partner management ─────────────────────────────────────────────────────
@@ -167,15 +188,16 @@ public sealed class Wedding : Entity
         string? ctaText,
         bool enabled,
         SnapShareModerationMode moderationMode,
+        bool uploaderNameRequired,
         DateTime utcNow)
     {
         if (SnapShare is null)
         {
-            SnapShare = SnapShareConfig.Create(Id, instagramHandle, ctaText, enabled, moderationMode);
+            SnapShare = SnapShareConfig.Create(Id, instagramHandle, ctaText, enabled, moderationMode, uploaderNameRequired);
         }
         else
         {
-            SnapShare.Update(instagramHandle, ctaText, enabled, moderationMode);
+            SnapShare.Update(instagramHandle, ctaText, enabled, moderationMode, uploaderNameRequired);
         }
 
         UpdatedAtUtc = utcNow;

@@ -8,4 +8,5 @@ public sealed record UpdateSnapShareConfigCommand(
     string? InstagramHandle,
     string? CtaText,
     bool Enabled,
-    SnapShareModerationMode ModerationMode) : ICommand;
+    SnapShareModerationMode ModerationMode,
+    bool UploaderNameRequired) : ICommand;

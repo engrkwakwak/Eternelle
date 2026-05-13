@@ -2,7 +2,6 @@ using Eternelle.Common.Application.Clock;
 using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
-using Eternelle.Modules.Weddings.Application.Abstractions.Subscriptions;
 using Eternelle.Modules.Weddings.Domain.GuestPhotos;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
@@ -11,7 +10,6 @@ namespace Eternelle.Modules.Weddings.Application.GuestPhotos.UploadGuestPhoto;
 internal sealed class UploadGuestPhotoCommandHandler(
     IWeddingRepository weddingRepository,
     IGuestPhotoRepository guestPhotoRepository,
-    ISubscriptionPlanService subscriptionPlanService,
     IDateTimeProvider dateTimeProvider,
     IUnitOfWork unitOfWork) : ICommandHandler<UploadGuestPhotoCommand, Guid>
 {
@@ -32,8 +30,7 @@ internal sealed class UploadGuestPhotoCommandHandler(
 
         // 2. Fast-path limit check — blocks clearly-over-cap weddings without locking.
         //    A small burst of concurrent uploads may slip past; step 5 corrects them.
-        int? planLimit = await subscriptionPlanService.GetPhotoLimitAsync(
-            wedding.TenantId, cancellationToken);
+        int? planLimit = WeddingPlanLimits.PhotoLimit(wedding.Plan);
 
         if (planLimit is not null)
         {
