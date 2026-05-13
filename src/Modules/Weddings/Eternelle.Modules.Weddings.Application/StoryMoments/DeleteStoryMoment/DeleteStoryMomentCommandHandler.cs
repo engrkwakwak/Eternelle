@@ -2,6 +2,7 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Modules.Weddings.Domain.StoryMoments;
+using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Application.StoryMoments.DeleteStoryMoment;
 
@@ -15,7 +16,7 @@ internal sealed class DeleteStoryMomentCommandHandler(
 
         StoryMoment? storyMoment = await storyMomentRepository.GetAsync(storyMomentId, cancellationToken);
 
-        if (storyMoment is null)
+        if (storyMoment is null || storyMoment.WeddingId != new WeddingId(command.WeddingId))
         {
             return Result.Failure(StoryMomentErrors.NotFound(storyMomentId));
         }

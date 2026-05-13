@@ -19,7 +19,7 @@ internal sealed class DeleteCeremonyActEndpoint : IEndpoint
             ISender sender,
             CancellationToken ct) =>
         {
-            Result result = await sender.Send(new DeleteCeremonyActCommand(id), ct);
+            Result result = await sender.Send(new DeleteCeremonyActCommand(weddingId, id), ct);
 
             return result.Match(() => Results.NoContent(), ApiResults.Problem);
         })

@@ -19,7 +19,7 @@ internal sealed class RemoveDressCodeImageEndpoint : IEndpoint
             ISender sender,
             CancellationToken ct) =>
         {
-            Result result = await sender.Send(new RemoveDressCodeImageCommand(imageId), ct);
+            Result result = await sender.Send(new RemoveDressCodeImageCommand(id, imageId), ct);
 
             return result.Match(() => Results.NoContent(), ApiResults.Problem);
         })

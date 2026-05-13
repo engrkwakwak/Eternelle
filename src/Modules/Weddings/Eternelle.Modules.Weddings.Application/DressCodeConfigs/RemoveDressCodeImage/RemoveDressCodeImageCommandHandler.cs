@@ -19,7 +19,7 @@ internal sealed class RemoveDressCodeImageCommandHandler(
             imageId,
             cancellationToken);
 
-        if (config is null)
+        if (config is null || config.Id != new DressCodeConfigId(command.DressCodeConfigId))
         {
             return Result.Failure(DressCodeConfigErrors.ImageNotFound(imageId));
         }

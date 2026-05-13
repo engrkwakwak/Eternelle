@@ -19,7 +19,7 @@ internal sealed class DeleteReminderEndpoint : IEndpoint
             ISender sender,
             CancellationToken ct) =>
         {
-            Result result = await sender.Send(new DeleteReminderCommand(id), ct);
+            Result result = await sender.Send(new DeleteReminderCommand(weddingId, id), ct);
 
             return result.Match(() => Results.NoContent(), ApiResults.Problem);
         })
