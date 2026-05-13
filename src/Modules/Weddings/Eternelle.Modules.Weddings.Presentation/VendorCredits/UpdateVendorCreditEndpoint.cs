@@ -28,6 +28,7 @@ internal sealed class UpdateVendorCreditEndpoint : IEndpoint
             CancellationToken ct) =>
         {
             var command = new UpdateVendorCreditCommand(
+                weddingId,
                 id,
                 request.Name,
                 request.Role,

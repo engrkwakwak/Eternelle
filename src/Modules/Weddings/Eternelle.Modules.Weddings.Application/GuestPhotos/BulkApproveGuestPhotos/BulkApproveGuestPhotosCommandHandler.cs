@@ -3,6 +3,7 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Modules.Weddings.Domain.GuestPhotos;
+using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Application.GuestPhotos.BulkApproveGuestPhotos;
 
@@ -18,7 +19,11 @@ internal sealed class BulkApproveGuestPhotosCommandHandler(
         IReadOnlyList<Guid> uniqueRawIds = command.GuestPhotoIds.Distinct().ToList();
         IReadOnlyList<GuestPhotoId> ids = [.. uniqueRawIds.Select(id => new GuestPhotoId(id))];
 
-        IReadOnlyList<GuestPhoto> photos = await guestPhotoRepository.GetManyAsync(ids, cancellationToken);
+        IReadOnlyList<GuestPhoto> allPhotos = await guestPhotoRepository.GetManyAsync(ids, cancellationToken);
+
+        // Filter to this wedding only — cross-wedding IDs are treated as not found.
+        var weddingId = new WeddingId(command.WeddingId);
+        IReadOnlyList<GuestPhoto> photos = [.. allPhotos.Where(p => p.WeddingId == weddingId)];
 
         HashSet<Guid> fetchedIds = [.. photos.Select(p => p.Id.Value)];
 

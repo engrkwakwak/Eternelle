@@ -30,6 +30,7 @@ internal sealed class UpdateEntourageMemberEndpoint : IEndpoint
             CancellationToken ct) =>
         {
             var command = new UpdateEntourageMemberCommand(
+                weddingId,
                 groupId,
                 memberId,
                 request.Name,

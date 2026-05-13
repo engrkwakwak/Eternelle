@@ -18,7 +18,7 @@ internal sealed class UpdateVendorCreditCommandHandler(
 
         VendorCredit? credit = await vendorCreditRepository.GetAsync(vendorCreditId, cancellationToken);
 
-        if (credit is null)
+        if (credit is null || credit.WeddingId != new WeddingId(command.WeddingId))
         {
             return Result.Failure(VendorCreditErrors.NotFound(vendorCreditId));
         }

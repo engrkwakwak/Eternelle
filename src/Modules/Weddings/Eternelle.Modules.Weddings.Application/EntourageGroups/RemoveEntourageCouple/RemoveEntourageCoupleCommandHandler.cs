@@ -2,6 +2,7 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Modules.Weddings.Domain.EntourageGroups;
+using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Application.EntourageGroups.RemoveEntourageCouple;
 
@@ -15,7 +16,7 @@ internal sealed class RemoveEntourageCoupleCommandHandler(
 
         EntourageGroup? group = await entourageGroupRepository.GetWithMembersByCoupleIdAsync(coupleId, cancellationToken);
 
-        if (group is null || group.Id != new EntourageGroupId(command.EntourageGroupId))
+        if (group is null || group.WeddingId != new WeddingId(command.WeddingId) || group.Id != new EntourageGroupId(command.EntourageGroupId))
         {
             return Result.Failure(EntourageGroupErrors.CoupleNotFound(coupleId));
         }

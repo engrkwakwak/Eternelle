@@ -88,6 +88,13 @@ internal sealed class GuestPhotoRepository(WeddingsDbContext context) : IGuestPh
 
         await using IDbContextTransaction tx = await context.Database.BeginTransactionAsync(ct);
 
+        // Acquire a row-level lock on the wedding profile to serialize concurrent photo
+        // insertions for the same wedding. This ensures the enforce query sees all photos
+        // from competing transactions before deciding which to mark as OverLimit.
+        await context.Database.ExecuteSqlAsync(
+            $"SELECT 1 FROM wedding.profiles WHERE id = {weddingId.Value} FOR UPDATE",
+            ct);
+
         context.GuestPhotos.AddRange(photos);
         await context.SaveChangesAsync(ct);
 
