@@ -9,6 +9,9 @@ internal sealed class RemoveDressCodeImageCommandValidator : AbstractValidator<R
         RuleFor(c => c.WeddingId)
             .NotEmpty();
 
+        RuleFor(c => c.DressCodeConfigId)
+            .NotEmpty();
+
         RuleFor(c => c.DressCodeImageId)
             .NotEmpty();
     }
