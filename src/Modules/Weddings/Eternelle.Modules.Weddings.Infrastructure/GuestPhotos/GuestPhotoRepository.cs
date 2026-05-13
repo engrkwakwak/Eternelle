@@ -71,22 +71,6 @@ internal sealed class GuestPhotoRepository(WeddingsDbContext context) : IGuestPh
             ct);
     }
 
-    public async Task InsertAndEnforceAsync(
-        GuestPhoto photo,
-        WeddingId weddingId,
-        int planLimit,
-        CancellationToken ct = default)
-    {
-        await using IDbContextTransaction tx = await context.Database.BeginTransactionAsync(ct);
-
-        context.GuestPhotos.Add(photo);
-        await context.SaveChangesAsync(ct);
-
-        await EnforcePhotoLimitAsync(weddingId, planLimit, ct);
-
-        await tx.CommitAsync(ct);
-    }
-
     public async Task InsertManyAndEnforceAsync(
         IReadOnlyList<GuestPhoto> photos,
         WeddingId weddingId,
@@ -110,11 +94,6 @@ internal sealed class GuestPhotoRepository(WeddingsDbContext context) : IGuestPh
         await EnforcePhotoLimitAsync(weddingId, planLimit, ct);
 
         await tx.CommitAsync(ct);
-    }
-
-    public void Insert(GuestPhoto photo)
-    {
-        context.GuestPhotos.Add(photo);
     }
 
     public void InsertMany(IReadOnlyList<GuestPhoto> photos)
