@@ -20,7 +20,7 @@ internal sealed class RemoveEntourageMemberEndpoint : IEndpoint
             ISender sender,
             CancellationToken ct) =>
         {
-            Result result = await sender.Send(new RemoveEntourageMemberCommand(groupId, memberId), ct);
+            Result result = await sender.Send(new RemoveEntourageMemberCommand(weddingId, groupId, memberId), ct);
 
             return result.Match(() => Results.NoContent(), ApiResults.Problem);
         })

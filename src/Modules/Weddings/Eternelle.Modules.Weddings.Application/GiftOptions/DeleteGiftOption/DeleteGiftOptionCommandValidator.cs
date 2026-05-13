@@ -6,6 +6,9 @@ internal sealed class DeleteGiftOptionCommandValidator : AbstractValidator<Delet
 {
     public DeleteGiftOptionCommandValidator()
     {
+        RuleFor(c => c.WeddingId)
+            .NotEmpty();
+
         RuleFor(c => c.GiftOptionId)
             .NotEmpty();
     }

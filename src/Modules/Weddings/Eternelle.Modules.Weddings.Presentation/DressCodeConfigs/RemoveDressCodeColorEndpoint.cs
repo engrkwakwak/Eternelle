@@ -20,7 +20,7 @@ internal sealed class RemoveDressCodeColorEndpoint : IEndpoint
             ISender sender,
             CancellationToken ct) =>
         {
-            Result result = await sender.Send(new RemoveDressCodeColorCommand(id, colorId), ct);
+            Result result = await sender.Send(new RemoveDressCodeColorCommand(weddingId, id, colorId), ct);
 
             return result.Match(() => Results.NoContent(), ApiResults.Problem);
         })
