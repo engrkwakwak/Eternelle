@@ -18,7 +18,13 @@ internal sealed class S3PhotoStorageService : IPhotoStorageService, IDisposable
 
     private readonly AmazonS3Client _s3;
     private readonly PhotoStorageOptions _options;
-    private bool _bucketEnsured;
+
+    // Guards EnsureBucketExistsAsync against concurrent initialization.
+    // S3PhotoStorageService is registered as a Singleton, so multiple requests
+    // can race on first startup. SemaphoreSlim + double-check prevents duplicate
+    // PutBucketAsync calls.
+    private readonly SemaphoreSlim _bucketLock = new(1, 1);
+    private volatile bool _bucketEnsured;
 
     public S3PhotoStorageService(IOptions<PhotoStorageOptions> options)
     {
@@ -49,13 +55,16 @@ internal sealed class S3PhotoStorageService : IPhotoStorageService, IDisposable
             var slotId = Guid.NewGuid();
             string objectKey = $"photos/{slotId}";
 
+            // ExpiresString uses the AWSSDK.S3 v4 API (ISO-8601 UTC string).
+            // ContentType is intentionally omitted — including it signs the content-type into
+            // the URL, which would force the client to send the exact same value or get a
+            // SignatureDoesNotMatch error. Browsers send the actual MIME type on upload.
             string presignedUrl = await _s3.GetPreSignedURLAsync(new GetPreSignedUrlRequest
             {
                 BucketName = _options.BucketName,
                 Key = objectKey,
                 Verb = HttpVerb.PUT,
-                Expires = DateTime.UtcNow.Add(PresignExpiry),
-                ContentType = "image/*"
+                ExpiresString = DateTime.UtcNow.Add(PresignExpiry).ToString("yyyy-MM-ddTHH:mm:ssZ")
             });
 
             // The SDK generates the presigned URL using ServiceUrl (internal Docker hostname).
@@ -72,28 +81,41 @@ internal sealed class S3PhotoStorageService : IPhotoStorageService, IDisposable
 
     /// <summary>
     /// Creates the bucket if it does not already exist.
-    /// Idempotent — safe to call on every request, result is cached after the first success.
+    /// Thread-safe: uses a SemaphoreSlim + double-check pattern so only one caller
+    /// performs the existence check and optional PutBucketAsync call, even under
+    /// concurrent requests at startup.
     /// </summary>
     private async Task EnsureBucketExistsAsync(CancellationToken cancellationToken)
     {
-        if (_bucketEnsured)
-        {
-            return;
-        }
+        if (_bucketEnsured) return;
 
-        bool exists = await AmazonS3Util.DoesS3BucketExistV2Async(_s3, _options.BucketName);
-
-        if (!exists)
+        await _bucketLock.WaitAsync(cancellationToken);
+        try
         {
-            await _s3.PutBucketAsync(new PutBucketRequest
+            if (_bucketEnsured) return;
+
+            bool exists = await AmazonS3Util.DoesS3BucketExistV2Async(_s3, _options.BucketName);
+
+            if (!exists)
             {
-                BucketName = _options.BucketName,
-                UseClientRegion = true
-            }, cancellationToken);
-        }
+                await _s3.PutBucketAsync(new PutBucketRequest
+                {
+                    BucketName = _options.BucketName,
+                    UseClientRegion = true
+                }, cancellationToken);
+            }
 
-        _bucketEnsured = true;
+            _bucketEnsured = true;
+        }
+        finally
+        {
+            _bucketLock.Release();
+        }
     }
 
-    public void Dispose() => _s3.Dispose();
+    public void Dispose()
+    {
+        _s3.Dispose();
+        _bucketLock.Dispose();
+    }
 }

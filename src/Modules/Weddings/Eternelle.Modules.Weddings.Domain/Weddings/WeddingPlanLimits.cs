@@ -3,7 +3,9 @@ namespace Eternelle.Modules.Weddings.Domain.Weddings;
 /// <summary>
 /// Canonical limits for each <see cref="WeddingPlan"/> tier.
 /// All limit constants live here — no database rows, no config keys.
-/// Changing a tier's limit means changing a constant and running a migration if needed.
+/// To change a wedding's plan, call <see cref="Wedding.ChangePlan"/> on the aggregate.
+/// Plan upgrades are driven by the Subscriptions module via integration events —
+/// limits here are never adjusted via database migrations or configuration values.
 /// </summary>
 public static class WeddingPlanLimits
 {

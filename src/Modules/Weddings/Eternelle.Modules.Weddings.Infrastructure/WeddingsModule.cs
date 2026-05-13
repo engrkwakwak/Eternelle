@@ -88,8 +88,10 @@ public static class WeddingsModule
         services.AddOptions<PhotoStorageOptions>()
             .Bind(configuration.GetSection(PhotoStorageOptions.SectionName))
             .Validate(opts => !string.IsNullOrWhiteSpace(opts.ServiceUrl), "PhotoStorage:ServiceUrl must be provided")
+            .Validate(opts => !string.IsNullOrWhiteSpace(opts.PublicUrl), "PhotoStorage:PublicUrl must be provided")
             .Validate(opts => !string.IsNullOrWhiteSpace(opts.AccessKey), "PhotoStorage:AccessKey must be provided")
             .Validate(opts => !string.IsNullOrWhiteSpace(opts.SecretKey), "PhotoStorage:SecretKey must be provided")
+            .Validate(opts => !string.IsNullOrWhiteSpace(opts.BucketName), "PhotoStorage:BucketName must be provided")
             .ValidateOnStart();
 
         services.Configure<OutboxOptions>(configuration.GetSection("Weddings:Outbox"));

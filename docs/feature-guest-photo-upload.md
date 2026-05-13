@@ -10,7 +10,7 @@ Guests scan a QR code at the wedding and upload photos directly from their phone
 
 The upload flow is split into two steps to support bulk uploads efficiently. Instead of routing file bytes through the API server, guests upload directly to the CDN. The server only issues presigned URLs and stores the resulting CDN URLs as metadata.
 
-```
+```text
 Guest scans QR code
        │
        ▼
@@ -55,6 +55,7 @@ All upload endpoints are **public** (no JWT required). Access is controlled by t
 Fetch context needed to render the upload UI.
 
 **Response `200 OK`**
+
 ```json
 {
   "weddingId": "018f1a2b-...",
@@ -62,7 +63,7 @@ Fetch context needed to render the upload UI.
 }
 ```
 
-> ⚠️ `uploaderNameRequired` is currently hardcoded `false`. It will be driven by `SnapShareConfig.UploaderNameRequired` once that field is added to the domain.
+`uploaderNameRequired` is driven by `SnapShareConfig.UploaderNameRequired` on the wedding's snap-share configuration. The couple sets this via `PUT /weddings/{weddingId}/snap-share`.
 
 **Response `404 Not Found`** — token is invalid or expired. The same error is returned whether the token never existed or the wedding was deleted. This is intentional — do not distinguish the two cases.
 
@@ -73,6 +74,7 @@ Fetch context needed to render the upload UI.
 Step 1. Request presigned upload slots from the server.
 
 **Request body**
+
 ```json
 {
   "count": 5
@@ -84,6 +86,7 @@ Step 1. Request presigned upload slots from the server.
 | `count` | `int` | Required. Min `1`, max `30` per request. |
 
 **Response `200 OK`**
+
 ```json
 {
   "uploads": [
@@ -119,6 +122,7 @@ Step 2. Register photos after uploading to the CDN.
 **Rate limit:** 10 requests per minute per IP address. Returns `429 Too Many Requests` when exceeded.
 
 **Request body**
+
 ```json
 {
   "photos": [
@@ -140,6 +144,7 @@ Step 2. Register photos after uploading to the CDN.
 | `heightPx`     | `int`    | Optional. Must be > 0 if provided. Read from the file.       |
 
 **Response `201 Created`**
+
 ```json
 {
   "photoIds": [
@@ -172,7 +177,7 @@ If the plan limit is hit **after** the fast-path check (e.g. due to concurrent u
 
 The `uploadToken` is a `Guid` stored on `SnapShareConfig`. It is embedded in the QR code URL:
 
-```
+```text
 https://app.eternelle.ph/photos/upload?token={uploadToken}
 ```
 
@@ -184,7 +189,7 @@ The couple can **regenerate** the token via their dashboard (`POST /weddings/{we
 
 Approved photos are served at:
 
-```
+```text
 GET /weddings/{weddingId}/photos/feed
 ```
 
@@ -261,7 +266,7 @@ The photo limit check runs in two places:
 
 ### Upload Slot Store
 
-`RedisUploadSlotStore` uses `IDistributedCache` (backed by the existing Redis instance). Slot TTL is 15 minutes. The get-then-delete is not atomic — the tiny race window between `GetStringAsync` and `RemoveAsync` could theoretically allow a slot to be redeemed twice in a concurrent scenario. For a wedding photo app this is acceptable. If stricter guarantees are needed, replace with a Lua script via `IConnectionMultiplexer`.
+`RedisUploadSlotStore` uses `IConnectionMultiplexer` directly (backed by the existing Redis instance). Slot TTL is 15 minutes. Redemption uses Redis `GETDEL` (`StringGetDeleteAsync`) which atomically returns and removes the key in a single round-trip — a slot can never be redeemed twice, even under concurrent requests.
 
 ### Why Redis for slots?
 
@@ -269,6 +274,5 @@ Without the slot store, any client knowing a CDN URL (e.g. by guessing or observ
 
 ### Known TODOs
 
-- `SnapShareConfig.UploaderNameRequired` — field not yet on the domain. The `GET /photos/upload` context endpoint always returns `false` until this is added (domain → migration → UpdateSnapShareConfig update).
 - Thumbnail URLs — currently `null` on all registered photos. Thumbnails should be CDN-derived via URL transformation parameters (e.g. Cloudflare Image Resizing). No separate upload step needed.
 - Bulk download endpoint (`GET /weddings/{weddingId}/photos/download`) — Plus tier only. Should zip all approved photos and return a signed download URL.

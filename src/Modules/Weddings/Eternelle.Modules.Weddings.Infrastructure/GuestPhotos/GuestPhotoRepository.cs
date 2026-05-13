@@ -93,6 +93,15 @@ internal sealed class GuestPhotoRepository(WeddingsDbContext context) : IGuestPh
         int planLimit,
         CancellationToken ct = default)
     {
+        // Guard against mixed-wedding batches — EnforcePhotoLimitAsync runs per weddingId,
+        // so a photo from a different wedding would skew the count and potentially mark
+        // the wrong photos as OverLimit.
+        if (photos.Any(p => p.WeddingId != weddingId))
+        {
+            throw new InvalidOperationException(
+                "All photos in a batch must belong to the same wedding as the provided weddingId.");
+        }
+
         await using IDbContextTransaction tx = await context.Database.BeginTransactionAsync(ct);
 
         context.GuestPhotos.AddRange(photos);

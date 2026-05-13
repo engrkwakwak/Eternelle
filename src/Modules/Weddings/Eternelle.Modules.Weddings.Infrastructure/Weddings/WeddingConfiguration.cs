@@ -33,9 +33,9 @@ internal sealed class WeddingConfiguration : IEntityTypeConfiguration<Wedding>
         // HasConversion<int>() maps the enum to its underlying integer value.
         // HasDefaultValue must use the CLR enum value, not the raw int — EF Core
         // applies the converter before comparing, so passing 0 here throws at design time.
+        // HasColumnName is omitted — UseSnakeCaseNamingConvention already maps Plan → "plan".
         builder.Property(w => w.Plan)
             .HasConversion<int>()
-            .HasColumnName("plan")
             .IsRequired()
             .HasDefaultValue(WeddingPlan.Free);
 

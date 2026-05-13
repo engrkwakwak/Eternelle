@@ -36,7 +36,7 @@ internal sealed class RegisterGuestPhotosEndpoint : IEndpoint
         {
             var command = new RegisterGuestPhotosCommand(
                 token,
-                request.Photos
+                (request.Photos ?? [])
                     .Select(p => new PhotoRegistration(p.SlotId, p.UploaderName, p.WidthPx, p.HeightPx))
                     .ToList());
 
