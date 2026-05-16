@@ -143,7 +143,7 @@ Step 2. Register photos after uploading to the CDN.
 | `widthPx`      | `int`    | Optional. Must be > 0 if provided. Read from the file.       |
 | `heightPx`     | `int`    | Optional. Must be > 0 if provided. Read from the file.       |
 
-**Response `201 Created`**
+**Response `200 OK`**
 
 ```json
 {

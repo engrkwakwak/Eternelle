@@ -51,6 +51,13 @@ internal sealed class RegisterGuestPhotosCommandHandler(
         // preventing orphaned CDN uploads that can never be registered.
         IReadOnlyList<Guid> slotIds = command.Photos.Select(r => r.SlotId).ToList();
 
+        // Reject duplicates before touching Redis — a duplicate SlotId would cause one CDN
+        // upload to be registered as two separate GuestPhoto records.
+        if (new HashSet<Guid>(slotIds).Count != slotIds.Count)
+        {
+            return Result.Failure<IReadOnlyList<Guid>>(GuestPhotoErrors.InvalidUploadSlot);
+        }
+
         IReadOnlyDictionary<Guid, string>? cdnUrls =
             await uploadSlotStore.RedeemManyAsync(slotIds, cancellationToken);
 

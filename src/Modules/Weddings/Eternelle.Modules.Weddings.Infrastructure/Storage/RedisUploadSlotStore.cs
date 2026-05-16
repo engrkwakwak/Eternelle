@@ -57,6 +57,11 @@ internal sealed class RedisUploadSlotStore(IConnectionMultiplexer redis) : IUplo
         if (slotIds.Count == 0)
             return new Dictionary<Guid, string>(0);
 
+        // Defensive guard — duplicate IDs would cause the Lua script to DELETE a key on the
+        // second pass that was already removed, and would silently map two photos to one upload.
+        if (new HashSet<Guid>(slotIds).Count != slotIds.Count)
+            return null;
+
         RedisKey[] keys = [.. slotIds.Select(id => Key(id))];
 
         RedisResult result = await Db.ScriptEvaluateAsync(RedeemManyScript, keys);
