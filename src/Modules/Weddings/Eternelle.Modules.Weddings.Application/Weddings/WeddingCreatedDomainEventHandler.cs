@@ -16,7 +16,8 @@ internal sealed class WeddingCreatedDomainEventHandler(
 
         if (wedding is null)
         {
-            return;
+            throw new InvalidOperationException(
+                $"Wedding {domainEvent.WeddingId} not found when handling {nameof(WeddingCreatedDomainEvent)}.");
         }
 
         await eventBus.PublishAsync(

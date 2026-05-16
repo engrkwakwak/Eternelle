@@ -1,3 +1,4 @@
+using Eternelle.Modules.Weddings.Domain.Shared;
 using FluentValidation;
 
 namespace Eternelle.Modules.Weddings.Application.Weddings.AddPartner;
@@ -13,9 +14,11 @@ internal sealed class AddPartnerCommandValidator : AbstractValidator<AddPartnerC
             .InclusiveBetween(1, 2);
 
         RuleFor(c => c.FirstName)
-            .NotEmpty();
+            .NotEmpty()
+            .MaximumLength(PersonFirstName.MaxLength);
 
         RuleFor(c => c.LastName)
-            .NotEmpty();
+            .NotEmpty()
+            .MaximumLength(PersonLastName.MaxLength);
     }
 }

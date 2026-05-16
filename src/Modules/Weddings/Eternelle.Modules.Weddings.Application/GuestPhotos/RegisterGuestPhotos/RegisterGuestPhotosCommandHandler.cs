@@ -84,7 +84,12 @@ internal sealed class RegisterGuestPhotosCommandHandler(
         List<GuestPhoto> photos = [];
         foreach (PhotoRegistration r in command.Photos)
         {
-            Result<ImageUrl> srcUrlResult = ImageUrl.Create(cdnUrls[r.SlotId]);
+            if (!cdnUrls.TryGetValue(r.SlotId, out string? cdnUrl))
+            {
+                return Result.Failure<IReadOnlyList<Guid>>(GuestPhotoErrors.InvalidUploadSlot);
+            }
+
+            Result<ImageUrl> srcUrlResult = ImageUrl.Create(cdnUrl);
             if (srcUrlResult.IsFailure)
             {
                 return Result.Failure<IReadOnlyList<Guid>>(srcUrlResult.Error);

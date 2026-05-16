@@ -8,7 +8,7 @@ This document describes the conventions for all modules in Eternelle. Follow it 
 
 A module is composed of five projects:
 
-```
+```text
 src/Modules/{Name}/
   Eternelle.Modules.{Name}.Domain/           — Entities, VOs, domain events, repository interfaces
   Eternelle.Modules.{Name}.Application/      — Commands, queries, handlers, validators, domain event handlers
@@ -39,7 +39,7 @@ Violating this graph creates circular dependencies and leaks module internals.
 
 Integration event flow (Pattern B — load in handler):
 
-```
+```text
 Domain event raised in aggregate
   → DomainEventHandler<TEvent> (in Application)
       → loads aggregate from repository to get full state

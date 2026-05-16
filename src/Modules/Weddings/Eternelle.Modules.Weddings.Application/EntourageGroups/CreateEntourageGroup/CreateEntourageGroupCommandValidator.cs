@@ -1,3 +1,4 @@
+using Eternelle.Modules.Weddings.Domain.EntourageGroups;
 using FluentValidation;
 
 namespace Eternelle.Modules.Weddings.Application.EntourageGroups.CreateEntourageGroup;
@@ -10,7 +11,12 @@ internal sealed class CreateEntourageGroupCommandValidator : AbstractValidator<C
             .NotEmpty();
 
         RuleFor(c => c.Label)
-            .NotEmpty();
+            .NotEmpty()
+            .MaximumLength(GroupLabel.MaxLength);
+
+        RuleFor(c => c.Subtitle)
+            .MaximumLength(GroupSubtitle.MaxLength)
+            .When(c => c.Subtitle is not null);
 
         RuleFor(c => c.GroupType)
             .InclusiveBetween(1, 11)
