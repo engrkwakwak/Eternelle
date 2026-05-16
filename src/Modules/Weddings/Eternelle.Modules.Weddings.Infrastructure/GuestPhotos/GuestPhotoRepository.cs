@@ -46,6 +46,12 @@ internal sealed class GuestPhotoRepository(WeddingsDbContext context) : IGuestPh
             .CountAsync(p => p.WeddingId == weddingId, ct);
     }
 
+    public async Task<int> CountActiveByWeddingIdAsync(WeddingId weddingId, CancellationToken ct = default)
+    {
+        return await context.GuestPhotos
+            .CountAsync(p => p.WeddingId == weddingId && p.Status != GuestPhotoStatus.OverLimit, ct);
+    }
+
     public async Task EnforcePhotoLimitAsync(
         WeddingId weddingId,
         int limit,
@@ -71,15 +77,31 @@ internal sealed class GuestPhotoRepository(WeddingsDbContext context) : IGuestPh
             ct);
     }
 
-    public async Task InsertAndEnforceAsync(
-        GuestPhoto photo,
+    public async Task InsertManyAndEnforceAsync(
+        IReadOnlyList<GuestPhoto> photos,
         WeddingId weddingId,
         int planLimit,
         CancellationToken ct = default)
     {
+        // Guard against mixed-wedding batches — EnforcePhotoLimitAsync runs per weddingId,
+        // so a photo from a different wedding would skew the count and potentially mark
+        // the wrong photos as OverLimit.
+        if (photos.Any(p => p.WeddingId != weddingId))
+        {
+            throw new InvalidOperationException(
+                "All photos in a batch must belong to the same wedding as the provided weddingId.");
+        }
+
         await using IDbContextTransaction tx = await context.Database.BeginTransactionAsync(ct);
 
-        context.GuestPhotos.Add(photo);
+        // Acquire a row-level lock on the wedding profile to serialize concurrent photo
+        // insertions for the same wedding. This ensures the enforce query sees all photos
+        // from competing transactions before deciding which to mark as OverLimit.
+        await context.Database.ExecuteSqlAsync(
+            $"SELECT 1 FROM wedding.profiles WHERE id = {weddingId.Value} FOR UPDATE",
+            ct);
+
+        context.GuestPhotos.AddRange(photos);
         await context.SaveChangesAsync(ct);
 
         await EnforcePhotoLimitAsync(weddingId, planLimit, ct);
@@ -87,9 +109,9 @@ internal sealed class GuestPhotoRepository(WeddingsDbContext context) : IGuestPh
         await tx.CommitAsync(ct);
     }
 
-    public void Insert(GuestPhoto photo)
+    public void InsertMany(IReadOnlyList<GuestPhoto> photos)
     {
-        context.GuestPhotos.Add(photo);
+        context.GuestPhotos.AddRange(photos);
     }
 
     public void Update(GuestPhoto photo)

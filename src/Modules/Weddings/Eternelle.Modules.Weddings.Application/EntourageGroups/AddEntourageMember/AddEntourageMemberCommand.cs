@@ -3,6 +3,7 @@ using Eternelle.Common.Application.Messaging;
 namespace Eternelle.Modules.Weddings.Application.EntourageGroups.AddEntourageMember;
 
 public sealed record AddEntourageMemberCommand(
+    Guid WeddingId,
     Guid EntourageGroupId,
     string Name,
     string Role,

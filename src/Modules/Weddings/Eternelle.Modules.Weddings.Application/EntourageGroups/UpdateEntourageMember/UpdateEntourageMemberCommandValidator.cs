@@ -7,6 +7,12 @@ internal sealed class UpdateEntourageMemberCommandValidator : AbstractValidator<
 {
     public UpdateEntourageMemberCommandValidator()
     {
+        RuleFor(c => c.WeddingId)
+            .NotEmpty();
+
+        RuleFor(c => c.EntourageGroupId)
+            .NotEmpty();
+
         RuleFor(c => c.EntourageMemberId)
             .NotEmpty();
 

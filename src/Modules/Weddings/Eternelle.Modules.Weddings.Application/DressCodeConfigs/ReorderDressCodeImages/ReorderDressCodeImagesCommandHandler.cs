@@ -2,6 +2,7 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Modules.Weddings.Domain.DressCodeConfigs;
+using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Application.DressCodeConfigs.ReorderDressCodeImages;
 
@@ -17,7 +18,7 @@ internal sealed class ReorderDressCodeImagesCommandHandler(
 
         DressCodeConfig? config = await dressCodeConfigRepository.GetWithDetailsAsync(configId, cancellationToken);
 
-        if (config is null)
+        if (config is null || config.WeddingId != new WeddingId(command.WeddingId))
         {
             return Result.Failure(DressCodeConfigErrors.NotFound(configId));
         }

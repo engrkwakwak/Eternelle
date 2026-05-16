@@ -12,6 +12,8 @@ namespace Eternelle.Modules.Weddings.Domain.Weddings;
 /// </summary>
 public sealed class SnapShareConfig : Entity
 {
+    public static readonly int MaxCtaTextLength = 200;
+
     private SnapShareConfig()
     {
     }
@@ -48,12 +50,19 @@ public sealed class SnapShareConfig : Entity
     /// </summary>
     public SnapShareModerationMode ModerationMode { get; private set; }
 
+    /// <summary>
+    /// When <c>true</c>, the upload UI requires guests to enter their name before uploading.
+    /// When <c>false</c>, the name field is shown but optional.
+    /// </summary>
+    public bool UploaderNameRequired { get; private set; }
+
     internal static SnapShareConfig Create(
         WeddingId weddingId,
         InstagramHandle? instagramHandle,
         string? ctaText,
         bool enabled,
-        SnapShareModerationMode moderationMode)
+        SnapShareModerationMode moderationMode,
+        bool uploaderNameRequired)
     {
         return new SnapShareConfig
         {
@@ -63,7 +72,8 @@ public sealed class SnapShareConfig : Entity
             CtaText = ctaText,
             Enabled = enabled,
             UploadToken = null,
-            ModerationMode = moderationMode
+            ModerationMode = moderationMode,
+            UploaderNameRequired = uploaderNameRequired
         };
     }
 
@@ -71,12 +81,14 @@ public sealed class SnapShareConfig : Entity
         InstagramHandle? instagramHandle,
         string? ctaText,
         bool enabled,
-        SnapShareModerationMode moderationMode)
+        SnapShareModerationMode moderationMode,
+        bool uploaderNameRequired)
     {
         InstagramHandle = instagramHandle;
         CtaText = ctaText;
         Enabled = enabled;
         ModerationMode = moderationMode;
+        UploaderNameRequired = uploaderNameRequired;
     }
 
     internal void RegenerateToken()

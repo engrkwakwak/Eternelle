@@ -562,6 +562,12 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                         .HasColumnType("text")
                         .HasColumnName("hashtag");
 
+                    b.Property<int>("Plan")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("plan");
+
                     b.Property<int>("SchemaVersion")
                         .HasColumnType("integer")
                         .HasColumnName("schema_version");
@@ -872,6 +878,12 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                             b1.Property<Guid?>("UploadToken")
                                 .HasColumnType("uuid")
                                 .HasColumnName("upload_token");
+
+                            b1.Property<bool>("UploaderNameRequired")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("boolean")
+                                .HasDefaultValue(false)
+                                .HasColumnName("uploader_name_required");
 
                             b1.Property<Guid>("WeddingId")
                                 .HasColumnType("uuid")

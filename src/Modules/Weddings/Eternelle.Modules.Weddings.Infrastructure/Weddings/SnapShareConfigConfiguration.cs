@@ -39,6 +39,10 @@ internal static class SnapShareConfigConfiguration
             .IsRequired()
             .HasDefaultValue(SnapShareModerationMode.Auto);
 
+        snapShare.Property(s => s.UploaderNameRequired)
+            .IsRequired()
+            .HasDefaultValue(false);
+
         snapShare.HasIndex(s => s.WeddingId)
             .IsUnique()
             .HasDatabaseName("ix_snap_share_configs_wedding_id");

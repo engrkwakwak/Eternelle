@@ -15,15 +15,20 @@ public interface IGuestPhotoRepository
 
     Task<int> CountByWeddingIdAsync(WeddingId weddingId, CancellationToken ct = default);
 
+    /// <summary>
+    /// Returns the number of photos that are not <see cref="GuestPhotoStatus.OverLimit"/>.
+    /// Used for pre-upload quota checks so that already-demoted photos do not block future uploads.
+    /// </summary>
+    Task<int> CountActiveByWeddingIdAsync(WeddingId weddingId, CancellationToken ct = default);
+
     Task EnforcePhotoLimitAsync(WeddingId weddingId, int limit, CancellationToken ct = default);
 
     /// <summary>
-    /// Inserts <paramref name="photo"/> and enforces the plan cap in a single transaction,
-    /// so no committed photo can exist outside the limit window.
+    /// Inserts all <paramref name="photos"/> and enforces the plan cap in a single transaction.
     /// </summary>
-    Task InsertAndEnforceAsync(GuestPhoto photo, WeddingId weddingId, int planLimit, CancellationToken ct = default);
+    Task InsertManyAndEnforceAsync(IReadOnlyList<GuestPhoto> photos, WeddingId weddingId, int planLimit, CancellationToken ct = default);
 
-    void Insert(GuestPhoto photo);
+    void InsertMany(IReadOnlyList<GuestPhoto> photos);
 
     void Update(GuestPhoto photo);
 

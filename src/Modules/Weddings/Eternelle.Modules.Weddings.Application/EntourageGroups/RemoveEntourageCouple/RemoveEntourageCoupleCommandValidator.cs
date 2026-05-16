@@ -6,6 +6,12 @@ internal sealed class RemoveEntourageCoupleCommandValidator : AbstractValidator<
 {
     public RemoveEntourageCoupleCommandValidator()
     {
+        RuleFor(c => c.WeddingId)
+            .NotEmpty();
+
+        RuleFor(c => c.EntourageGroupId)
+            .NotEmpty();
+
         RuleFor(c => c.EntourageCoupleId)
             .NotEmpty();
     }

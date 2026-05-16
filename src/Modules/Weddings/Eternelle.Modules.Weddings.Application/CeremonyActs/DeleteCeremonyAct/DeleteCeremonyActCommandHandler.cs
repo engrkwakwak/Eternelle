@@ -2,6 +2,7 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Modules.Weddings.Domain.CeremonyActs;
+using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Application.CeremonyActs.DeleteCeremonyAct;
 
@@ -17,7 +18,7 @@ internal sealed class DeleteCeremonyActCommandHandler(
 
         CeremonyAct? act = await ceremonyActRepository.GetAsync(ceremonyActId, cancellationToken);
 
-        if (act is null)
+        if (act is null || act.WeddingId != new WeddingId(command.WeddingId))
         {
             return Result.Failure(CeremonyActErrors.NotFound(ceremonyActId));
         }

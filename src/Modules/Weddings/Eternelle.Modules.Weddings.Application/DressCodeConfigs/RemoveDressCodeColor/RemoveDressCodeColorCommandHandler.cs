@@ -2,6 +2,7 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Modules.Weddings.Domain.DressCodeConfigs;
+using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Application.DressCodeConfigs.RemoveDressCodeColor;
 
@@ -19,7 +20,7 @@ internal sealed class RemoveDressCodeColorCommandHandler(
             colorId,
             cancellationToken);
 
-        if (config is null)
+        if (config is null || config.WeddingId != new WeddingId(command.WeddingId) || config.Id != new DressCodeConfigId(command.DressCodeConfigId))
         {
             return Result.Failure(DressCodeConfigErrors.ColorNotFound(colorId));
         }

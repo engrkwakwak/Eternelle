@@ -3,7 +3,7 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Infrastructure.Outbox;
 using Eternelle.Common.Presentation.Endpoints;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
-using Eternelle.Modules.Weddings.Application.Abstractions.Subscriptions;
+using Eternelle.Modules.Weddings.Application.Abstractions.Storage;
 using Eternelle.Modules.Weddings.Domain.CeremonyActs;
 using Eternelle.Modules.Weddings.Domain.DressCodeConfigs;
 using Eternelle.Modules.Weddings.Domain.EntourageGroups;
@@ -25,7 +25,7 @@ using Eternelle.Modules.Weddings.Infrastructure.Inbox;
 using Eternelle.Modules.Weddings.Infrastructure.Outbox;
 using Eternelle.Modules.Weddings.Infrastructure.Reminders;
 using Eternelle.Modules.Weddings.Infrastructure.StoryMoments;
-using Eternelle.Modules.Weddings.Infrastructure.Subscriptions;
+using Eternelle.Modules.Weddings.Infrastructure.Storage;
 using Eternelle.Modules.Weddings.Infrastructure.VendorCredits;
 using Eternelle.Modules.Weddings.Infrastructure.Weddings;
 using Microsoft.EntityFrameworkCore;
@@ -66,7 +66,8 @@ public static class WeddingsModule
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<WeddingsDbContext>());
 
-        services.AddScoped<ISubscriptionPlanService, StubSubscriptionPlanService>();
+        services.AddSingleton<IPhotoStorageService, S3PhotoStorageService>();
+        services.AddScoped<IUploadSlotStore, RedisUploadSlotStore>();
 
         services.AddScoped<IWeddingRepository, WeddingRepository>();
         services.AddScoped<IEntourageGroupRepository, EntourageGroupRepository>();
@@ -78,6 +79,20 @@ public static class WeddingsModule
         services.AddScoped<ICeremonyActRepository, CeremonyActRepository>();
         services.AddScoped<IVendorCreditRepository, VendorCreditRepository>();
         services.AddScoped<IReminderRepository, ReminderRepository>();
+
+        services.AddOptions<Application.Weddings.SnapShareOptions>()
+            .Bind(configuration.GetSection("Weddings:SnapShare"))
+            .Validate(opts => !string.IsNullOrWhiteSpace(opts.UploadBaseUrl), "UploadBaseUrl must be provided")
+            .ValidateOnStart();
+
+        services.AddOptions<PhotoStorageOptions>()
+            .Bind(configuration.GetSection(PhotoStorageOptions.SectionName))
+            .Validate(opts => !string.IsNullOrWhiteSpace(opts.ServiceUrl), "PhotoStorage:ServiceUrl must be provided")
+            .Validate(opts => !string.IsNullOrWhiteSpace(opts.PublicUrl), "PhotoStorage:PublicUrl must be provided")
+            .Validate(opts => !string.IsNullOrWhiteSpace(opts.AccessKey), "PhotoStorage:AccessKey must be provided")
+            .Validate(opts => !string.IsNullOrWhiteSpace(opts.SecretKey), "PhotoStorage:SecretKey must be provided")
+            .Validate(opts => !string.IsNullOrWhiteSpace(opts.BucketName), "PhotoStorage:BucketName must be provided")
+            .ValidateOnStart();
 
         services.Configure<OutboxOptions>(configuration.GetSection("Weddings:Outbox"));
 

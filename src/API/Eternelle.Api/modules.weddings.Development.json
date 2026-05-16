@@ -1,5 +1,18 @@
 {
   "Weddings": {
+    "SnapShare": {
+      "UploadBaseUrl": "http://localhost:5173/snap-share"
+    },
+    "Subscription": {
+      "PhotoUploadLimit": null
+    },
+    "PhotoStorage": {
+      "ServiceUrl": "http://eternelle.minio:9000",
+      "PublicUrl": "http://localhost:9000",
+      "AccessKey": "minioadmin",
+      "SecretKey": "minioadmin",
+      "BucketName": "eternelle-photos"
+    },
     "Outbox": {
       "IntervalInSeconds": 5,
       "BatchSize": 20
