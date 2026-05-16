@@ -2,18 +2,11 @@ using Eternelle.Common.Domain;
 
 namespace Eternelle.Modules.Weddings.Domain.Weddings;
 
-public sealed class WeddingPartnerAddedDomainEvent : DomainEvent
+public sealed class WeddingPartnerAddedDomainEvent(WeddingId weddingId, PartnerId partnerId, PartnerNumber partnerNumber) : DomainEvent
 {
-    public WeddingPartnerAddedDomainEvent(WeddingId weddingId, PartnerId partnerId, PartnerNumber partnerNumber)
-    {
-        WeddingId = weddingId;
-        PartnerId = partnerId;
-        PartnerNumber = partnerNumber;
-    }
+    public WeddingId WeddingId { get; init; } = weddingId;
 
-    public WeddingId WeddingId { get; init; }
+    public PartnerId PartnerId { get; init; } = partnerId;
 
-    public PartnerId PartnerId { get; init; }
-
-    public PartnerNumber PartnerNumber { get; init; }
+    public PartnerNumber PartnerNumber { get; init; } = partnerNumber;
 }

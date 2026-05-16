@@ -3,15 +3,9 @@ using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Domain.GiftOptions;
 
-public sealed class GiftOptionCreatedDomainEvent : DomainEvent
+public sealed class GiftOptionCreatedDomainEvent(GiftOptionId giftOptionId, WeddingId weddingId) : DomainEvent
 {
-    public GiftOptionCreatedDomainEvent(GiftOptionId giftOptionId, WeddingId weddingId)
-    {
-        GiftOptionId = giftOptionId;
-        WeddingId = weddingId;
-    }
+    public GiftOptionId GiftOptionId { get; init; } = giftOptionId;
 
-    public GiftOptionId GiftOptionId { get; init; }
-
-    public WeddingId WeddingId { get; init; }
+    public WeddingId WeddingId { get; init; } = weddingId;
 }
