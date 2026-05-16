@@ -1,10 +1,7 @@
-namespace Eternelle.Common.Domain.ValueObjects;
+using Eternelle.Common.Domain;
 
-/// <summary>
-/// Value object for short titles or names of scheduled or listed items
-/// (ceremony acts, gift options, reminders, story moments). Up to 200 characters,
-/// trimmed, non-empty.
-/// </summary>
+namespace Eternelle.Modules.Weddings.Domain.Shared;
+
 public sealed record ActivityName
 {
     public static readonly int MaxLength = 200;
@@ -35,5 +32,5 @@ public sealed record ActivityName
 
     public override string ToString() => Value;
 
-    public static ActivityName FromPersistence(string value) => new(value);
+    internal static ActivityName FromPersistence(string value) => new(value);
 }

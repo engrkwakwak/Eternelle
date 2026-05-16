@@ -1,4 +1,5 @@
 using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Domain.EntourageGroups;
@@ -23,11 +24,6 @@ public sealed class EntourageMember : Entity
     {
     }
 
-    public static readonly int MaxNameLength = 150;
-    public static readonly int MaxRoleLength = 100;
-    public static readonly int MaxMessageLength = 1000;
-    public static readonly int MaxNoteLength = 500;
-
     public EntourageMemberId Id { get; private set; }
 
     /// <summary>
@@ -38,26 +34,26 @@ public sealed class EntourageMember : Entity
 
     public EntourageGroupId GroupId { get; private set; }
 
-    public string Name { get; private set; }
+    public PersonName Name { get; private set; }
 
     /// <summary>
     /// Role within this group (e.g. "Ninong", "Best Man", "Maid of Honor").
     /// Free text — no fixed vocabulary; the group type provides semantic meaning.
     /// </summary>
-    public string Role { get; private set; }
+    public PersonRole Role { get; private set; }
 
-    public string? ImageUrl { get; private set; }
+    public ImageUrl? ImageUrl { get; private set; }
 
     /// <summary>
     /// Optional message from this member (e.g. a short congratulatory note).
     /// </summary>
-    public string? Message { get; private set; }
+    public PersonMessage? Message { get; private set; }
 
     /// <summary>
     /// Optional internal note visible only to the couple (e.g. "Needs dietary reminder").
     /// Not rendered to guests.
     /// </summary>
-    public string? Note { get; private set; }
+    public InternalNote? Note { get; private set; }
 
     /// <summary>
     /// Seed for deterministic generative avatar placeholder when ImageUrl is null.
@@ -72,11 +68,11 @@ public sealed class EntourageMember : Entity
     internal static EntourageMember Create(
         WeddingId weddingId,
         EntourageGroupId groupId,
-        string name,
-        string role,
-        string? imageUrl,
-        string? message,
-        string? note,
+        PersonName name,
+        PersonRole role,
+        ImageUrl? imageUrl,
+        PersonMessage? message,
+        InternalNote? note,
         int? seed,
         int displayOrder)
     {
@@ -98,11 +94,11 @@ public sealed class EntourageMember : Entity
     // ─── Behaviour ──────────────────────────────────────────────────────────────
 
     internal void Update(
-        string name,
-        string role,
-        string? imageUrl,
-        string? message,
-        string? note,
+        PersonName name,
+        PersonRole role,
+        ImageUrl? imageUrl,
+        PersonMessage? message,
+        InternalNote? note,
         int? seed)
     {
         Name = name;

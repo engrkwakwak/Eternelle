@@ -34,9 +34,21 @@ internal sealed class UpdateSnapShareConfigCommandHandler(
             instagramHandle = handleResult.Value;
         }
 
+        CallToAction? callToAction = null;
+        if (command.CtaText is not null)
+        {
+            Result<CallToAction> ctaResult = CallToAction.Create(command.CtaText);
+            if (ctaResult.IsFailure)
+            {
+                return Result.Failure(ctaResult.Error);
+            }
+
+            callToAction = ctaResult.Value;
+        }
+
         wedding.ConfigureSnapShare(
             instagramHandle,
-            command.CtaText,
+            callToAction,
             command.Enabled,
             command.ModerationMode,
             command.UploaderNameRequired,

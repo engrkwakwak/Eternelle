@@ -1,10 +1,7 @@
-namespace Eternelle.Common.Domain.ValueObjects;
+using Eternelle.Common.Domain;
 
-/// <summary>
-/// Value object representing an external web URL (e.g. vendor website, gift registry link).
-/// Must be an absolute http or https URI — relative paths are rejected because these
-/// values are rendered as user-facing outbound links.
-/// </summary>
+namespace Eternelle.Modules.Weddings.Domain.Shared;
+
 public sealed record WebUrl
 {
     public static readonly int MaxLength = 2048;
@@ -41,5 +38,5 @@ public sealed record WebUrl
 
     public override string ToString() => Value;
 
-    public static WebUrl FromPersistence(string value) => new(value);
+    internal static WebUrl FromPersistence(string value) => new(value);
 }

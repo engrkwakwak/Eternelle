@@ -2,6 +2,7 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Modules.Weddings.Domain.Reminders;
+using Eternelle.Modules.Weddings.Domain.Shared;
 
 namespace Eternelle.Modules.Weddings.Application.Reminders.UpdateReminder;
 
@@ -22,7 +23,25 @@ internal sealed class UpdateReminderCommandHandler(
             return Result.Failure(ReminderErrors.NotFound(reminderId));
         }
 
-        reminder.Update(command.Icon, command.Title, command.Body);
+        Result<IconIdentifier> iconResult = IconIdentifier.Create(command.Icon);
+        if (iconResult.IsFailure)
+        {
+            return Result.Failure(iconResult.Error);
+        }
+
+        Result<ActivityName> titleResult = ActivityName.Create(command.Title);
+        if (titleResult.IsFailure)
+        {
+            return Result.Failure(titleResult.Error);
+        }
+
+        Result<RichDescription> bodyResult = RichDescription.Create(command.Body);
+        if (bodyResult.IsFailure)
+        {
+            return Result.Failure(bodyResult.Error);
+        }
+
+        reminder.Update(iconResult.Value, titleResult.Value, bodyResult.Value);
 
         reminderRepository.Update(reminder);
 

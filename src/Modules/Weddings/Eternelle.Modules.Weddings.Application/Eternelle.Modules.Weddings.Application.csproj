@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Eternelle.Modules.Weddings.Domain\Eternelle.Modules.Weddings.Domain.csproj" />
+    <ProjectReference Include="..\Eternelle.Modules.Weddings.IntegrationEvents\Eternelle.Modules.Weddings.IntegrationEvents.csproj" />
     <ProjectReference Include="..\..\..\Common\Eternelle.Common.Application\Eternelle.Common.Application.csproj" />
   </ItemGroup>
 

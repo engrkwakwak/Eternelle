@@ -1,7 +1,6 @@
 using Eternelle.Common.Application.Clock;
 using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
-using Eternelle.Common.Domain.ValueObjects;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;

@@ -1,4 +1,3 @@
-using Eternelle.Common.Domain.ValueObjects;
 using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 using Microsoft.EntityFrameworkCore;

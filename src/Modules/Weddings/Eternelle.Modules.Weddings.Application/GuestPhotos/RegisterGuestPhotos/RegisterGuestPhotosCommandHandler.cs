@@ -4,6 +4,7 @@ using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Modules.Weddings.Application.Abstractions.Storage;
 using Eternelle.Modules.Weddings.Domain.GuestPhotos;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Application.GuestPhotos.RegisterGuestPhotos;
@@ -80,16 +81,36 @@ internal sealed class RegisterGuestPhotosCommandHandler(
 
         DateTime now = dateTimeProvider.UtcNow;
 
-        List<GuestPhoto> photos = [.. command.Photos
-            .Select(r => GuestPhoto.Create(
+        List<GuestPhoto> photos = [];
+        foreach (PhotoRegistration r in command.Photos)
+        {
+            Result<ImageUrl> srcUrlResult = ImageUrl.Create(cdnUrls[r.SlotId]);
+            if (srcUrlResult.IsFailure)
+            {
+                return Result.Failure<IReadOnlyList<Guid>>(srcUrlResult.Error);
+            }
+
+            PersonName? uploaderName = null;
+            if (!string.IsNullOrWhiteSpace(r.UploaderName))
+            {
+                Result<PersonName> uploaderNameResult = PersonName.Create(r.UploaderName);
+                if (uploaderNameResult.IsFailure)
+                {
+                    return Result.Failure<IReadOnlyList<Guid>>(uploaderNameResult.Error);
+                }
+                uploaderName = uploaderNameResult.Value;
+            }
+
+            photos.Add(GuestPhoto.Create(
                 wedding.Id,
-                cdnUrls[r.SlotId],
-                r.UploaderName,
+                srcUrlResult.Value,
+                uploaderName,
                 thumbnailUrl: null,   // thumbnails are CDN-derived via URL params, not a separate upload
                 r.WidthPx,
                 r.HeightPx,
                 initialStatus,
-                now))];
+                now));
+        }
 
         if (planLimit is not null)
         {

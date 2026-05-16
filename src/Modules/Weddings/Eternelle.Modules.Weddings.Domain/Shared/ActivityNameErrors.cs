@@ -1,6 +1,8 @@
-namespace Eternelle.Common.Domain.ValueObjects;
+using Eternelle.Common.Domain;
 
-public static class ActivityNameErrors
+namespace Eternelle.Modules.Weddings.Domain.Shared;
+
+internal static class ActivityNameErrors
 {
     public static readonly Error Empty =
         Error.Problem("ActivityName.Empty", "Name must not be empty");

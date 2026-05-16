@@ -1,10 +1,7 @@
-namespace Eternelle.Common.Domain.ValueObjects;
+using Eternelle.Common.Domain;
 
-/// <summary>
-/// Value object for multi-line descriptive prose (dress code description, story moment body,
-/// reminder body, etc.). Allows up to 2000 characters and rejects empty strings — callers
-/// that allow an absent description should hold a nullable <see cref="RichDescription"/>?.
-/// </summary>
+namespace Eternelle.Modules.Weddings.Domain.Shared;
+
 public sealed record RichDescription
 {
     public static readonly int MaxLength = 2000;
@@ -35,5 +32,5 @@ public sealed record RichDescription
 
     public override string ToString() => Value;
 
-    public static RichDescription FromPersistence(string value) => new(value);
+    internal static RichDescription FromPersistence(string value) => new(value);
 }

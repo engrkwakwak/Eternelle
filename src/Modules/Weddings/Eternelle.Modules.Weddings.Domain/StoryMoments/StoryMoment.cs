@@ -1,4 +1,5 @@
 using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Domain.StoryMoments;
@@ -19,9 +20,6 @@ public sealed class StoryMoment : Entity
     {
     }
 
-    public static readonly int MaxTitleLength = 200;
-    public static readonly int MaxDescriptionLength = 2000;
-
     public StoryMomentId Id { get; private set; }
 
     /// <summary>
@@ -30,7 +28,7 @@ public sealed class StoryMoment : Entity
     /// </summary>
     public WeddingId WeddingId { get; private set; }
 
-    public string Title { get; private set; }
+    public ActivityName Title { get; private set; }
 
     /// <summary>
     /// The date this moment occurred. Nullable — some couples describe a moment
@@ -38,9 +36,9 @@ public sealed class StoryMoment : Entity
     /// </summary>
     public DateOnly? StoryDate { get; private set; }
 
-    public string Description { get; private set; }
+    public RichDescription Description { get; private set; }
 
-    public string? ImageUrl { get; private set; }
+    public ImageUrl? ImageUrl { get; private set; }
 
     public int DisplayOrder { get; private set; }
 
@@ -48,10 +46,10 @@ public sealed class StoryMoment : Entity
 
     public static StoryMoment Create(
         WeddingId weddingId,
-        string title,
+        ActivityName title,
         DateOnly? storyDate,
-        string description,
-        string? imageUrl,
+        RichDescription description,
+        ImageUrl? imageUrl,
         int displayOrder)
     {
         var storyMoment = new StoryMoment
@@ -73,10 +71,10 @@ public sealed class StoryMoment : Entity
     // ─── Behaviour ──────────────────────────────────────────────────────────────
 
     public void Update(
-        string title,
+        ActivityName title,
         DateOnly? storyDate,
-        string description,
-        string? imageUrl)
+        RichDescription description,
+        ImageUrl? imageUrl)
     {
         Title = title;
         StoryDate = storyDate;

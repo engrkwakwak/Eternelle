@@ -11,12 +11,7 @@ internal sealed class CreateGiftOptionCommandValidator : AbstractValidator<Creat
             .NotEmpty();
 
         RuleFor(c => c.Title)
-            .NotEmpty()
-            .MaximumLength(GiftOption.MaxTitleLength);
-
-        RuleFor(c => c.Description)
-            .MaximumLength(GiftOption.MaxDescriptionLength)
-            .When(c => c.Description is not null);
+            .NotEmpty();
 
         RuleFor(c => c.DisplayMode)
             .IsInEnum();
@@ -24,18 +19,6 @@ internal sealed class CreateGiftOptionCommandValidator : AbstractValidator<Creat
         RuleFor(c => c.LinkUrl)
             .NotEmpty()
             .When(c => c.DisplayMode == GiftDisplayMode.Link);
-
-        RuleFor(c => c.AccountName)
-            .MaximumLength(GiftOption.MaxAccountNameLength)
-            .When(c => c.AccountName is not null);
-
-        RuleFor(c => c.AccountNumber)
-            .MaximumLength(GiftOption.MaxAccountNumberLength)
-            .When(c => c.AccountNumber is not null);
-
-        RuleFor(c => c.AccountType)
-            .MaximumLength(GiftOption.MaxAccountTypeLength)
-            .When(c => c.AccountType is not null);
 
         RuleFor(c => c.DisplayOrder)
             .GreaterThanOrEqualTo(0);

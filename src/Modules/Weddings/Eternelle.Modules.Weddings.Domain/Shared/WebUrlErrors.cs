@@ -1,6 +1,8 @@
-namespace Eternelle.Common.Domain.ValueObjects;
+using Eternelle.Common.Domain;
 
-public static class WebUrlErrors
+namespace Eternelle.Modules.Weddings.Domain.Shared;
+
+internal static class WebUrlErrors
 {
     public static readonly Error Empty =
         Error.Problem("WebUrl.Empty", "Web URL must not be empty");

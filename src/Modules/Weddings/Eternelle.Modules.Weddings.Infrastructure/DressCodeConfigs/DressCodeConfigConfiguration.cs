@@ -1,4 +1,5 @@
 using Eternelle.Modules.Weddings.Domain.DressCodeConfigs;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -19,8 +20,9 @@ internal sealed class DressCodeConfigConfiguration : IEntityTypeConfiguration<Dr
             .HasDatabaseName("ix_dress_code_configs_wedding_id");
 
         builder.Property(d => d.Description)
+            .HasConversion(v => v.Value, v => RichDescription.FromPersistence(v))
             .IsRequired()
-            .HasMaxLength(DressCodeConfig.MaxDescriptionLength);
+            .HasMaxLength(RichDescription.MaxLength);
 
         // ─── Colors ──────────────────────────────────────────────────────────────
         builder.OwnsMany(d => d.Colors, DressCodeColorConfiguration.Configure);

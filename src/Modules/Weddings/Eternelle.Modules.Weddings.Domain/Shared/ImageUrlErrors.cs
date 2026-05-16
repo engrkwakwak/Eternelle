@@ -1,6 +1,8 @@
-namespace Eternelle.Common.Domain.ValueObjects;
+using Eternelle.Common.Domain;
 
-public static class ImageUrlErrors
+namespace Eternelle.Modules.Weddings.Domain.Shared;
+
+internal static class ImageUrlErrors
 {
     public static readonly Error Empty =
         Error.Problem("ImageUrl.Empty", "Image URL must not be empty");

@@ -1,6 +1,8 @@
-namespace Eternelle.Common.Domain.ValueObjects;
+using Eternelle.Common.Domain;
 
-public static class RichDescriptionErrors
+namespace Eternelle.Modules.Weddings.Domain.Shared;
+
+internal static class RichDescriptionErrors
 {
     public static readonly Error Empty =
         Error.Problem("RichDescription.Empty", "Description must not be empty");

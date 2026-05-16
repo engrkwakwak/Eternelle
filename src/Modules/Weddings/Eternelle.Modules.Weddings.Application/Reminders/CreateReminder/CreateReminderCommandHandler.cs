@@ -2,6 +2,7 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Modules.Weddings.Domain.Reminders;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Application.Reminders.CreateReminder;
@@ -24,11 +25,29 @@ internal sealed class CreateReminderCommandHandler(
             ? 0
             : existingReminders.Max(r => r.DisplayOrder) + 1;
 
+        Result<IconIdentifier> iconResult = IconIdentifier.Create(command.Icon);
+        if (iconResult.IsFailure)
+        {
+            return Result.Failure<Guid>(iconResult.Error);
+        }
+
+        Result<ActivityName> titleResult = ActivityName.Create(command.Title);
+        if (titleResult.IsFailure)
+        {
+            return Result.Failure<Guid>(titleResult.Error);
+        }
+
+        Result<RichDescription> bodyResult = RichDescription.Create(command.Body);
+        if (bodyResult.IsFailure)
+        {
+            return Result.Failure<Guid>(bodyResult.Error);
+        }
+
         var reminder = Reminder.Create(
             weddingId,
-            command.Icon,
-            command.Title,
-            command.Body,
+            iconResult.Value,
+            titleResult.Value,
+            bodyResult.Value,
             displayOrder);
 
         reminderRepository.Insert(reminder);

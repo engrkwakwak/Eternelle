@@ -1,4 +1,5 @@
 using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Domain.GalleryImages;
@@ -21,9 +22,6 @@ public sealed class GalleryImage : Entity
     {
     }
 
-    public static readonly int MaxAltTextLength = 300;
-    public static readonly int MaxCaptionLength = 500;
-
     public GalleryImageId Id { get; private set; }
 
     /// <summary>
@@ -33,16 +31,15 @@ public sealed class GalleryImage : Entity
     public WeddingId WeddingId { get; private set; }
 
     /// <summary>
-    /// CDN or storage URL of the image. The domain stores, not validates, URLs —
-    /// the application layer is responsible for upload and URL generation.
+    /// CDN or storage URL of the image.
     /// </summary>
-    public string SrcUrl { get; private set; }
+    public ImageUrl SrcUrl { get; private set; }
 
     /// <summary>
     /// Accessible alt text for the image. Required — guests using screen readers
     /// should always receive a description.
     /// </summary>
-    public string AltText { get; private set; }
+    public AccessibilityText AltText { get; private set; }
 
     /// <summary>
     /// Original pixel width. Nullable — not always available at upload time.
@@ -55,7 +52,7 @@ public sealed class GalleryImage : Entity
     /// </summary>
     public int? HeightPx { get; private set; }
 
-    public string? Caption { get; private set; }
+    public ImageCaption? Caption { get; private set; }
 
     public int DisplayOrder { get; private set; }
 
@@ -65,11 +62,11 @@ public sealed class GalleryImage : Entity
 
     public static GalleryImage Create(
         WeddingId weddingId,
-        string srcUrl,
-        string altText,
+        ImageUrl srcUrl,
+        AccessibilityText altText,
         int? widthPx,
         int? heightPx,
-        string? caption,
+        ImageCaption? caption,
         int displayOrder,
         DateTime utcNow)
     {
@@ -94,11 +91,11 @@ public sealed class GalleryImage : Entity
     // ─── Behaviour ──────────────────────────────────────────────────────────────
 
     public void Update(
-        string srcUrl,
-        string altText,
+        ImageUrl srcUrl,
+        AccessibilityText altText,
         int? widthPx,
         int? heightPx,
-        string? caption)
+        ImageCaption? caption)
     {
         SrcUrl = srcUrl;
         AltText = altText;

@@ -1,4 +1,5 @@
 using Eternelle.Modules.Weddings.Domain.CeremonyActs;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -20,14 +21,21 @@ internal sealed class CeremonyActConfiguration : IEntityTypeConfiguration<Ceremo
             .HasDatabaseName("ix_ceremony_acts_wedding_id_display_order");
 
         builder.Property(c => c.Name)
+            .HasConversion(v => v.Value, v => ActivityName.FromPersistence(v))
             .IsRequired()
-            .HasMaxLength(CeremonyAct.MaxNameLength);
+            .HasMaxLength(ActivityName.MaxLength);
 
         builder.Property(c => c.Description)
-            .HasMaxLength(CeremonyAct.MaxDescriptionLength);
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? RichDescription.FromPersistence(v) : null)
+            .HasMaxLength(RichDescription.MaxLength);
 
         builder.Property(c => c.Icon)
-            .HasMaxLength(CeremonyAct.MaxIconLength);
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? IconIdentifier.FromPersistence(v) : null)
+            .HasMaxLength(IconIdentifier.MaxLength);
 
         // TimeOnly? — maps to PostgreSQL "time without time zone".
         // Nullable: couples may describe acts without pinning them to a specific time.

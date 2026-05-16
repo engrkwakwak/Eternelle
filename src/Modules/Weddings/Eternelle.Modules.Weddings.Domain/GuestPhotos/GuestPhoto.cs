@@ -1,4 +1,5 @@
 using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Domain.GuestPhotos;
@@ -18,8 +19,6 @@ namespace Eternelle.Modules.Weddings.Domain.GuestPhotos;
 /// </summary>
 public sealed class GuestPhoto : Entity
 {
-    public static readonly int MaxUploaderNameLength = 100;
-
     private GuestPhoto()
     {
     }
@@ -34,16 +33,14 @@ public sealed class GuestPhoto : Entity
 
     /// <summary>
     /// CDN or storage URL of the full-resolution photo.
-    /// The domain stores, not validates, URLs — upload and URL generation are
-    /// handled by the application layer.
     /// </summary>
-    public string SrcUrl { get; private set; }
+    public ImageUrl SrcUrl { get; private set; }
 
     /// <summary>
     /// Optional CDN URL of the compressed thumbnail. Null until the storage
     /// pipeline generates it asynchronously.
     /// </summary>
-    public string? ThumbnailUrl { get; private set; }
+    public ImageUrl? ThumbnailUrl { get; private set; }
 
     /// <summary>
     /// Original pixel width. Nullable — not always available at upload time.
@@ -60,7 +57,7 @@ public sealed class GuestPhoto : Entity
     /// Optional display name provided by the uploader at submission time.
     /// Null when the guest uploads anonymously.
     /// </summary>
-    public string? UploaderName { get; private set; }
+    public PersonName? UploaderName { get; private set; }
 
     public GuestPhotoStatus Status { get; private set; }
 
@@ -76,9 +73,9 @@ public sealed class GuestPhoto : Entity
 
     public static GuestPhoto Create(
         WeddingId weddingId,
-        string srcUrl,
-        string? uploaderName,
-        string? thumbnailUrl,
+        ImageUrl srcUrl,
+        PersonName? uploaderName,
+        ImageUrl? thumbnailUrl,
         int? widthPx,
         int? heightPx,
         GuestPhotoStatus initialStatus,
@@ -119,6 +116,8 @@ public sealed class GuestPhoto : Entity
         Status = GuestPhotoStatus.Approved;
         ReviewedAt = utcNow;
 
+        Raise(new GuestPhotoApprovedDomainEvent(Id, WeddingId, utcNow));
+
         return Result.Success();
     }
 
@@ -135,6 +134,8 @@ public sealed class GuestPhoto : Entity
 
         Status = GuestPhotoStatus.Rejected;
         ReviewedAt = utcNow;
+
+        Raise(new GuestPhotoRejectedDomainEvent(Id, WeddingId, utcNow));
 
         return Result.Success();
     }

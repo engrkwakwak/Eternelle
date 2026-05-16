@@ -1,4 +1,5 @@
 using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Domain.Shared;
 
 namespace Eternelle.Modules.Weddings.Domain.EntourageGroups;
 
@@ -23,8 +24,6 @@ public sealed class EntourageCouple : Entity
     {
     }
 
-    public static readonly int MaxNoteLength = 200;
-
     public EntourageCoupleId Id { get; private set; }
 
     public EntourageGroupId GroupId { get; private set; }
@@ -44,7 +43,7 @@ public sealed class EntourageCouple : Entity
     /// <summary>
     /// Optional annotation shown under the rendered pair (e.g. "Lifetime sponsors ♥").
     /// </summary>
-    public string? Note { get; private set; }
+    public InternalNote? Note { get; private set; }
 
     public int DisplayOrder { get; private set; }
 
@@ -54,7 +53,7 @@ public sealed class EntourageCouple : Entity
         EntourageGroupId groupId,
         EntourageMemberId firstId,
         EntourageMemberId secondId,
-        string? note,
+        InternalNote? note,
         int displayOrder)
     {
         // Enforce canonical ordering: MemberAId < MemberBId (UUID byte comparison).
@@ -77,7 +76,7 @@ public sealed class EntourageCouple : Entity
 
     // ─── Behaviour ──────────────────────────────────────────────────────────────
 
-    internal void Update(string? note)
+    internal void Update(InternalNote? note)
     {
         Note = note;
     }

@@ -1,4 +1,5 @@
 using Eternelle.Modules.Weddings.Domain.EntourageGroups;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -21,11 +22,15 @@ internal sealed class EntourageGroupConfiguration : IEntityTypeConfiguration<Ent
             .HasDatabaseName("ix_entourage_groups_wedding_id_display_order");
 
         builder.Property(g => g.Label)
+            .HasConversion(v => v.Value, v => GroupLabel.FromPersistence(v))
             .IsRequired()
-            .HasMaxLength(EntourageGroup.MaxLabelLength);
+            .HasMaxLength(GroupLabel.MaxLength);
 
         builder.Property(g => g.Subtitle)
-            .HasMaxLength(EntourageGroup.MaxSubtitleLength);
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? GroupSubtitle.FromPersistence(v) : null)
+            .HasMaxLength(GroupSubtitle.MaxLength);
 
         // GroupType — nullable int column. C# enum default ordinal values.
         builder.Property(g => g.GroupType)

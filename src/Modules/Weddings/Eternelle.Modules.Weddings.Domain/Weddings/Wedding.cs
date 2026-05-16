@@ -1,5 +1,4 @@
 using Eternelle.Common.Domain;
-using Eternelle.Common.Domain.ValueObjects;
 using Eternelle.Modules.Weddings.Domain.Shared;
 
 namespace Eternelle.Modules.Weddings.Domain.Weddings;
@@ -126,8 +125,11 @@ public sealed class Wedding : Entity
     /// </summary>
     public void ChangePlan(WeddingPlan plan, DateTime utcNow)
     {
+        WeddingPlan previousPlan = Plan;
         Plan = plan;
         UpdatedAtUtc = utcNow;
+
+        Raise(new WeddingPlanChangedDomainEvent(Id, previousPlan, plan));
     }
 
     // ─── Partner management ─────────────────────────────────────────────────────
@@ -155,6 +157,8 @@ public sealed class Wedding : Entity
 
         UpdatedAtUtc = utcNow;
 
+        Raise(new WeddingPartnerAddedDomainEvent(Id, partner.Id, partnerNumber));
+
         return partner;
     }
 
@@ -176,6 +180,8 @@ public sealed class Wedding : Entity
         partner.Update(firstName, lastName, bio, imageUrl);
         UpdatedAtUtc = utcNow;
 
+        Raise(new WeddingPartnerUpdatedDomainEvent(Id, partnerId));
+
         return Result.Success();
     }
 
@@ -187,7 +193,7 @@ public sealed class Wedding : Entity
     /// </summary>
     public void ConfigureSnapShare(
         InstagramHandle? instagramHandle,
-        string? ctaText,
+        CallToAction? callToAction,
         bool enabled,
         SnapShareModerationMode moderationMode,
         bool uploaderNameRequired,
@@ -195,11 +201,11 @@ public sealed class Wedding : Entity
     {
         if (SnapShare is null)
         {
-            SnapShare = SnapShareConfig.Create(Id, instagramHandle, ctaText, enabled, moderationMode, uploaderNameRequired);
+            SnapShare = SnapShareConfig.Create(Id, instagramHandle, callToAction, enabled, moderationMode, uploaderNameRequired);
         }
         else
         {
-            SnapShare.Update(instagramHandle, ctaText, enabled, moderationMode, uploaderNameRequired);
+            SnapShare.Update(instagramHandle, callToAction, enabled, moderationMode, uploaderNameRequired);
         }
 
         UpdatedAtUtc = utcNow;

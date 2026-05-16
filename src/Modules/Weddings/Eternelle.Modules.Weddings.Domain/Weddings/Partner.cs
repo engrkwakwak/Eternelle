@@ -1,5 +1,4 @@
 using Eternelle.Common.Domain;
-using Eternelle.Common.Domain.ValueObjects;
 using Eternelle.Modules.Weddings.Domain.Shared;
 
 namespace Eternelle.Modules.Weddings.Domain.Weddings;

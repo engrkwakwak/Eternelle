@@ -2,6 +2,7 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Modules.Weddings.Domain.EntourageGroups;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Application.EntourageGroups.PairEntourageCouple;
@@ -32,10 +33,21 @@ internal sealed class PairEntourageCoupleCommandHandler(
             ? 0
             : group.Couples.Max(c => c.DisplayOrder) + 1;
 
+        InternalNote? note = null;
+        if (command.Note is not null)
+        {
+            Result<InternalNote> noteResult = InternalNote.Create(command.Note);
+            if (noteResult.IsFailure)
+            {
+                return Result.Failure<Guid>(noteResult.Error);
+            }
+            note = noteResult.Value;
+        }
+
         Result<EntourageCouple> result = group.PairMembers(
             new EntourageMemberId(canonicalA),
             new EntourageMemberId(canonicalB),
-            command.Note,
+            note,
             displayOrder);
 
         if (result.IsFailure)

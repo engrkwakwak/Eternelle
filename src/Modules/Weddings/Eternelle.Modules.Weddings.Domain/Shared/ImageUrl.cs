@@ -1,10 +1,7 @@
-namespace Eternelle.Common.Domain.ValueObjects;
+using Eternelle.Common.Domain;
 
-/// <summary>
-/// Value object representing the URL of an image. Accepts absolute URIs
-/// (https://cdn.example.com/foo.jpg) and absolute-path relative URIs
-/// (/uploads/foo.jpg) to cover both CDN and locally-uploaded assets.
-/// </summary>
+namespace Eternelle.Modules.Weddings.Domain.Shared;
+
 public sealed record ImageUrl
 {
     public static readonly int MaxLength = 2048;
@@ -40,5 +37,5 @@ public sealed record ImageUrl
 
     public override string ToString() => Value;
 
-    public static ImageUrl FromPersistence(string value) => new(value);
+    internal static ImageUrl FromPersistence(string value) => new(value);
 }

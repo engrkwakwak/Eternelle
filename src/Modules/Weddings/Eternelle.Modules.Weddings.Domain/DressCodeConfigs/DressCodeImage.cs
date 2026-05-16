@@ -1,4 +1,5 @@
 using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Domain.Shared;
 
 namespace Eternelle.Modules.Weddings.Domain.DressCodeConfigs;
 
@@ -19,9 +20,9 @@ public sealed class DressCodeImage : Entity
     public DressCodeConfigId DressCodeConfigId { get; private set; }
 
     /// <summary>
-    /// CDN or storage URL of the inspiration image. The domain stores, not validates, URLs.
+    /// CDN or storage URL of the inspiration image.
     /// </summary>
-    public string ImageUrl { get; private set; }
+    public ImageUrl ImageUrl { get; private set; }
 
     public int DisplayOrder { get; private set; }
 
@@ -29,7 +30,7 @@ public sealed class DressCodeImage : Entity
 
     internal static DressCodeImage Create(
         DressCodeConfigId dressCodeConfigId,
-        string imageUrl,
+        ImageUrl imageUrl,
         int displayOrder)
     {
         return new DressCodeImage
