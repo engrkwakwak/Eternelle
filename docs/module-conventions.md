@@ -98,7 +98,7 @@ Every domain-meaningful string is a sealed record VO:
 ```csharp
 public sealed record PersonName
 {
-    public static readonly int MaxLength = 150;
+    public const int MaxLength = 150;
 
     private PersonName(string value) { Value = value; }
 
@@ -116,6 +116,6 @@ Rules:
 - Every VO has a sibling `{Vo}Errors` class with `Error` constants for each failure mode.
 - Aggregate methods accept VOs, not raw strings. Command handlers call `Create()` and short-circuit on failure before invoking the aggregate.
 - EF Core value converters use `HasConversion(v => v.Value, v => Vo.FromPersistence(v))` + `HasMaxLength(Vo.MaxLength)`. Nullable pattern: `(v => v != null ? v.Value : null, v => v != null ? Vo.FromPersistence(v) : null)`.
-- FluentValidation validators keep only `NotEmpty()` (fast HTTP-layer rejection); domain VOs own all length and format rules.
+- FluentValidation validators keep `NotEmpty()` and `MaximumLength(Vo.MaxLength)` for fast HTTP-layer rejection. Domain VOs are the single source of truth for the actual limit; validators reference the VO constant directly so the two never diverge.
 
 Shared VOs that are likely to be needed by multiple modules start in the module's `Shared/` folder and are lifted to `Common.Domain` when a second module actually needs them.

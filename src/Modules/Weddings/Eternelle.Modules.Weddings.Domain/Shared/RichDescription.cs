@@ -1,10 +1,10 @@
-using Eternelle.Common.Domain;
+﻿using Eternelle.Common.Domain;
 
 namespace Eternelle.Modules.Weddings.Domain.Shared;
 
 public sealed record RichDescription
 {
-    public static readonly int MaxLength = 2000;
+    public const int MaxLength = 2000;
 
     private RichDescription(string value)
     {

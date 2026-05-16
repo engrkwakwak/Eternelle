@@ -1,15 +1,15 @@
-using Eternelle.Common.Domain;
+﻿using Eternelle.Common.Domain;
 
 namespace Eternelle.Modules.Weddings.Domain.GiftOptions;
 
 /// <summary>
 /// Bank account, mobile-wallet number, or similar payment identifier shown
-/// on a gift option. Limited to digits, dashes, and spaces — the surface for
+/// on a gift option. Limited to digits, dashes, and spaces â€” the surface for
 /// every supported gateway. Up to 50 characters.
 /// </summary>
 public sealed record AccountNumber
 {
-    public static readonly int MaxLength = 50;
+    public const int MaxLength = 50;
 
     private AccountNumber(string value)
     {

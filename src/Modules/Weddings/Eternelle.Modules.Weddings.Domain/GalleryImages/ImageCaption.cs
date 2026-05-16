@@ -1,4 +1,4 @@
-using Eternelle.Common.Domain;
+﻿using Eternelle.Common.Domain;
 
 namespace Eternelle.Modules.Weddings.Domain.GalleryImages;
 
@@ -7,7 +7,7 @@ namespace Eternelle.Modules.Weddings.Domain.GalleryImages;
 /// </summary>
 public sealed record ImageCaption
 {
-    public static readonly int MaxLength = 500;
+    public const int MaxLength = 500;
 
     private ImageCaption(string value)
     {

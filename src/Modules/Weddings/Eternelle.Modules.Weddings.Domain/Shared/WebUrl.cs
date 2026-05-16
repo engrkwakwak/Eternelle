@@ -1,10 +1,10 @@
-using Eternelle.Common.Domain;
+﻿using Eternelle.Common.Domain;
 
 namespace Eternelle.Modules.Weddings.Domain.Shared;
 
 public sealed record WebUrl
 {
-    public static readonly int MaxLength = 2048;
+    public const int MaxLength = 2048;
 
     private WebUrl(string value)
     {

@@ -26,6 +26,7 @@ internal sealed class AddDressCodeColorCommandValidator : AbstractValidator<AddD
             });
 
         RuleFor(c => c.ColorName)
-            .NotEmpty();
+            .NotEmpty()
+            .MaximumLength(ColorName.MaxLength);
     }
 }

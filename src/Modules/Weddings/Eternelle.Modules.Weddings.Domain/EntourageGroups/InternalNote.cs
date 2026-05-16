@@ -1,4 +1,4 @@
-using Eternelle.Common.Domain;
+﻿using Eternelle.Common.Domain;
 
 namespace Eternelle.Modules.Weddings.Domain.EntourageGroups;
 
@@ -9,7 +9,7 @@ namespace Eternelle.Modules.Weddings.Domain.EntourageGroups;
 /// </summary>
 public sealed record InternalNote
 {
-    public static readonly int MaxLength = 500;
+    public const int MaxLength = 500;
 
     private InternalNote(string value)
     {

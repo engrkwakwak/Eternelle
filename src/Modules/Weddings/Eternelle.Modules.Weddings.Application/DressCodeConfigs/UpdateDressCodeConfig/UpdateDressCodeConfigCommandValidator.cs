@@ -1,3 +1,4 @@
+using Eternelle.Modules.Weddings.Domain.Shared;
 using FluentValidation;
 
 namespace Eternelle.Modules.Weddings.Application.DressCodeConfigs.UpdateDressCodeConfig;
@@ -10,6 +11,7 @@ internal sealed class UpdateDressCodeConfigCommandValidator : AbstractValidator<
             .NotEmpty();
 
         RuleFor(c => c.Description)
-            .NotEmpty();
+            .NotEmpty()
+            .MaximumLength(RichDescription.MaxLength);
     }
 }

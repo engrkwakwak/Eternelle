@@ -1,11 +1,11 @@
-using Eternelle.Common.Domain;
+﻿using Eternelle.Common.Domain;
 
 namespace Eternelle.Modules.Weddings.Domain.Weddings;
 
 /// <summary>
 /// Value object representing a wedding hashtag (e.g. CarlAndVina2026).
 ///
-/// Stored without the leading '#' — use ToDisplayString() when rendering to guests.
+/// Stored without the leading '#' â€” use ToDisplayString() when rendering to guests.
 /// Normalized on creation: leading '#' and surrounding whitespace are stripped.
 ///
 /// Rules:
@@ -16,7 +16,7 @@ namespace Eternelle.Modules.Weddings.Domain.Weddings;
 /// </summary>
 public sealed record Hashtag
 {
-    public static readonly int MaxLength = 100;
+    public const int MaxLength = 100;
 
     private Hashtag(string value)
     {
@@ -65,13 +65,13 @@ public sealed record Hashtag
     /// </summary>
     public string ToDisplayString() => $"#{Value}";
 
-    // Record auto-generates Equals() and GetHashCode() from Value — no manual override needed.
+    // Record auto-generates Equals() and GetHashCode() from Value â€” no manual override needed.
     // ToString() is overridden because the record default would produce "Hashtag { Value = ... }".
     public override string ToString() => Value;
 
     /// <summary>
     /// Bypasses validation and constructs a Hashtag directly from a persisted value.
-    /// Only for use by EF Core value converters — the value is assumed already valid
+    /// Only for use by EF Core value converters â€” the value is assumed already valid
     /// because it passed Create() before it was ever written to the database.
     /// </summary>
     internal static Hashtag FromPersistence(string value) => new(value);

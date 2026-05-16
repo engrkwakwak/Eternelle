@@ -1,15 +1,15 @@
-using Eternelle.Common.Domain;
+﻿using Eternelle.Common.Domain;
 
 namespace Eternelle.Modules.Weddings.Domain.Shared;
 
 /// <summary>
 /// Value object for the display name of a person referenced by a wedding profile
-/// (entourage member, guest uploader). Single-field name — for partners that
+/// (entourage member, guest uploader). Single-field name â€” for partners that
 /// split first/last, see <see cref="PersonFirstName"/> and <see cref="PersonLastName"/>.
 /// </summary>
 public sealed record PersonName
 {
-    public static readonly int MaxLength = 150;
+    public const int MaxLength = 150;
 
     private PersonName(string value)
     {

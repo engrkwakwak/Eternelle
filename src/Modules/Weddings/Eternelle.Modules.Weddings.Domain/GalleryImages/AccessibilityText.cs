@@ -1,14 +1,14 @@
-using Eternelle.Common.Domain;
+﻿using Eternelle.Common.Domain;
 
 namespace Eternelle.Modules.Weddings.Domain.GalleryImages;
 
 /// <summary>
-/// Alt text for a gallery image — required for accessibility.
+/// Alt text for a gallery image â€” required for accessibility.
 /// Up to 300 characters; describes the image content for screen readers.
 /// </summary>
 public sealed record AccessibilityText
 {
-    public static readonly int MaxLength = 300;
+    public const int MaxLength = 300;
 
     private AccessibilityText(string value)
     {

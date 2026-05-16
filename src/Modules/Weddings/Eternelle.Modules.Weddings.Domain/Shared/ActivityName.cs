@@ -1,10 +1,10 @@
-using Eternelle.Common.Domain;
+﻿using Eternelle.Common.Domain;
 
 namespace Eternelle.Modules.Weddings.Domain.Shared;
 
 public sealed record ActivityName
 {
-    public static readonly int MaxLength = 200;
+    public const int MaxLength = 200;
 
     private ActivityName(string value)
     {

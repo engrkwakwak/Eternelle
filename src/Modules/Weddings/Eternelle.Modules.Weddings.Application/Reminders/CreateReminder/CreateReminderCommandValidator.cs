@@ -1,3 +1,4 @@
+using Eternelle.Modules.Weddings.Domain.Shared;
 using FluentValidation;
 
 namespace Eternelle.Modules.Weddings.Application.Reminders.CreateReminder;
@@ -10,12 +11,15 @@ internal sealed class CreateReminderCommandValidator : AbstractValidator<CreateR
             .NotEmpty();
 
         RuleFor(c => c.Icon)
-            .NotEmpty();
+            .NotEmpty()
+            .MaximumLength(IconIdentifier.MaxLength);
 
         RuleFor(c => c.Title)
-            .NotEmpty();
+            .NotEmpty()
+            .MaximumLength(ActivityName.MaxLength);
 
         RuleFor(c => c.Body)
-            .NotEmpty();
+            .NotEmpty()
+            .MaximumLength(RichDescription.MaxLength);
     }
 }

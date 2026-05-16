@@ -14,6 +14,9 @@ internal sealed class UpdateSnapShareConfigCommandValidator : AbstractValidator<
             .MaximumLength(InstagramHandle.MaxLength)
             .When(c => c.InstagramHandle is not null);
 
+        RuleFor(c => c.CtaText)
+            .MaximumLength(CallToAction.MaxLength)
+            .When(c => c.CtaText is not null);
 
         RuleFor(c => c.ModerationMode)
             .IsInEnum();

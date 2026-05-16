@@ -1,4 +1,4 @@
-using Eternelle.Common.Domain;
+﻿using Eternelle.Common.Domain;
 
 namespace Eternelle.Modules.Weddings.Domain.Shared;
 
@@ -7,7 +7,7 @@ namespace Eternelle.Modules.Weddings.Domain.Shared;
 /// </summary>
 public sealed record PersonLastName
 {
-    public static readonly int MaxLength = 100;
+    public const int MaxLength = 100;
 
     private PersonLastName(string value)
     {

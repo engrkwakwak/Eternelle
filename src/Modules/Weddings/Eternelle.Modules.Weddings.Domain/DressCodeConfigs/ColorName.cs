@@ -1,14 +1,14 @@
-using Eternelle.Common.Domain;
+﻿using Eternelle.Common.Domain;
 
 namespace Eternelle.Modules.Weddings.Domain.DressCodeConfigs;
 
 /// <summary>
 /// Human-readable name of a palette color (e.g. "Dusty Rose", "Sage Green").
-/// Free text — couples define their own palette names. Up to 100 characters.
+/// Free text â€” couples define their own palette names. Up to 100 characters.
 /// </summary>
 public sealed record ColorName
 {
-    public static readonly int MaxLength = 100;
+    public const int MaxLength = 100;
 
     private ColorName(string value)
     {

@@ -1,15 +1,15 @@
-using Eternelle.Common.Domain;
+﻿using Eternelle.Common.Domain;
 
 namespace Eternelle.Modules.Weddings.Domain.Weddings;
 
 /// <summary>
-/// A short personal blurb for a partner. Optional at the entity level —
-/// callers hold <see cref="Biography"/>? — but if a value is supplied
+/// A short personal blurb for a partner. Optional at the entity level â€”
+/// callers hold <see cref="Biography"/>? â€” but if a value is supplied
 /// it must be non-blank and bounded.
 /// </summary>
 public sealed record Biography
 {
-    public static readonly int MaxLength = 500;
+    public const int MaxLength = 500;
 
     private Biography(string value)
     {

@@ -1,4 +1,4 @@
-using Eternelle.Common.Domain;
+﻿using Eternelle.Common.Domain;
 
 namespace Eternelle.Modules.Weddings.Domain.GiftOptions;
 
@@ -8,7 +8,7 @@ namespace Eternelle.Modules.Weddings.Domain.GiftOptions;
 /// </summary>
 public sealed record AccountType
 {
-    public static readonly int MaxLength = 100;
+    public const int MaxLength = 100;
 
     private AccountType(string value)
     {

@@ -1,4 +1,4 @@
-using Eternelle.Common.Domain;
+﻿using Eternelle.Common.Domain;
 
 namespace Eternelle.Modules.Weddings.Domain.Weddings;
 
@@ -8,7 +8,7 @@ namespace Eternelle.Modules.Weddings.Domain.Weddings;
 /// </summary>
 public sealed record CallToAction
 {
-    public static readonly int MaxLength = 200;
+    public const int MaxLength = 200;
 
     private CallToAction(string value)
     {
