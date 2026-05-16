@@ -15,4 +15,14 @@ public interface IUploadSlotStore
     /// Returns <see langword="null"/> if the slot has expired or was already redeemed.
     /// </summary>
     Task<string?> RedeemAsync(Guid slotId, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Atomically validates and redeems all <paramref name="slotIds"/> in a single operation.
+    /// Returns a dictionary mapping each slot ID to its CDN URL if every slot is valid,
+    /// or <see langword="null"/> if any slot is missing or already redeemed — in which case
+    /// no slots are consumed.
+    /// </summary>
+    Task<IReadOnlyDictionary<Guid, string>?> RedeemManyAsync(
+        IReadOnlyList<Guid> slotIds,
+        CancellationToken cancellationToken);
 }

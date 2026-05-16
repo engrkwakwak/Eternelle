@@ -46,6 +46,12 @@ internal sealed class GuestPhotoRepository(WeddingsDbContext context) : IGuestPh
             .CountAsync(p => p.WeddingId == weddingId, ct);
     }
 
+    public async Task<int> CountActiveByWeddingIdAsync(WeddingId weddingId, CancellationToken ct = default)
+    {
+        return await context.GuestPhotos
+            .CountAsync(p => p.WeddingId == weddingId && p.Status != GuestPhotoStatus.OverLimit, ct);
+    }
+
     public async Task EnforcePhotoLimitAsync(
         WeddingId weddingId,
         int limit,

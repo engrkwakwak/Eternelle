@@ -35,7 +35,9 @@ internal sealed class RegisterGuestPhotosCommandHandler(
 
         if (planLimit is not null)
         {
-            int current = await guestPhotoRepository.CountByWeddingIdAsync(
+            // Count only active (non-OverLimit) photos so that previously demoted photos do not
+            // incorrectly block new uploads when active count is still within the plan cap.
+            int current = await guestPhotoRepository.CountActiveByWeddingIdAsync(
                 wedding.Id, cancellationToken);
 
             if (current + command.Photos.Count > planLimit.Value)
@@ -44,20 +46,24 @@ internal sealed class RegisterGuestPhotosCommandHandler(
             }
         }
 
-        // Redeem all slot IDs — fail the entire batch if any slot is invalid or expired.
-        // This prevents partial registrations where some photos are stored and others are not.
-        var cdnUrls = new Dictionary<Guid, string>(command.Photos.Count);
+        // Atomically redeem all slot IDs in a single operation. If any slot is invalid or
+        // already redeemed, the entire batch is rejected and no slots are consumed —
+        // preventing orphaned CDN uploads that can never be registered.
+        IReadOnlyList<Guid> slotIds = command.Photos.Select(r => r.SlotId).ToList();
 
-        foreach (PhotoRegistration registration in command.Photos)
+        // Reject duplicates before touching Redis — a duplicate SlotId would cause one CDN
+        // upload to be registered as two separate GuestPhoto records.
+        if (new HashSet<Guid>(slotIds).Count != slotIds.Count)
         {
-            string? cdnUrl = await uploadSlotStore.RedeemAsync(registration.SlotId, cancellationToken);
+            return Result.Failure<IReadOnlyList<Guid>>(GuestPhotoErrors.InvalidUploadSlot);
+        }
 
-            if (cdnUrl is null)
-            {
-                return Result.Failure<IReadOnlyList<Guid>>(GuestPhotoErrors.InvalidUploadSlot);
-            }
+        IReadOnlyDictionary<Guid, string>? cdnUrls =
+            await uploadSlotStore.RedeemManyAsync(slotIds, cancellationToken);
 
-            cdnUrls[registration.SlotId] = cdnUrl;
+        if (cdnUrls is null)
+        {
+            return Result.Failure<IReadOnlyList<Guid>>(GuestPhotoErrors.InvalidUploadSlot);
         }
 
         // SnapShare must be configured before photos can be registered via the upload token.

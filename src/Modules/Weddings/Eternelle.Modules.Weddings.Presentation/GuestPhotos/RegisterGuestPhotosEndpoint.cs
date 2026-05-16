@@ -43,7 +43,7 @@ internal sealed class RegisterGuestPhotosEndpoint : IEndpoint
             Result<IReadOnlyList<Guid>> result = await sender.Send(command, ct);
 
             return result.Match(
-                photoIds => Results.Created("/photos/upload", new { photoIds }),
+                photoIds => Results.Ok(new { photoIds }),
                 ApiResults.Problem);
         })
         .WithTags(Tags.SnapShare)

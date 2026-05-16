@@ -143,7 +143,7 @@ Step 2. Register photos after uploading to the CDN.
 | `widthPx`      | `int`    | Optional. Must be > 0 if provided. Read from the file.       |
 | `heightPx`     | `int`    | Optional. Must be > 0 if provided. Read from the file.       |
 
-**Response `201 Created`**
+**Response `200 OK`**
 
 ```json
 {
@@ -247,7 +247,7 @@ The photo limit check runs in two places:
 
 **Docker / local dev:** MinIO runs on port `9000` (S3 API) and `9001` (console). The API communicates with MinIO via `http://eternelle.minio:9000` (internal Docker hostname). Presigned URLs are rewritten to `http://localhost:9000` before being returned to the browser — in production `ServiceUrl == PublicUrl` so the rewrite is a no-op.
 
-**Production (Cloudflare R2):** Set `Weddings:PhotoStorage:ServiceUrl` and `PublicUrl` both to your R2 endpoint. Cloudflare R2 exposes the S3 API — no code changes needed.
+**Production (Cloudflare R2):** Set `Weddings:PhotoStorage:ServiceUrl` to the R2 S3 endpoint used for API operations (presigning, uploads) and `PublicUrl` to the public-facing CDN domain used for serving images to clients (e.g. `https://cdn.example.com`). Cloudflare R2 exposes the S3 API — no code changes needed.
 
 ```json
 // appsettings.Production.json (example R2 config)
