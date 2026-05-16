@@ -111,7 +111,7 @@ Slots expire after **15 minutes**. If the guest doesn't complete the upload with
 
 **Response `422 Unprocessable Entity`** — `count` is 0, negative, or exceeds 30.
 
-**Response `422 Unprocessable Entity`** — plan photo limit would be exceeded by this batch. The couple's subscription plan caps the total number of approved photos.
+**Response `422 Unprocessable Entity`** — plan photo limit would be exceeded by this batch. The couple's subscription plan caps the total number of **active (non-`OverLimit`) photos**, including those pending manual moderation — not just approved ones.
 
 ---
 
