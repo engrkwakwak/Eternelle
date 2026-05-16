@@ -55,12 +55,16 @@ internal sealed class RedisUploadSlotStore(IConnectionMultiplexer redis) : IUplo
         CancellationToken cancellationToken)
     {
         if (slotIds.Count == 0)
+        {
             return new Dictionary<Guid, string>(0);
+        }
 
         // Defensive guard — duplicate IDs would cause the Lua script to DELETE a key on the
         // second pass that was already removed, and would silently map two photos to one upload.
         if (new HashSet<Guid>(slotIds).Count != slotIds.Count)
+        {
             return null;
+        }
 
         RedisKey[] keys = [.. slotIds.Select(id => Key(id))];
 
@@ -68,9 +72,11 @@ internal sealed class RedisUploadSlotStore(IConnectionMultiplexer redis) : IUplo
 
         // Lua returned false — at least one slot was missing; nothing was deleted.
         if (result.IsNull)
+        {
             return null;
+        }
 
-        RedisResult[] values = (RedisResult[])result!;
+        var values = (RedisResult[])result!;
 
         var dict = new Dictionary<Guid, string>(slotIds.Count);
 
@@ -78,7 +84,9 @@ internal sealed class RedisUploadSlotStore(IConnectionMultiplexer redis) : IUplo
         {
             string? cdnUrl = (string?)values[i];
             if (cdnUrl is null)
+            {
                 return null;
+            }
 
             dict[slotIds[i]] = cdnUrl;
         }

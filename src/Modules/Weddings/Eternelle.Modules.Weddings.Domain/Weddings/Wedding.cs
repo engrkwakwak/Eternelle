@@ -1,4 +1,6 @@
 using Eternelle.Common.Domain;
+using Eternelle.Common.Domain.ValueObjects;
+using Eternelle.Modules.Weddings.Domain.Shared;
 
 namespace Eternelle.Modules.Weddings.Domain.Weddings;
 
@@ -137,10 +139,10 @@ public sealed class Wedding : Entity
     /// </summary>
     public Result<Partner> AddPartner(
         PartnerNumber partnerNumber,
-        string firstName,
-        string lastName,
-        string? bio,
-        string? imageUrl,
+        PersonFirstName firstName,
+        PersonLastName lastName,
+        Biography? bio,
+        ImageUrl? imageUrl,
         DateTime utcNow)
     {
         if (_partners.Any(p => p.PartnerNumber == partnerNumber))
@@ -158,10 +160,10 @@ public sealed class Wedding : Entity
 
     public Result UpdatePartner(
         PartnerId partnerId,
-        string firstName,
-        string lastName,
-        string? bio,
-        string? imageUrl,
+        PersonFirstName firstName,
+        PersonLastName lastName,
+        Biography? bio,
+        ImageUrl? imageUrl,
         DateTime utcNow)
     {
         Partner? partner = _partners.FirstOrDefault(p => p.Id == partnerId);

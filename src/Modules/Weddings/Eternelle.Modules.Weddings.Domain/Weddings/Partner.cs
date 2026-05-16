@@ -1,4 +1,6 @@
 using Eternelle.Common.Domain;
+using Eternelle.Common.Domain.ValueObjects;
+using Eternelle.Modules.Weddings.Domain.Shared;
 
 namespace Eternelle.Modules.Weddings.Domain.Weddings;
 
@@ -13,9 +15,6 @@ public sealed class Partner : Entity
     {
     }
 
-    public static readonly int MaxFirstNameLength = 100;
-    public static readonly int MaxLastNameLength = 100;
-
     public PartnerId Id { get; private set; }
 
     public WeddingId WeddingId { get; private set; }
@@ -26,21 +25,21 @@ public sealed class Partner : Entity
     /// </summary>
     public PartnerNumber PartnerNumber { get; private set; }
 
-    public string FirstName { get; private set; }
+    public PersonFirstName FirstName { get; private set; }
 
-    public string LastName { get; private set; }
+    public PersonLastName LastName { get; private set; }
 
-    public string? Bio { get; private set; }
+    public Biography? Bio { get; private set; }
 
-    public string? ImageUrl { get; private set; }
+    public ImageUrl? ImageUrl { get; private set; }
 
     internal static Partner Create(
         WeddingId weddingId,
         PartnerNumber partnerNumber,
-        string firstName,
-        string lastName,
-        string? bio,
-        string? imageUrl)
+        PersonFirstName firstName,
+        PersonLastName lastName,
+        Biography? bio,
+        ImageUrl? imageUrl)
     {
         return new Partner
         {
@@ -54,7 +53,7 @@ public sealed class Partner : Entity
         };
     }
 
-    internal void Update(string firstName, string lastName, string? bio, string? imageUrl)
+    internal void Update(PersonFirstName firstName, PersonLastName lastName, Biography? bio, ImageUrl? imageUrl)
     {
         FirstName = firstName;
         LastName = lastName;

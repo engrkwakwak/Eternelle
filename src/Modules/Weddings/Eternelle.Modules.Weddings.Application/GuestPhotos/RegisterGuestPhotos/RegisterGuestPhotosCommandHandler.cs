@@ -49,7 +49,7 @@ internal sealed class RegisterGuestPhotosCommandHandler(
         // Atomically redeem all slot IDs in a single operation. If any slot is invalid or
         // already redeemed, the entire batch is rejected and no slots are consumed —
         // preventing orphaned CDN uploads that can never be registered.
-        IReadOnlyList<Guid> slotIds = command.Photos.Select(r => r.SlotId).ToList();
+        var slotIds = command.Photos.Select(r => r.SlotId).ToList();
 
         // Reject duplicates before touching Redis — a duplicate SlotId would cause one CDN
         // upload to be registered as two separate GuestPhoto records.
