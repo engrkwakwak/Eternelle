@@ -22,8 +22,11 @@ internal sealed class StubUploadSlotStore : IUploadSlotStore
 
     public Task<string?> RedeemAsync(Guid slotId, CancellationToken cancellationToken)
     {
-        string? cdnUrl = _slots.TryRemove(slotId, out string? value) ? value : null;
-        return Task.FromResult(cdnUrl);
+        lock (_redeemLock)
+        {
+            string? cdnUrl = _slots.TryRemove(slotId, out string? value) ? value : null;
+            return Task.FromResult(cdnUrl);
+        }
     }
 
     public Task<IReadOnlyDictionary<Guid, string>?> RedeemManyAsync(
