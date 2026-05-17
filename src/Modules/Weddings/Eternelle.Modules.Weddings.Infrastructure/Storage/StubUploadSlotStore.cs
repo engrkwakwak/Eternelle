@@ -12,6 +12,7 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Storage;
 internal sealed class StubUploadSlotStore : IUploadSlotStore
 {
     private readonly ConcurrentDictionary<Guid, string> _slots = new();
+    private readonly object _redeemLock = new();
 
     public Task StoreAsync(Guid slotId, string cdnUrl, CancellationToken cancellationToken)
     {
@@ -34,29 +35,25 @@ internal sealed class StubUploadSlotStore : IUploadSlotStore
             return Task.FromResult<IReadOnlyDictionary<Guid, string>?>(new Dictionary<Guid, string>(0));
         }
 
-        // Verify all slots exist before removing any (all-or-nothing, mirrors Redis Lua script behaviour).
-        foreach (Guid slotId in slotIds)
+        lock (_redeemLock)
         {
-            if (!_slots.ContainsKey(slotId))
+            // Verify all slots exist before removing any (all-or-nothing, mirrors Redis Lua script behaviour).
+            foreach (Guid slotId in slotIds)
             {
-                return Task.FromResult<IReadOnlyDictionary<Guid, string>?>(null);
+                if (!_slots.ContainsKey(slotId))
+                {
+                    return Task.FromResult<IReadOnlyDictionary<Guid, string>?>(null);
+                }
             }
-        }
 
-        var dict = new Dictionary<Guid, string>(slotIds.Count);
-        foreach (Guid slotId in slotIds)
-        {
-            if (_slots.TryRemove(slotId, out string? cdnUrl))
+            var dict = new Dictionary<Guid, string>(slotIds.Count);
+            foreach (Guid slotId in slotIds)
             {
-                dict[slotId] = cdnUrl;
+                _slots.TryRemove(slotId, out string? cdnUrl);
+                dict[slotId] = cdnUrl!;
             }
-            else
-            {
-                // Slot was removed by a concurrent request between the ContainsKey check and TryRemove.
-                return Task.FromResult<IReadOnlyDictionary<Guid, string>?>(null);
-            }
-        }
 
-        return Task.FromResult<IReadOnlyDictionary<Guid, string>?>(dict);
+            return Task.FromResult<IReadOnlyDictionary<Guid, string>?>(dict);
+        }
     }
 }
