@@ -23,7 +23,7 @@ Packed repomix snapshots — read these when you need pattern guidance:
 
 ## Project Layout
 
-```
+```text
 src/
 ├── API/Eternelle.Api/              ← Host (Program.cs, config, middleware)
 ├── Common/                         ← Shared kernel (Domain, Application, Infrastructure, Presentation)
@@ -58,7 +58,7 @@ Future modules follow the same **five-project** structure: **Identity → Tenanc
 - **Only `Eternelle.Modules.{X}.IntegrationEvents`** may be referenced from outside module X.
   No module may reference another module's Domain or Application project.
 - **Synchronous reads** use local data copies — each module duplicates the fields it needs in its own schema, kept consistent via integration events. No synchronous cross-module service calls.
-- **Asynchronous communication** uses the Outbox/Inbox pipeline with MassTransit. Domain event → `DomainEventHandler` loads aggregate → publishes `IntegrationEvent` via `IEventBus` → other module's Presentation subscribes via `IntegrationEventHandler<T>` (Pattern B).
+- **Asynchronous communication** uses the Outbox/Inbox pipeline with MassTransit. Domain event → `DomainEventHandler` publishes `IntegrationEvent` directly from event payload via `IEventBus` → other module's Presentation subscribes via `IntegrationEventHandler<T>`.
 
 ---
 
@@ -164,6 +164,7 @@ RuleFor(c => c.Bio)
 ```
 
 **IDOR guard pattern — load by child ID:**
+
 ```csharp
 if (group is null
     || group.WeddingId != new WeddingId(command.WeddingId)
@@ -174,6 +175,7 @@ if (group is null
 ```
 
 **IDOR guard pattern — load by parent ID:**
+
 ```csharp
 if (group is null || group.WeddingId != new WeddingId(command.WeddingId))
 {
