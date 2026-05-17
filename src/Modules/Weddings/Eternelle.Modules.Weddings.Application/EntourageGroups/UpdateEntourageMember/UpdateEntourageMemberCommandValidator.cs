@@ -32,5 +32,9 @@ internal sealed class UpdateEntourageMemberCommandValidator : AbstractValidator<
         RuleFor(c => c.Note)
             .MaximumLength(InternalNote.MaxLength)
             .When(c => c.Note is not null);
+
+        RuleFor(c => c.ImageUrl)
+            .MaximumLength(ImageUrl.MaxLength)
+            .When(c => c.ImageUrl is not null);
     }
 }

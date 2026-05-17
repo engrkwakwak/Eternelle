@@ -1,4 +1,5 @@
 using Eternelle.Modules.Weddings.Application.GuestPhotos.GenerateUploadSlots;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using FluentValidation;
 
 namespace Eternelle.Modules.Weddings.Application.GuestPhotos.RegisterGuestPhotos;
@@ -22,6 +23,7 @@ internal sealed class RegisterGuestPhotosCommandValidator : AbstractValidator<Re
 
             photo.RuleFor(p => p.UploaderName)
                 .NotEmpty()
+                .MaximumLength(PersonName.MaxLength)
                 .When(p => p.UploaderName is not null);
 
             photo.RuleFor(p => p.WidthPx)
