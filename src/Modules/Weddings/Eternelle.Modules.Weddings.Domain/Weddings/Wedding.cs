@@ -125,6 +125,9 @@ public sealed class Wedding : Entity
     /// </summary>
     public void ChangePlan(WeddingPlan plan, DateTime utcNow)
     {
+        if (plan == Plan)
+            return;
+
         WeddingPlan previousPlan = Plan;
         Plan = plan;
         UpdatedAtUtc = utcNow;
