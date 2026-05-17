@@ -1,11 +1,11 @@
-using Eternelle.Common.Domain;
+﻿using Eternelle.Common.Domain;
 
 namespace Eternelle.Modules.Weddings.Domain.Weddings;
 
 /// <summary>
 /// Value object representing an Instagram handle (e.g. carlandvina2026).
 ///
-/// Stored without the leading '@' — use ToDisplayString() when rendering to guests.
+/// Stored without the leading '@' â€” use ToDisplayString() when rendering to guests.
 /// Normalized on creation: leading '@' and surrounding whitespace are stripped.
 ///
 /// Rules follow Instagram's own constraints:
@@ -15,7 +15,7 @@ namespace Eternelle.Modules.Weddings.Domain.Weddings;
 /// </summary>
 public sealed record InstagramHandle
 {
-    public static readonly int MaxLength = 30;
+    public const int MaxLength = 30;
 
     private InstagramHandle(string value)
     {
@@ -63,7 +63,7 @@ public sealed record InstagramHandle
 
     /// <summary>
     /// Bypasses validation and constructs an InstagramHandle directly from a persisted value.
-    /// Only for use by EF Core value converters — the value is assumed already valid
+    /// Only for use by EF Core value converters â€” the value is assumed already valid
     /// because it passed Create() before it was ever written to the database.
     /// </summary>
     internal static InstagramHandle FromPersistence(string value) => new(value);

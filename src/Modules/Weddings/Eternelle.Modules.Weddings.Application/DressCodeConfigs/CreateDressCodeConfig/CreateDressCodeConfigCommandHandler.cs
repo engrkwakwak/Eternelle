@@ -2,6 +2,7 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Modules.Weddings.Domain.DressCodeConfigs;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Application.DressCodeConfigs.CreateDressCodeConfig;
@@ -25,7 +26,13 @@ internal sealed class CreateDressCodeConfigCommandHandler(
             return Result.Failure<Guid>(DressCodeConfigErrors.AlreadyExistsForWedding);
         }
 
-        var config = DressCodeConfig.Create(weddingId, command.Description);
+        Result<RichDescription> descriptionResult = RichDescription.Create(command.Description);
+        if (descriptionResult.IsFailure)
+        {
+            return Result.Failure<Guid>(descriptionResult.Error);
+        }
+
+        var config = DressCodeConfig.Create(weddingId, descriptionResult.Value);
 
         dressCodeConfigRepository.Insert(config);
 

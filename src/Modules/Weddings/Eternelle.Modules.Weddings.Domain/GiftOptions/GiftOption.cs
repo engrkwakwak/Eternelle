@@ -1,4 +1,5 @@
 using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Domain.GiftOptions;
@@ -22,12 +23,6 @@ public sealed class GiftOption : Entity
     {
     }
 
-    public static readonly int MaxTitleLength         = 200;
-    public static readonly int MaxDescriptionLength   = 1000;
-    public static readonly int MaxAccountNameLength   = 100;
-    public static readonly int MaxAccountNumberLength = 50;
-    public static readonly int MaxAccountTypeLength   = 100;
-
     public GiftOptionId Id { get; private set; }
 
     /// <summary>
@@ -36,9 +31,9 @@ public sealed class GiftOption : Entity
     /// </summary>
     public WeddingId WeddingId { get; private set; }
 
-    public string Title { get; private set; }
+    public ActivityName Title { get; private set; }
 
-    public string? Description { get; private set; }
+    public RichDescription? Description { get; private set; }
 
     public GiftDisplayMode DisplayMode { get; private set; }
 
@@ -46,32 +41,32 @@ public sealed class GiftOption : Entity
     /// Required when DisplayMode = Link. The domain enforces this at Create/Update time.
     /// For ModalDetails and InlineDetails this is null — the QR + account fields are used.
     /// </summary>
-    public string? LinkUrl { get; private set; }
+    public WebUrl? LinkUrl { get; private set; }
 
     /// <summary>
     /// Card thumbnail image (not the QR code). Optional for all display modes.
     /// </summary>
-    public string? ImageUrl { get; private set; }
+    public ImageUrl? ImageUrl { get; private set; }
 
     /// <summary>
     /// Bank/e-wallet QR code image URL. Relevant for ModalDetails and InlineDetails.
     /// </summary>
-    public string? QrImageUrl { get; private set; }
+    public ImageUrl? QrImageUrl { get; private set; }
 
     /// <summary>
     /// Account holder name (e.g. "Carl Marion"). Relevant for ModalDetails and InlineDetails.
     /// </summary>
-    public string? AccountName { get; private set; }
+    public AccountHolderName? AccountName { get; private set; }
 
     /// <summary>
     /// Account number. Free-form string — formats vary by bank and e-wallet.
     /// </summary>
-    public string? AccountNumber { get; private set; }
+    public AccountNumber? AccountNumber { get; private set; }
 
     /// <summary>
     /// Account type label (e.g. "BPI Savings", "GCash", "Maya", "PayPal").
     /// </summary>
-    public string? AccountType { get; private set; }
+    public AccountType? AccountType { get; private set; }
 
     public int DisplayOrder { get; private set; }
 
@@ -79,18 +74,18 @@ public sealed class GiftOption : Entity
 
     public static Result<GiftOption> Create(
         WeddingId weddingId,
-        string title,
-        string? description,
+        ActivityName title,
+        RichDescription? description,
         GiftDisplayMode displayMode,
-        string? linkUrl,
-        string? imageUrl,
-        string? qrImageUrl,
-        string? accountName,
-        string? accountNumber,
-        string? accountType,
+        WebUrl? linkUrl,
+        ImageUrl? imageUrl,
+        ImageUrl? qrImageUrl,
+        AccountHolderName? accountName,
+        AccountNumber? accountNumber,
+        AccountType? accountType,
         int displayOrder)
     {
-        if (displayMode == GiftDisplayMode.Link && string.IsNullOrWhiteSpace(linkUrl))
+        if (displayMode == GiftDisplayMode.Link && linkUrl is null)
         {
             return Result.Failure<GiftOption>(GiftOptionErrors.LinkUrlRequired);
         }
@@ -119,17 +114,17 @@ public sealed class GiftOption : Entity
     // ─── Behaviour ──────────────────────────────────────────────────────────────
 
     public Result Update(
-        string title,
-        string? description,
+        ActivityName title,
+        RichDescription? description,
         GiftDisplayMode displayMode,
-        string? linkUrl,
-        string? imageUrl,
-        string? qrImageUrl,
-        string? accountName,
-        string? accountNumber,
-        string? accountType)
+        WebUrl? linkUrl,
+        ImageUrl? imageUrl,
+        ImageUrl? qrImageUrl,
+        AccountHolderName? accountName,
+        AccountNumber? accountNumber,
+        AccountType? accountType)
     {
-        if (displayMode == GiftDisplayMode.Link && string.IsNullOrWhiteSpace(linkUrl))
+        if (displayMode == GiftDisplayMode.Link && linkUrl is null)
         {
             return Result.Failure(GiftOptionErrors.LinkUrlRequired);
         }

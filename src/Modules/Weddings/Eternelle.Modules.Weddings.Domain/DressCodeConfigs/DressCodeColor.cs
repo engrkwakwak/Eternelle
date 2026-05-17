@@ -17,8 +17,6 @@ public sealed class DressCodeColor : Entity
     {
     }
 
-    public static readonly int MaxColorNameLength = 100;
-
     public DressCodeColorId Id { get; private set; }
 
     public DressCodeConfigId DressCodeConfigId { get; private set; }
@@ -29,7 +27,7 @@ public sealed class DressCodeColor : Entity
     /// Human-readable name for the color (e.g. "Dusty Rose").
     /// Free text — no fixed vocabulary; couples define their own palette names.
     /// </summary>
-    public string ColorName { get; private set; }
+    public ColorName ColorName { get; private set; }
 
     public int DisplayOrder { get; private set; }
 
@@ -38,7 +36,7 @@ public sealed class DressCodeColor : Entity
     internal static DressCodeColor Create(
         DressCodeConfigId dressCodeConfigId,
         HexColor colorHex,
-        string colorName,
+        ColorName colorName,
         int displayOrder)
     {
         return new DressCodeColor
@@ -53,7 +51,7 @@ public sealed class DressCodeColor : Entity
 
     // ─── Behaviour ──────────────────────────────────────────────────────────────
 
-    internal void Update(HexColor colorHex, string colorName)
+    internal void Update(HexColor colorHex, ColorName colorName)
     {
         ColorHex = colorHex;
         ColorName = colorName;

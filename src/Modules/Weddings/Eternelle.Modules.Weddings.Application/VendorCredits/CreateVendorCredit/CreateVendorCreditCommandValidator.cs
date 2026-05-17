@@ -1,4 +1,5 @@
 using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.VendorCredits;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 using FluentValidation;
@@ -14,11 +15,11 @@ internal sealed class CreateVendorCreditCommandValidator : AbstractValidator<Cre
 
         RuleFor(c => c.Name)
             .NotEmpty()
-            .MaximumLength(VendorCredit.MaxNameLength);
+            .MaximumLength(VendorName.MaxLength);
 
         RuleFor(c => c.Role)
             .NotEmpty()
-            .MaximumLength(VendorCredit.MaxRoleLength);
+            .MaximumLength(PersonRole.MaxLength);
 
         RuleFor(c => c.InstagramHandle)
             .Custom((handle, ctx) =>

@@ -1,4 +1,5 @@
 using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Domain.Reminders;
@@ -16,10 +17,6 @@ namespace Eternelle.Modules.Weddings.Domain.Reminders;
 /// </summary>
 public sealed class Reminder : Entity
 {
-    public static readonly int MaxIconLength  = 50;
-    public static readonly int MaxTitleLength = 200;
-    public static readonly int MaxBodyLength  = 2000;
-
     private Reminder()
     {
     }
@@ -36,11 +33,11 @@ public sealed class Reminder : Entity
     /// Icon identifier or emoji used in the rendered card.
     /// The domain stores, not interprets, the icon value — rendering is the UI's concern.
     /// </summary>
-    public string Icon { get; private set; }
+    public IconIdentifier Icon { get; private set; }
 
-    public string Title { get; private set; }
+    public ActivityName Title { get; private set; }
 
-    public string Body { get; private set; }
+    public RichDescription Body { get; private set; }
 
     public int DisplayOrder { get; private set; }
 
@@ -48,9 +45,9 @@ public sealed class Reminder : Entity
 
     public static Reminder Create(
         WeddingId weddingId,
-        string icon,
-        string title,
-        string body,
+        IconIdentifier icon,
+        ActivityName title,
+        RichDescription body,
         int displayOrder)
     {
         var reminder = new Reminder
@@ -70,7 +67,7 @@ public sealed class Reminder : Entity
 
     // ─── Behaviour ──────────────────────────────────────────────────────────────
 
-    public void Update(string icon, string title, string body)
+    public void Update(IconIdentifier icon, ActivityName title, RichDescription body)
     {
         Icon = icon;
         Title = title;

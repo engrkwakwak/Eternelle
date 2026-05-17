@@ -15,10 +15,10 @@ internal sealed class UpdateEntourageGroupCommandValidator : AbstractValidator<U
 
         RuleFor(c => c.Label)
             .NotEmpty()
-            .MaximumLength(EntourageGroup.MaxLabelLength);
+            .MaximumLength(GroupLabel.MaxLength);
 
         RuleFor(c => c.Subtitle)
-            .MaximumLength(EntourageGroup.MaxSubtitleLength)
+            .MaximumLength(GroupSubtitle.MaxLength)
             .When(c => c.Subtitle is not null);
 
         RuleFor(c => c.GroupType)

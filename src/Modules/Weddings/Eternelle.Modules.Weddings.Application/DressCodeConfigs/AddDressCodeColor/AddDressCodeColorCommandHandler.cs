@@ -34,7 +34,13 @@ internal sealed class AddDressCodeColorCommandHandler(
             ? 0
             : config.Colors.Max(c => c.DisplayOrder) + 1;
 
-        DressCodeColor color = config.AddColor(hexResult.Value, command.ColorName, displayOrder);
+        Result<ColorName> colorNameResult = ColorName.Create(command.ColorName);
+        if (colorNameResult.IsFailure)
+        {
+            return Result.Failure<Guid>(colorNameResult.Error);
+        }
+
+        DressCodeColor color = config.AddColor(hexResult.Value, colorNameResult.Value, displayOrder);
 
         dressCodeConfigRepository.Update(config);
 

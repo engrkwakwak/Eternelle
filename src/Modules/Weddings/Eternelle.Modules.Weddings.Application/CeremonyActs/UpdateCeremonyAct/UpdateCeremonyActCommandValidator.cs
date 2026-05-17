@@ -1,4 +1,4 @@
-using Eternelle.Modules.Weddings.Domain.CeremonyActs;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using FluentValidation;
 
 namespace Eternelle.Modules.Weddings.Application.CeremonyActs.UpdateCeremonyAct;
@@ -12,14 +12,14 @@ internal sealed class UpdateCeremonyActCommandValidator : AbstractValidator<Upda
 
         RuleFor(c => c.Name)
             .NotEmpty()
-            .MaximumLength(CeremonyAct.MaxNameLength);
+            .MaximumLength(ActivityName.MaxLength);
 
         RuleFor(c => c.Description)
-            .MaximumLength(CeremonyAct.MaxDescriptionLength)
+            .MaximumLength(RichDescription.MaxLength)
             .When(c => c.Description is not null);
 
         RuleFor(c => c.Icon)
-            .MaximumLength(CeremonyAct.MaxIconLength)
+            .MaximumLength(IconIdentifier.MaxLength)
             .When(c => c.Icon is not null);
     }
 }

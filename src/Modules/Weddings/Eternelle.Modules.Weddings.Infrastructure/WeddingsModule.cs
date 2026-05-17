@@ -33,6 +33,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using StackExchange.Redis;
 
 namespace Eternelle.Modules.Weddings.Infrastructure;
 
@@ -67,7 +68,17 @@ public static class WeddingsModule
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<WeddingsDbContext>());
 
         services.AddSingleton<IPhotoStorageService, S3PhotoStorageService>();
-        services.AddScoped<IUploadSlotStore, RedisUploadSlotStore>();
+
+        // IConnectionMultiplexer is only registered by common infrastructure when Redis is reachable.
+        // Fall back to an in-memory stub so the app starts without Redis in local dev.
+        if (services.Any(d => d.ServiceType == typeof(IConnectionMultiplexer)))
+        {
+            services.AddScoped<IUploadSlotStore, RedisUploadSlotStore>();
+        }
+        else
+        {
+            services.AddSingleton<IUploadSlotStore, StubUploadSlotStore>();
+        }
 
         services.AddScoped<IWeddingRepository, WeddingRepository>();
         services.AddScoped<IEntourageGroupRepository, EntourageGroupRepository>();

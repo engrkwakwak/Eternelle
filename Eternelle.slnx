@@ -19,6 +19,7 @@
     <Project Path="src/Modules/Weddings/Eternelle.Modules.Weddings.Application/Eternelle.Modules.Weddings.Application.csproj" Id="a6f4ff32-35b6-40bf-a034-4aff406678ea" />
     <Project Path="src/Modules/Weddings/Eternelle.Modules.Weddings.Domain/Eternelle.Modules.Weddings.Domain.csproj" Id="8ca34ec3-032b-4439-bc9f-318df0f9e87a" />
     <Project Path="src/Modules/Weddings/Eternelle.Modules.Weddings.Infrastructure/Eternelle.Modules.Weddings.Infrastructure.csproj" Id="f7f463ef-3373-4063-9909-487fb52a34e0" />
+    <Project Path="src/Modules/Weddings/Eternelle.Modules.Weddings.IntegrationEvents/Eternelle.Modules.Weddings.IntegrationEvents.csproj" />
     <Project Path="src/Modules/Weddings/Eternelle.Modules.Weddings.Presentation/Eternelle.Modules.Weddings.Presentation.csproj" Id="b3270df7-22f8-48fa-a6f3-cd38080773ed" />
   </Folder>
   <Folder Name="/test/" />

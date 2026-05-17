@@ -1,6 +1,7 @@
 using Eternelle.Common.Application.EventBus;
 using Eternelle.Common.Application.Messaging;
 using Eternelle.Modules.Weddings.Domain.Weddings;
+using Eternelle.Modules.Weddings.IntegrationEvents.Weddings;
 
 namespace Eternelle.Modules.Weddings.Application.Weddings;
 
@@ -13,7 +14,9 @@ internal sealed class WeddingCreatedDomainEventHandler(IEventBus eventBus)
             new WeddingCreatedIntegrationEvent(
                 domainEvent.Id,
                 domainEvent.OccurredOnUtc,
-                domainEvent.WeddingId.Value),
+                domainEvent.WeddingId.Value,
+                domainEvent.TenantId,
+                domainEvent.WeddingDate),
             cancellationToken);
     }
 }

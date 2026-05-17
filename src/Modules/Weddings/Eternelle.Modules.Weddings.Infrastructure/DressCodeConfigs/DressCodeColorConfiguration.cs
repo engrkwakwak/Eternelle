@@ -30,8 +30,9 @@ internal sealed class DressCodeColorConfiguration
             .HasMaxLength(HexColor.MaxLength);
 
         color.Property(c => c.ColorName)
+            .HasConversion(v => v.Value, v => ColorName.FromPersistence(v))
             .IsRequired()
-            .HasMaxLength(DressCodeColor.MaxColorNameLength);
+            .HasMaxLength(ColorName.MaxLength);
 
         color.Property(c => c.DisplayOrder).IsRequired();
 

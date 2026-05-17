@@ -1,4 +1,4 @@
-using Eternelle.Modules.Weddings.Domain.StoryMoments;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using FluentValidation;
 
 namespace Eternelle.Modules.Weddings.Application.StoryMoments.UpdateStoryMoment;
@@ -12,10 +12,10 @@ internal sealed class UpdateStoryMomentCommandValidator : AbstractValidator<Upda
 
         RuleFor(c => c.Title)
             .NotEmpty()
-            .MaximumLength(StoryMoment.MaxTitleLength);
+            .MaximumLength(ActivityName.MaxLength);
 
         RuleFor(c => c.Description)
             .NotEmpty()
-            .MaximumLength(StoryMoment.MaxDescriptionLength);
+            .MaximumLength(RichDescription.MaxLength);
     }
 }

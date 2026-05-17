@@ -1,3 +1,4 @@
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -60,10 +61,27 @@ internal sealed class WeddingConfiguration : IEntityTypeConfiguration<Wedding>
                 .HasConversion<int>()
                 .IsRequired();
 
-            partner.Property(p => p.FirstName).IsRequired().HasMaxLength(Partner.MaxFirstNameLength);
-            partner.Property(p => p.LastName).IsRequired().HasMaxLength(Partner.MaxLastNameLength);
-            partner.Property(p => p.Bio);
-            partner.Property(p => p.ImageUrl);
+            partner.Property(p => p.FirstName)
+                .HasConversion(v => v.Value, v => PersonFirstName.FromPersistence(v))
+                .IsRequired()
+                .HasMaxLength(PersonFirstName.MaxLength);
+
+            partner.Property(p => p.LastName)
+                .HasConversion(v => v.Value, v => PersonLastName.FromPersistence(v))
+                .IsRequired()
+                .HasMaxLength(PersonLastName.MaxLength);
+
+            partner.Property(p => p.Bio)
+                .HasConversion(
+                    v => v != null ? v.Value : null,
+                    v => v != null ? Biography.FromPersistence(v) : null)
+                .HasMaxLength(Biography.MaxLength);
+
+            partner.Property(p => p.ImageUrl)
+                .HasConversion(
+                    v => v != null ? v.Value : null,
+                    v => v != null ? ImageUrl.FromPersistence(v) : null)
+                .HasMaxLength(ImageUrl.MaxLength);
 
             partner.HasIndex(p => new { p.WeddingId, p.PartnerNumber }).IsUnique();
         });

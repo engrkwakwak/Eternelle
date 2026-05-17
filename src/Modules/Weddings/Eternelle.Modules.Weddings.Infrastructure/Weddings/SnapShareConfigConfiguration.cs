@@ -27,7 +27,12 @@ internal static class SnapShareConfigConfiguration
         snapShare.Property(s => s.WeddingId)
             .HasColumnName("wedding_id");
 
-        snapShare.Property(s => s.CtaText);
+        snapShare.Property(s => s.CallToAction)
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? CallToAction.FromPersistence(v) : null)
+            .HasColumnName("cta_text")
+            .HasMaxLength(CallToAction.MaxLength);
 
         snapShare.Property(s => s.Enabled).IsRequired();
 

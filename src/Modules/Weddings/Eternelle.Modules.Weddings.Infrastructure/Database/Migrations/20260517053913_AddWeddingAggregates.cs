@@ -23,7 +23,7 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     wedding_id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
                     icon = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     act_time = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
                     display_order = table.Column<int>(type: "integer", nullable: false)
@@ -72,7 +72,7 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     wedding_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    src_url = table.Column<string>(type: "text", nullable: false),
+                    src_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
                     alt_text = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
                     width_px = table.Column<int>(type: "integer", nullable: true),
                     height_px = table.Column<int>(type: "integer", nullable: true),
@@ -93,11 +93,11 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     wedding_id = table.Column<Guid>(type: "uuid", nullable: false),
                     title = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
                     display_mode = table.Column<int>(type: "integer", nullable: false),
-                    link_url = table.Column<string>(type: "text", nullable: true),
-                    image_url = table.Column<string>(type: "text", nullable: true),
-                    qr_image_url = table.Column<string>(type: "text", nullable: true),
+                    link_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
+                    image_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
+                    qr_image_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
                     account_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     account_number = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     account_type = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
@@ -115,11 +115,11 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     wedding_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    src_url = table.Column<string>(type: "text", nullable: false),
-                    thumbnail_url = table.Column<string>(type: "text", nullable: true),
+                    src_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
+                    thumbnail_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
                     width_px = table.Column<int>(type: "integer", nullable: true),
                     height_px = table.Column<int>(type: "integer", nullable: true),
-                    uploader_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    uploader_name = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
                     status = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
                     uploaded_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     reviewed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
@@ -199,6 +199,7 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                     schema_version = table.Column<int>(type: "integer", nullable: false),
                     wedding_date = table.Column<DateOnly>(type: "date", nullable: false),
                     hashtag = table.Column<string>(type: "text", nullable: true),
+                    plan = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -234,7 +235,7 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                     title = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     story_date = table.Column<DateOnly>(type: "date", nullable: true),
                     description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
-                    image_url = table.Column<string>(type: "text", nullable: true),
+                    image_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
                     display_order = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -251,8 +252,8 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                     wedding_id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     role = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    website_url = table.Column<string>(type: "text", nullable: true),
-                    image_url = table.Column<string>(type: "text", nullable: true),
+                    website_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
+                    image_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
                     instagram_handle = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: true),
                     display_order = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -292,7 +293,7 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     dress_code_config_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    image_url = table.Column<string>(type: "text", nullable: false),
+                    image_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
                     display_order = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -316,7 +317,7 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                     group_id = table.Column<Guid>(type: "uuid", nullable: false),
                     member_a_id = table.Column<Guid>(type: "uuid", nullable: false),
                     member_b_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    note = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    note = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     display_order = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -342,7 +343,7 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                     group_id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     role = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    image_url = table.Column<string>(type: "text", nullable: true),
+                    image_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
                     message = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     note = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     seed = table.Column<int>(type: "integer", nullable: true),
@@ -370,8 +371,8 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                     partner_number = table.Column<int>(type: "integer", nullable: false),
                     first_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     last_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    bio = table.Column<string>(type: "text", nullable: true),
-                    image_url = table.Column<string>(type: "text", nullable: true)
+                    bio = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    image_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -393,10 +394,11 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     wedding_id = table.Column<Guid>(type: "uuid", nullable: false),
                     instagram_handle = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: true),
-                    cta_text = table.Column<string>(type: "text", nullable: true),
+                    cta_text = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     enabled = table.Column<bool>(type: "boolean", nullable: false),
                     upload_token = table.Column<Guid>(type: "uuid", nullable: true),
-                    moderation_mode = table.Column<int>(type: "integer", nullable: false, defaultValue: 0)
+                    moderation_mode = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    uploader_name_required = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {

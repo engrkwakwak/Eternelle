@@ -1,4 +1,5 @@
 using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Domain.DressCodeConfigs;
@@ -30,8 +31,6 @@ public sealed class DressCodeConfig : Entity
     {
     }
 
-    public static readonly int MaxDescriptionLength = 2000;
-
     public DressCodeConfigId Id { get; private set; }
 
     /// <summary>
@@ -44,7 +43,7 @@ public sealed class DressCodeConfig : Entity
     /// Narrative description of the expected attire (e.g. "Garden Formal — think soft
     /// florals, linen suits, and earthy tones.").
     /// </summary>
-    public string Description { get; private set; }
+    public RichDescription Description { get; private set; }
 
     public IReadOnlyCollection<DressCodeColor> Colors => _colors.AsReadOnly();
 
@@ -54,7 +53,7 @@ public sealed class DressCodeConfig : Entity
 
     public static DressCodeConfig Create(
         WeddingId weddingId,
-        string description)
+        RichDescription description)
     {
         var config = new DressCodeConfig
         {
@@ -70,7 +69,7 @@ public sealed class DressCodeConfig : Entity
 
     // ─── Description ────────────────────────────────────────────────────────────
 
-    public void UpdateDescription(string description)
+    public void UpdateDescription(RichDescription description)
     {
         Description = description;
     }
@@ -81,7 +80,7 @@ public sealed class DressCodeConfig : Entity
     /// Appends a color chip to the palette. The caller is responsible for passing a
     /// fully validated HexColor — use HexColor.Create() in the application layer.
     /// </summary>
-    public DressCodeColor AddColor(HexColor colorHex, string colorName, int displayOrder)
+    public DressCodeColor AddColor(HexColor colorHex, ColorName colorName, int displayOrder)
     {
         var color = DressCodeColor.Create(Id, colorHex, colorName, displayOrder);
         _colors.Add(color);
@@ -91,7 +90,7 @@ public sealed class DressCodeConfig : Entity
     public Result UpdateColor(
         DressCodeColorId colorId,
         HexColor colorHex,
-        string colorName)
+        ColorName colorName)
     {
         DressCodeColor? color = _colors.FirstOrDefault(c => c.Id == colorId);
 
@@ -132,7 +131,7 @@ public sealed class DressCodeConfig : Entity
 
     // ─── Inspiration images ──────────────────────────────────────────────────────
 
-    public DressCodeImage AddImage(string imageUrl, int displayOrder)
+    public DressCodeImage AddImage(ImageUrl imageUrl, int displayOrder)
     {
         var image = DressCodeImage.Create(Id, imageUrl, displayOrder);
         _images.Add(image);

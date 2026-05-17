@@ -1,4 +1,5 @@
 using Eternelle.Modules.Weddings.Domain.EntourageGroups;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -20,7 +21,11 @@ internal sealed class EntourageCoupleConfiguration
 
         couple.Property(c => c.MemberAId).IsRequired();
         couple.Property(c => c.MemberBId).IsRequired();
-        couple.Property(c => c.Note).HasMaxLength(EntourageCouple.MaxNoteLength);
+        couple.Property(c => c.Note)
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? InternalNote.FromPersistence(v) : null)
+            .HasMaxLength(InternalNote.MaxLength);
         couple.Property(c => c.DisplayOrder).IsRequired();
 
         // MemberAId / MemberBId: EF Core OwnedNavigationBuilder (EF Core 9) does not

@@ -1,6 +1,7 @@
 using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.VendorCredits;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
@@ -24,6 +25,40 @@ internal sealed class CreateVendorCreditCommandHandler(
             ? 0
             : existingCredits.Max(c => c.DisplayOrder) + 1;
 
+        Result<VendorName> nameResult = VendorName.Create(command.Name);
+        if (nameResult.IsFailure)
+        {
+            return Result.Failure<Guid>(nameResult.Error);
+        }
+
+        Result<PersonRole> roleResult = PersonRole.Create(command.Role);
+        if (roleResult.IsFailure)
+        {
+            return Result.Failure<Guid>(roleResult.Error);
+        }
+
+        WebUrl? websiteUrl = null;
+        if (command.WebsiteUrl is not null)
+        {
+            Result<WebUrl> websiteUrlResult = WebUrl.Create(command.WebsiteUrl);
+            if (websiteUrlResult.IsFailure)
+            {
+                return Result.Failure<Guid>(websiteUrlResult.Error);
+            }
+            websiteUrl = websiteUrlResult.Value;
+        }
+
+        ImageUrl? imageUrl = null;
+        if (command.ImageUrl is not null)
+        {
+            Result<ImageUrl> imageUrlResult = ImageUrl.Create(command.ImageUrl);
+            if (imageUrlResult.IsFailure)
+            {
+                return Result.Failure<Guid>(imageUrlResult.Error);
+            }
+            imageUrl = imageUrlResult.Value;
+        }
+
         InstagramHandle? instagramHandle = null;
         if (!string.IsNullOrWhiteSpace(command.InstagramHandle))
         {
@@ -37,10 +72,10 @@ internal sealed class CreateVendorCreditCommandHandler(
 
         var credit = VendorCredit.Create(
             weddingId,
-            command.Name,
-            command.Role,
-            command.WebsiteUrl,
-            command.ImageUrl,
+            nameResult.Value,
+            roleResult.Value,
+            websiteUrl,
+            imageUrl,
             instagramHandle,
             displayOrder);
 

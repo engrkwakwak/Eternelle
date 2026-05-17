@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Eternelle.Common.Application\Eternelle.Common.Application.csproj" />
+  </ItemGroup>
+
+</Project>

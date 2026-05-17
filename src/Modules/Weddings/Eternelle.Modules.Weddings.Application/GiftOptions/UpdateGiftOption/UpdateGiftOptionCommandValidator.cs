@@ -1,4 +1,5 @@
 using Eternelle.Modules.Weddings.Domain.GiftOptions;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using FluentValidation;
 
 namespace Eternelle.Modules.Weddings.Application.GiftOptions.UpdateGiftOption;
@@ -15,10 +16,10 @@ internal sealed class UpdateGiftOptionCommandValidator : AbstractValidator<Updat
 
         RuleFor(c => c.Title)
             .NotEmpty()
-            .MaximumLength(GiftOption.MaxTitleLength);
+            .MaximumLength(ActivityName.MaxLength);
 
         RuleFor(c => c.Description)
-            .MaximumLength(GiftOption.MaxDescriptionLength)
+            .MaximumLength(RichDescription.MaxLength)
             .When(c => c.Description is not null);
 
         RuleFor(c => c.DisplayMode)
@@ -28,16 +29,28 @@ internal sealed class UpdateGiftOptionCommandValidator : AbstractValidator<Updat
             .NotEmpty()
             .When(c => c.DisplayMode == GiftDisplayMode.Link);
 
+        RuleFor(c => c.LinkUrl)
+            .MaximumLength(WebUrl.MaxLength)
+            .When(c => c.LinkUrl is not null);
+
+        RuleFor(c => c.ImageUrl)
+            .MaximumLength(ImageUrl.MaxLength)
+            .When(c => c.ImageUrl is not null);
+
+        RuleFor(c => c.QrImageUrl)
+            .MaximumLength(ImageUrl.MaxLength)
+            .When(c => c.QrImageUrl is not null);
+
         RuleFor(c => c.AccountName)
-            .MaximumLength(GiftOption.MaxAccountNameLength)
+            .MaximumLength(AccountHolderName.MaxLength)
             .When(c => c.AccountName is not null);
 
         RuleFor(c => c.AccountNumber)
-            .MaximumLength(GiftOption.MaxAccountNumberLength)
+            .MaximumLength(AccountNumber.MaxLength)
             .When(c => c.AccountNumber is not null);
 
         RuleFor(c => c.AccountType)
-            .MaximumLength(GiftOption.MaxAccountTypeLength)
+            .MaximumLength(AccountType.MaxLength)
             .When(c => c.AccountType is not null);
     }
 }
