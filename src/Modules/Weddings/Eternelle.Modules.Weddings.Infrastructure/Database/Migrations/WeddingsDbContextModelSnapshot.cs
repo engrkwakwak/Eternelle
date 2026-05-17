@@ -140,8 +140,8 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                         .HasColumnName("act_time");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
                         .HasColumnName("description");
 
                     b.Property<int>("DisplayOrder")
@@ -271,7 +271,8 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
 
                     b.Property<string>("SrcUrl")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
                         .HasColumnName("src_url");
 
                     b.Property<Guid>("WeddingId")
@@ -313,8 +314,8 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                         .HasColumnName("account_type");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
                         .HasColumnName("description");
 
                     b.Property<int>("DisplayMode")
@@ -326,15 +327,18 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                         .HasColumnName("display_order");
 
                     b.Property<string>("ImageUrl")
-                        .HasColumnType("text")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
                         .HasColumnName("image_url");
 
                     b.Property<string>("LinkUrl")
-                        .HasColumnType("text")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
                         .HasColumnName("link_url");
 
                     b.Property<string>("QrImageUrl")
-                        .HasColumnType("text")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
                         .HasColumnName("qr_image_url");
 
                     b.Property<string>("Title")
@@ -372,7 +376,8 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
 
                     b.Property<string>("SrcUrl")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
                         .HasColumnName("src_url");
 
                     b.Property<int>("Status")
@@ -382,7 +387,8 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                         .HasColumnName("status");
 
                     b.Property<string>("ThumbnailUrl")
-                        .HasColumnType("text")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
                         .HasColumnName("thumbnail_url");
 
                     b.Property<DateTime>("UploadedAt")
@@ -390,8 +396,8 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                         .HasColumnName("uploaded_at");
 
                     b.Property<string>("UploaderName")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
                         .HasColumnName("uploader_name");
 
                     b.Property<Guid>("WeddingId")
@@ -474,7 +480,8 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                         .HasColumnName("display_order");
 
                     b.Property<string>("ImageUrl")
-                        .HasColumnType("text")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
                         .HasColumnName("image_url");
 
                     b.Property<DateOnly?>("StoryDate")
@@ -511,7 +518,8 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                         .HasColumnName("display_order");
 
                     b.Property<string>("ImageUrl")
-                        .HasColumnType("text")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
                         .HasColumnName("image_url");
 
                     b.Property<string>("InstagramHandle")
@@ -532,7 +540,8 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                         .HasColumnName("role");
 
                     b.Property<string>("WebsiteUrl")
-                        .HasColumnType("text")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
                         .HasColumnName("website_url");
 
                     b.Property<Guid>("WeddingId")
@@ -654,7 +663,8 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
 
                             b1.Property<string>("ImageUrl")
                                 .IsRequired()
-                                .HasColumnType("text")
+                                .HasMaxLength(2048)
+                                .HasColumnType("character varying(2048)")
                                 .HasColumnName("image_url");
 
                             b1.HasKey("Id")
@@ -700,8 +710,8 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                                 .HasColumnName("member_b_id");
 
                             b1.Property<string>("Note")
-                                .HasMaxLength(200)
-                                .HasColumnType("character varying(200)")
+                                .HasMaxLength(500)
+                                .HasColumnType("character varying(500)")
                                 .HasColumnName("note");
 
                             b1.HasKey("Id")
@@ -742,7 +752,8 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                                 .HasColumnName("group_id");
 
                             b1.Property<string>("ImageUrl")
-                                .HasColumnType("text")
+                                .HasMaxLength(2048)
+                                .HasColumnType("character varying(2048)")
                                 .HasColumnName("image_url");
 
                             b1.Property<string>("Message")
@@ -809,7 +820,8 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                                 .HasColumnName("id");
 
                             b1.Property<string>("Bio")
-                                .HasColumnType("text")
+                                .HasMaxLength(500)
+                                .HasColumnType("character varying(500)")
                                 .HasColumnName("bio");
 
                             b1.Property<string>("FirstName")
@@ -819,7 +831,8 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                                 .HasColumnName("first_name");
 
                             b1.Property<string>("ImageUrl")
-                                .HasColumnType("text")
+                                .HasMaxLength(2048)
+                                .HasColumnType("character varying(2048)")
                                 .HasColumnName("image_url");
 
                             b1.Property<string>("LastName")
@@ -856,8 +869,9 @@ namespace Eternelle.Modules.Weddings.Infrastructure.Database.Migrations
                                 .HasColumnType("uuid")
                                 .HasColumnName("id");
 
-                            b1.Property<string>("CtaText")
-                                .HasColumnType("text")
+                            b1.Property<string>("CallToAction")
+                                .HasMaxLength(200)
+                                .HasColumnType("character varying(200)")
                                 .HasColumnName("cta_text");
 
                             b1.Property<bool>("Enabled")
