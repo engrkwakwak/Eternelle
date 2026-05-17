@@ -3,15 +3,9 @@ using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Domain.CeremonyActs;
 
-public sealed class CeremonyActCreatedDomainEvent : DomainEvent
+public sealed class CeremonyActCreatedDomainEvent(CeremonyActId ceremonyActId, WeddingId weddingId) : DomainEvent
 {
-    public CeremonyActCreatedDomainEvent(CeremonyActId ceremonyActId, WeddingId weddingId)
-    {
-        CeremonyActId = ceremonyActId;
-        WeddingId = weddingId;
-    }
+    public CeremonyActId CeremonyActId { get; init; } = ceremonyActId;
 
-    public CeremonyActId CeremonyActId { get; init; }
-
-    public WeddingId WeddingId { get; init; }
+    public WeddingId WeddingId { get; init; } = weddingId;
 }

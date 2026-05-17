@@ -1,4 +1,5 @@
 using Eternelle.Modules.Weddings.Domain.GuestPhotos;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,16 +15,26 @@ internal sealed class GuestPhotoConfiguration : IEntityTypeConfiguration<GuestPh
 
         builder.Property(p => p.WeddingId).IsRequired();
 
-        builder.Property(p => p.SrcUrl).IsRequired();
+        builder.Property(p => p.SrcUrl)
+            .HasConversion(v => v.Value, v => ImageUrl.FromPersistence(v))
+            .IsRequired()
+            .HasMaxLength(ImageUrl.MaxLength);
 
-        builder.Property(p => p.ThumbnailUrl);
+        builder.Property(p => p.ThumbnailUrl)
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? ImageUrl.FromPersistence(v) : null)
+            .HasMaxLength(ImageUrl.MaxLength);
 
         builder.Property(p => p.WidthPx);
 
         builder.Property(p => p.HeightPx);
 
         builder.Property(p => p.UploaderName)
-            .HasMaxLength(GuestPhoto.MaxUploaderNameLength);
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? PersonName.FromPersistence(v) : null)
+            .HasMaxLength(PersonName.MaxLength);
 
         // GuestPhotoStatus — stored as int. Pending = 0, Approved = 1, Rejected = 2, OverLimit = 3.
         builder.Property(p => p.Status)

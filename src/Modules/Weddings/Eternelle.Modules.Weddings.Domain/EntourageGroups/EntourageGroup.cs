@@ -1,4 +1,5 @@
 using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Domain.EntourageGroups;
@@ -48,9 +49,6 @@ public sealed class EntourageGroup : Entity
     {
     }
 
-    public static readonly int MaxLabelLength = 150;
-    public static readonly int MaxSubtitleLength = 200;
-
     public EntourageGroupId Id { get; private set; }
 
     /// <summary>
@@ -63,9 +61,9 @@ public sealed class EntourageGroup : Entity
     /// Display label for this group (e.g. "Ninongs &amp; Ninangs", "Secondary Sponsors").
     /// Free text — couples often use Filipino-specific labels.
     /// </summary>
-    public string Label { get; private set; }
+    public GroupLabel Label { get; private set; }
 
-    public string? Subtitle { get; private set; }
+    public GroupSubtitle? Subtitle { get; private set; }
 
     /// <summary>
     /// Semantic type. Null = fully custom / user-defined group.
@@ -88,8 +86,8 @@ public sealed class EntourageGroup : Entity
 
     public static EntourageGroup Create(
         WeddingId weddingId,
-        string label,
-        string? subtitle,
+        GroupLabel label,
+        GroupSubtitle? subtitle,
         EntourageGroupType? groupType,
         EntourageRenderMode renderAs,
         int displayOrder)
@@ -113,8 +111,8 @@ public sealed class EntourageGroup : Entity
     // ─── Group details ───────────────────────────────────────────────────────────
 
     public void UpdateDetails(
-        string label,
-        string? subtitle,
+        GroupLabel label,
+        GroupSubtitle? subtitle,
         EntourageGroupType? groupType,
         EntourageRenderMode renderAs)
     {
@@ -132,26 +130,29 @@ public sealed class EntourageGroup : Entity
     // ─── Member management ───────────────────────────────────────────────────────
 
     public EntourageMember AddMember(
-        string name,
-        string role,
-        string? imageUrl,
-        string? message,
-        string? note,
+        PersonName name,
+        PersonRole role,
+        ImageUrl? imageUrl,
+        PersonMessage? message,
+        InternalNote? note,
         int? seed,
         int displayOrder)
     {
         var member = EntourageMember.Create(WeddingId, Id, name, role, imageUrl, message, note, seed, displayOrder);
         _members.Add(member);
+
+        Raise(new EntourageMemberAddedDomainEvent(Id, member.Id, WeddingId));
+
         return member;
     }
 
     public Result UpdateMember(
         EntourageMemberId memberId,
-        string name,
-        string role,
-        string? imageUrl,
-        string? message,
-        string? note,
+        PersonName name,
+        PersonRole role,
+        ImageUrl? imageUrl,
+        PersonMessage? message,
+        InternalNote? note,
         int? seed)
     {
         EntourageMember? member = _members.FirstOrDefault(m => m.Id == memberId);
@@ -196,6 +197,8 @@ public sealed class EntourageGroup : Entity
         _couples.RemoveAll(c => c.MemberAId == memberId || c.MemberBId == memberId);
         _members.Remove(member);
 
+        Raise(new EntourageMemberRemovedDomainEvent(Id, memberId, WeddingId));
+
         return Result.Success();
     }
 
@@ -209,7 +212,7 @@ public sealed class EntourageGroup : Entity
     public Result<EntourageCouple> PairMembers(
         EntourageMemberId firstId,
         EntourageMemberId secondId,
-        string? note,
+        InternalNote? note,
         int displayOrder)
     {
         if (GroupType.HasValue && NoCouplesAllowed.Contains(GroupType.Value))
@@ -251,7 +254,7 @@ public sealed class EntourageGroup : Entity
         return couple;
     }
 
-    public Result UpdateCouple(EntourageCoupleId coupleId, string? note)
+    public Result UpdateCouple(EntourageCoupleId coupleId, InternalNote? note)
     {
         EntourageCouple? couple = _couples.FirstOrDefault(c => c.Id == coupleId);
 

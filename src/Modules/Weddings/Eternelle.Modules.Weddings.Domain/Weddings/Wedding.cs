@@ -1,4 +1,5 @@
 using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Domain.Shared;
 
 namespace Eternelle.Modules.Weddings.Domain.Weddings;
 
@@ -124,8 +125,11 @@ public sealed class Wedding : Entity
     /// </summary>
     public void ChangePlan(WeddingPlan plan, DateTime utcNow)
     {
+        WeddingPlan previousPlan = Plan;
         Plan = plan;
         UpdatedAtUtc = utcNow;
+
+        Raise(new WeddingPlanChangedDomainEvent(Id, previousPlan, plan));
     }
 
     // ─── Partner management ─────────────────────────────────────────────────────
@@ -137,10 +141,10 @@ public sealed class Wedding : Entity
     /// </summary>
     public Result<Partner> AddPartner(
         PartnerNumber partnerNumber,
-        string firstName,
-        string lastName,
-        string? bio,
-        string? imageUrl,
+        PersonFirstName firstName,
+        PersonLastName lastName,
+        Biography? bio,
+        ImageUrl? imageUrl,
         DateTime utcNow)
     {
         if (_partners.Any(p => p.PartnerNumber == partnerNumber))
@@ -153,15 +157,17 @@ public sealed class Wedding : Entity
 
         UpdatedAtUtc = utcNow;
 
+        Raise(new WeddingPartnerAddedDomainEvent(Id, partner.Id, partnerNumber));
+
         return partner;
     }
 
     public Result UpdatePartner(
         PartnerId partnerId,
-        string firstName,
-        string lastName,
-        string? bio,
-        string? imageUrl,
+        PersonFirstName firstName,
+        PersonLastName lastName,
+        Biography? bio,
+        ImageUrl? imageUrl,
         DateTime utcNow)
     {
         Partner? partner = _partners.FirstOrDefault(p => p.Id == partnerId);
@@ -174,6 +180,8 @@ public sealed class Wedding : Entity
         partner.Update(firstName, lastName, bio, imageUrl);
         UpdatedAtUtc = utcNow;
 
+        Raise(new WeddingPartnerUpdatedDomainEvent(Id, partnerId));
+
         return Result.Success();
     }
 
@@ -185,7 +193,7 @@ public sealed class Wedding : Entity
     /// </summary>
     public void ConfigureSnapShare(
         InstagramHandle? instagramHandle,
-        string? ctaText,
+        CallToAction? callToAction,
         bool enabled,
         SnapShareModerationMode moderationMode,
         bool uploaderNameRequired,
@@ -193,11 +201,11 @@ public sealed class Wedding : Entity
     {
         if (SnapShare is null)
         {
-            SnapShare = SnapShareConfig.Create(Id, instagramHandle, ctaText, enabled, moderationMode, uploaderNameRequired);
+            SnapShare = SnapShareConfig.Create(Id, instagramHandle, callToAction, enabled, moderationMode, uploaderNameRequired);
         }
         else
         {
-            SnapShare.Update(instagramHandle, ctaText, enabled, moderationMode, uploaderNameRequired);
+            SnapShare.Update(instagramHandle, callToAction, enabled, moderationMode, uploaderNameRequired);
         }
 
         UpdatedAtUtc = utcNow;

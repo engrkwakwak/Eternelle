@@ -1,4 +1,5 @@
 using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Domain.CeremonyActs;
@@ -19,10 +20,6 @@ namespace Eternelle.Modules.Weddings.Domain.CeremonyActs;
 /// </summary>
 public sealed class CeremonyAct : Entity
 {
-    public static readonly int MaxNameLength        = 200;
-    public static readonly int MaxDescriptionLength = 1000;
-    public static readonly int MaxIconLength        = 50;
-
     private CeremonyAct()
     {
     }
@@ -35,15 +32,15 @@ public sealed class CeremonyAct : Entity
     /// </summary>
     public WeddingId WeddingId { get; private set; }
 
-    public string Name { get; private set; }
+    public ActivityName Name { get; private set; }
 
-    public string? Description { get; private set; }
+    public RichDescription? Description { get; private set; }
 
     /// <summary>
     /// Icon identifier or emoji for the act (e.g. "🕊️" or "rings").
     /// The domain stores, not interprets, the icon value — rendering is the UI's concern.
     /// </summary>
-    public string? Icon { get; private set; }
+    public IconIdentifier? Icon { get; private set; }
 
     /// <summary>
     /// Optional clock time for the act. Consistent with wedding.events.event_time.
@@ -57,9 +54,9 @@ public sealed class CeremonyAct : Entity
 
     public static CeremonyAct Create(
         WeddingId weddingId,
-        string name,
-        string? description,
-        string? icon,
+        ActivityName name,
+        RichDescription? description,
+        IconIdentifier? icon,
         TimeOnly? actTime,
         int displayOrder)
     {
@@ -82,9 +79,9 @@ public sealed class CeremonyAct : Entity
     // ─── Behaviour ──────────────────────────────────────────────────────────────
 
     public void Update(
-        string name,
-        string? description,
-        string? icon,
+        ActivityName name,
+        RichDescription? description,
+        IconIdentifier? icon,
         TimeOnly? actTime)
     {
         Name = name;

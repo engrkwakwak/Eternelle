@@ -2,6 +2,7 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Modules.Weddings.Domain.EntourageGroups;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Application.EntourageGroups.UpdateEntourageGroup;
@@ -21,9 +22,26 @@ internal sealed class UpdateEntourageGroupCommandHandler(
             return Result.Failure(EntourageGroupErrors.NotFound(groupId));
         }
 
+        Result<GroupLabel> labelResult = GroupLabel.Create(command.Label);
+        if (labelResult.IsFailure)
+        {
+            return Result.Failure(labelResult.Error);
+        }
+
+        GroupSubtitle? subtitle = null;
+        if (command.Subtitle is not null)
+        {
+            Result<GroupSubtitle> subtitleResult = GroupSubtitle.Create(command.Subtitle);
+            if (subtitleResult.IsFailure)
+            {
+                return Result.Failure(subtitleResult.Error);
+            }
+            subtitle = subtitleResult.Value;
+        }
+
         group.UpdateDetails(
-            command.Label,
-            command.Subtitle,
+            labelResult.Value,
+            subtitle,
             command.GroupType.HasValue ? (EntourageGroupType)command.GroupType.Value : group.GroupType,
             (EntourageRenderMode)command.RenderAs);
 

@@ -1,0 +1,42 @@
+﻿using Eternelle.Common.Domain;
+
+namespace Eternelle.Modules.Weddings.Domain.Shared;
+
+public sealed record WebUrl
+{
+    public const int MaxLength = 2048;
+
+    private WebUrl(string value)
+    {
+        Value = value;
+    }
+
+    public string Value { get; }
+
+    public static Result<WebUrl> Create(string? raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            return Result.Failure<WebUrl>(WebUrlErrors.Empty);
+        }
+
+        string trimmed = raw.Trim();
+
+        if (trimmed.Length > MaxLength)
+        {
+            return Result.Failure<WebUrl>(WebUrlErrors.TooLong);
+        }
+
+        if (!Uri.TryCreate(trimmed, UriKind.Absolute, out Uri? uri) ||
+            uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps)
+        {
+            return Result.Failure<WebUrl>(WebUrlErrors.InvalidFormat);
+        }
+
+        return Result.Success(new WebUrl(trimmed));
+    }
+
+    public override string ToString() => Value;
+
+    internal static WebUrl FromPersistence(string value) => new(value);
+}

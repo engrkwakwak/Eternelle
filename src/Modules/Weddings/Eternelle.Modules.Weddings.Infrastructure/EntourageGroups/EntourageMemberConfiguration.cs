@@ -1,4 +1,5 @@
 using Eternelle.Modules.Weddings.Domain.EntourageGroups;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,11 +19,29 @@ internal sealed class EntourageMemberConfiguration
         // Converter registered globally in WeddingsDbContext.ConfigureConventions.
         member.Property(m => m.WeddingId).IsRequired();
 
-        member.Property(m => m.Name).IsRequired().HasMaxLength(EntourageMember.MaxNameLength);
-        member.Property(m => m.Role).IsRequired().HasMaxLength(EntourageMember.MaxRoleLength);
-        member.Property(m => m.ImageUrl);
-        member.Property(m => m.Message).HasMaxLength(EntourageMember.MaxMessageLength);
-        member.Property(m => m.Note).HasMaxLength(EntourageMember.MaxNoteLength);
+        member.Property(m => m.Name)
+            .HasConversion(v => v.Value, v => PersonName.FromPersistence(v))
+            .IsRequired()
+            .HasMaxLength(PersonName.MaxLength);
+        member.Property(m => m.Role)
+            .HasConversion(v => v.Value, v => PersonRole.FromPersistence(v))
+            .IsRequired()
+            .HasMaxLength(PersonRole.MaxLength);
+        member.Property(m => m.ImageUrl)
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? ImageUrl.FromPersistence(v) : null)
+            .HasMaxLength(ImageUrl.MaxLength);
+        member.Property(m => m.Message)
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? PersonMessage.FromPersistence(v) : null)
+            .HasMaxLength(PersonMessage.MaxLength);
+        member.Property(m => m.Note)
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? InternalNote.FromPersistence(v) : null)
+            .HasMaxLength(InternalNote.MaxLength);
         member.Property(m => m.Seed);
         member.Property(m => m.DisplayOrder).IsRequired();
 

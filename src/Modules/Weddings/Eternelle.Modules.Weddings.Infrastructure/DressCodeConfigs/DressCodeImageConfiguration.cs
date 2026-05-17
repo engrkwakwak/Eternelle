@@ -1,4 +1,5 @@
 using Eternelle.Modules.Weddings.Domain.DressCodeConfigs;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,7 +15,10 @@ internal sealed class DressCodeImageConfiguration
         // dress_code_config_id FK — cascade delete is the EF Core default for owned entities.
         image.WithOwner().HasForeignKey(i => i.DressCodeConfigId);
 
-        image.Property(i => i.ImageUrl).IsRequired();
+        image.Property(i => i.ImageUrl)
+            .HasConversion(v => v.Value, v => ImageUrl.FromPersistence(v))
+            .IsRequired()
+            .HasMaxLength(ImageUrl.MaxLength);
         image.Property(i => i.DisplayOrder).IsRequired();
 
         // Composite index supports ordered loads via Include on DressCodeConfigRepository.

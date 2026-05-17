@@ -12,8 +12,6 @@ namespace Eternelle.Modules.Weddings.Domain.Weddings;
 /// </summary>
 public sealed class SnapShareConfig : Entity
 {
-    public static readonly int MaxCtaTextLength = 200;
-
     private SnapShareConfig()
     {
     }
@@ -30,9 +28,8 @@ public sealed class SnapShareConfig : Entity
 
     /// <summary>
     /// Optional call-to-action text shown to guests, e.g. "Tag us @carlandvina2026 in your photos!"
-    /// Free-form text — length validated at the application layer.
     /// </summary>
-    public string? CtaText { get; private set; }
+    public CallToAction? CallToAction { get; private set; }
 
     public bool Enabled { get; private set; }
 
@@ -59,7 +56,7 @@ public sealed class SnapShareConfig : Entity
     internal static SnapShareConfig Create(
         WeddingId weddingId,
         InstagramHandle? instagramHandle,
-        string? ctaText,
+        CallToAction? callToAction,
         bool enabled,
         SnapShareModerationMode moderationMode,
         bool uploaderNameRequired)
@@ -69,7 +66,7 @@ public sealed class SnapShareConfig : Entity
             Id = SnapShareConfigId.New(),
             WeddingId = weddingId,
             InstagramHandle = instagramHandle,
-            CtaText = ctaText,
+            CallToAction = callToAction,
             Enabled = enabled,
             UploadToken = null,
             ModerationMode = moderationMode,
@@ -79,13 +76,13 @@ public sealed class SnapShareConfig : Entity
 
     internal void Update(
         InstagramHandle? instagramHandle,
-        string? ctaText,
+        CallToAction? callToAction,
         bool enabled,
         SnapShareModerationMode moderationMode,
         bool uploaderNameRequired)
     {
         InstagramHandle = instagramHandle;
-        CtaText = ctaText;
+        CallToAction = callToAction;
         Enabled = enabled;
         ModerationMode = moderationMode;
         UploaderNameRequired = uploaderNameRequired;

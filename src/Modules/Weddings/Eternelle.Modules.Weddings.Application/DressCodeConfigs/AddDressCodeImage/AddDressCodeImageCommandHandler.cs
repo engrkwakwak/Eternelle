@@ -2,6 +2,7 @@ using Eternelle.Common.Application.Messaging;
 using Eternelle.Common.Domain;
 using Eternelle.Modules.Weddings.Application.Abstractions.Data;
 using Eternelle.Modules.Weddings.Domain.DressCodeConfigs;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Application.DressCodeConfigs.AddDressCodeImage;
@@ -27,7 +28,13 @@ internal sealed class AddDressCodeImageCommandHandler(
             ? 0
             : config.Images.Max(i => i.DisplayOrder) + 1;
 
-        DressCodeImage image = config.AddImage(command.ImageUrl, displayOrder);
+        Result<ImageUrl> imageUrlResult = ImageUrl.Create(command.ImageUrl);
+        if (imageUrlResult.IsFailure)
+        {
+            return Result.Failure<Guid>(imageUrlResult.Error);
+        }
+
+        DressCodeImage image = config.AddImage(imageUrlResult.Value, displayOrder);
 
         dressCodeConfigRepository.Update(config);
 

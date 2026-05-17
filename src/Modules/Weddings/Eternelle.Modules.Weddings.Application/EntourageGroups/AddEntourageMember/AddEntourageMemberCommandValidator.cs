@@ -1,4 +1,5 @@
 using Eternelle.Modules.Weddings.Domain.EntourageGroups;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using FluentValidation;
 
 namespace Eternelle.Modules.Weddings.Application.EntourageGroups.AddEntourageMember;
@@ -12,18 +13,18 @@ internal sealed class AddEntourageMemberCommandValidator : AbstractValidator<Add
 
         RuleFor(c => c.Name)
             .NotEmpty()
-            .MaximumLength(EntourageMember.MaxNameLength);
+            .MaximumLength(PersonName.MaxLength);
 
         RuleFor(c => c.Role)
             .NotEmpty()
-            .MaximumLength(EntourageMember.MaxRoleLength);
+            .MaximumLength(PersonRole.MaxLength);
 
         RuleFor(c => c.Message)
-            .MaximumLength(EntourageMember.MaxMessageLength)
+            .MaximumLength(PersonMessage.MaxLength)
             .When(c => c.Message is not null);
 
         RuleFor(c => c.Note)
-            .MaximumLength(EntourageMember.MaxNoteLength)
+            .MaximumLength(InternalNote.MaxLength)
             .When(c => c.Note is not null);
 
         RuleFor(c => c.DisplayOrder)

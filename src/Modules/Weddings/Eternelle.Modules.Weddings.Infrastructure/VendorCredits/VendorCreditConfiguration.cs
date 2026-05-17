@@ -1,3 +1,4 @@
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.VendorCredits;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 using Microsoft.EntityFrameworkCore;
@@ -21,16 +22,26 @@ internal sealed class VendorCreditConfiguration : IEntityTypeConfiguration<Vendo
             .HasDatabaseName("ix_vendor_credits_wedding_id_display_order");
 
         builder.Property(v => v.Name)
+            .HasConversion(v => v.Value, v => VendorName.FromPersistence(v))
             .IsRequired()
-            .HasMaxLength(VendorCredit.MaxNameLength);
+            .HasMaxLength(VendorName.MaxLength);
 
         builder.Property(v => v.Role)
+            .HasConversion(v => v.Value, v => PersonRole.FromPersistence(v))
             .IsRequired()
-            .HasMaxLength(VendorCredit.MaxRoleLength);
+            .HasMaxLength(PersonRole.MaxLength);
 
-        builder.Property(v => v.WebsiteUrl);
+        builder.Property(v => v.WebsiteUrl)
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? WebUrl.FromPersistence(v) : null)
+            .HasMaxLength(WebUrl.MaxLength);
 
-        builder.Property(v => v.ImageUrl);
+        builder.Property(v => v.ImageUrl)
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? ImageUrl.FromPersistence(v) : null)
+            .HasMaxLength(ImageUrl.MaxLength);
 
         // InstagramHandle — value object with FromPersistence() bypass factory.
         // Stored as plain text; Create() validation was enforced on write.

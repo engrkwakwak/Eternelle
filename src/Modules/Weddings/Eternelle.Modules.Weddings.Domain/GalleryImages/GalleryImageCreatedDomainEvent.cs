@@ -3,15 +3,9 @@ using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Domain.GalleryImages;
 
-public sealed class GalleryImageCreatedDomainEvent : DomainEvent
+public sealed class GalleryImageCreatedDomainEvent(GalleryImageId galleryImageId, WeddingId weddingId) : DomainEvent
 {
-    public GalleryImageCreatedDomainEvent(GalleryImageId galleryImageId, WeddingId weddingId)
-    {
-        GalleryImageId = galleryImageId;
-        WeddingId = weddingId;
-    }
+    public GalleryImageId GalleryImageId { get; init; } = galleryImageId;
 
-    public GalleryImageId GalleryImageId { get; init; }
-
-    public WeddingId WeddingId { get; init; }
+    public WeddingId WeddingId { get; init; } = weddingId;
 }

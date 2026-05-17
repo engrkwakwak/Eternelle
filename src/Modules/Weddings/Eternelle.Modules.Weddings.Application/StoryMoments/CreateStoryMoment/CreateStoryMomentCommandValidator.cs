@@ -1,4 +1,4 @@
-using Eternelle.Modules.Weddings.Domain.StoryMoments;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using FluentValidation;
 
 namespace Eternelle.Modules.Weddings.Application.StoryMoments.CreateStoryMoment;
@@ -12,11 +12,11 @@ internal sealed class CreateStoryMomentCommandValidator : AbstractValidator<Crea
 
         RuleFor(c => c.Title)
             .NotEmpty()
-            .MaximumLength(StoryMoment.MaxTitleLength);
+            .MaximumLength(ActivityName.MaxLength);
 
         RuleFor(c => c.Description)
             .NotEmpty()
-            .MaximumLength(StoryMoment.MaxDescriptionLength);
+            .MaximumLength(RichDescription.MaxLength);
 
         RuleFor(c => c.DisplayOrder)
             .GreaterThanOrEqualTo(0);

@@ -1,4 +1,5 @@
 using Eternelle.Modules.Weddings.Domain.GiftOptions;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -21,29 +22,56 @@ internal sealed class GiftOptionConfiguration : IEntityTypeConfiguration<GiftOpt
             .HasDatabaseName("ix_gift_options_wedding_id_display_order");
 
         builder.Property(g => g.Title)
+            .HasConversion(v => v.Value, v => ActivityName.FromPersistence(v))
             .IsRequired()
-            .HasMaxLength(GiftOption.MaxTitleLength);
+            .HasMaxLength(ActivityName.MaxLength);
 
         builder.Property(g => g.Description)
-            .HasMaxLength(GiftOption.MaxDescriptionLength);
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? RichDescription.FromPersistence(v) : null)
+            .HasMaxLength(RichDescription.MaxLength);
 
         // GiftDisplayMode — stored as int. C# enum default ordinal values.
         builder.Property(g => g.DisplayMode)
             .HasConversion<int>()
             .IsRequired();
 
-        builder.Property(g => g.LinkUrl);
-        builder.Property(g => g.ImageUrl);
-        builder.Property(g => g.QrImageUrl);
+        builder.Property(g => g.LinkUrl)
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? WebUrl.FromPersistence(v) : null)
+            .HasMaxLength(WebUrl.MaxLength);
+
+        builder.Property(g => g.ImageUrl)
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? ImageUrl.FromPersistence(v) : null)
+            .HasMaxLength(ImageUrl.MaxLength);
+
+        builder.Property(g => g.QrImageUrl)
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? ImageUrl.FromPersistence(v) : null)
+            .HasMaxLength(ImageUrl.MaxLength);
 
         builder.Property(g => g.AccountName)
-            .HasMaxLength(GiftOption.MaxAccountNameLength);
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? AccountHolderName.FromPersistence(v) : null)
+            .HasMaxLength(AccountHolderName.MaxLength);
 
         builder.Property(g => g.AccountNumber)
-            .HasMaxLength(GiftOption.MaxAccountNumberLength);
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? AccountNumber.FromPersistence(v) : null)
+            .HasMaxLength(AccountNumber.MaxLength);
 
         builder.Property(g => g.AccountType)
-            .HasMaxLength(GiftOption.MaxAccountTypeLength);
+            .HasConversion(
+                v => v != null ? v.Value : null,
+                v => v != null ? AccountType.FromPersistence(v) : null)
+            .HasMaxLength(AccountType.MaxLength);
 
         builder.Property(g => g.DisplayOrder).IsRequired();
     }

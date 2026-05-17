@@ -1,4 +1,4 @@
-using Eternelle.Modules.Weddings.Domain.Reminders;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using FluentValidation;
 
 namespace Eternelle.Modules.Weddings.Application.Reminders.UpdateReminder;
@@ -12,14 +12,14 @@ internal sealed class UpdateReminderCommandValidator : AbstractValidator<UpdateR
 
         RuleFor(c => c.Icon)
             .NotEmpty()
-            .MaximumLength(Reminder.MaxIconLength);
+            .MaximumLength(IconIdentifier.MaxLength);
 
         RuleFor(c => c.Title)
             .NotEmpty()
-            .MaximumLength(Reminder.MaxTitleLength);
+            .MaximumLength(ActivityName.MaxLength);
 
         RuleFor(c => c.Body)
             .NotEmpty()
-            .MaximumLength(Reminder.MaxBodyLength);
+            .MaximumLength(RichDescription.MaxLength);
     }
 }

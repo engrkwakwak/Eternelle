@@ -1,4 +1,5 @@
 using Eternelle.Common.Domain;
+using Eternelle.Modules.Weddings.Domain.Shared;
 using Eternelle.Modules.Weddings.Domain.Weddings;
 
 namespace Eternelle.Modules.Weddings.Domain.VendorCredits;
@@ -18,9 +19,6 @@ namespace Eternelle.Modules.Weddings.Domain.VendorCredits;
 /// </summary>
 public sealed class VendorCredit : Entity
 {
-    public static readonly int MaxNameLength = 200;
-    public static readonly int MaxRoleLength = 100;
-
     private VendorCredit()
     {
     }
@@ -33,20 +31,20 @@ public sealed class VendorCredit : Entity
     /// </summary>
     public WeddingId WeddingId { get; private set; }
 
-    public string Name { get; private set; }
+    public VendorName Name { get; private set; }
 
     /// <summary>
     /// The vendor's role (e.g. "Photography", "Catering", "Flowers").
     /// Free text — no closed vocabulary; couples define their own labels.
     /// </summary>
-    public string Role { get; private set; }
+    public PersonRole Role { get; private set; }
 
     /// <summary>
     /// Optional vendor website URL. The domain stores, not validates, URLs.
     /// </summary>
-    public string? WebsiteUrl { get; private set; }
+    public WebUrl? WebsiteUrl { get; private set; }
 
-    public string? ImageUrl { get; private set; }
+    public ImageUrl? ImageUrl { get; private set; }
 
     /// <summary>
     /// Optional Instagram handle for the vendor. Reuses the InstagramHandle value object
@@ -60,10 +58,10 @@ public sealed class VendorCredit : Entity
 
     public static VendorCredit Create(
         WeddingId weddingId,
-        string name,
-        string role,
-        string? websiteUrl,
-        string? imageUrl,
+        VendorName name,
+        PersonRole role,
+        WebUrl? websiteUrl,
+        ImageUrl? imageUrl,
         InstagramHandle? instagramHandle,
         int displayOrder)
     {
@@ -87,10 +85,10 @@ public sealed class VendorCredit : Entity
     // ─── Behaviour ──────────────────────────────────────────────────────────────
 
     public void Update(
-        string name,
-        string role,
-        string? websiteUrl,
-        string? imageUrl,
+        VendorName name,
+        PersonRole role,
+        WebUrl? websiteUrl,
+        ImageUrl? imageUrl,
         InstagramHandle? instagramHandle)
     {
         Name = name;
