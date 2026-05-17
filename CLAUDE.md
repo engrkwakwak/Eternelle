@@ -183,23 +183,29 @@ if (group is null || group.WeddingId != new WeddingId(command.WeddingId))
 
 Always return an **opaque** `NotFound` error — never leak existence.
 
-**Domain event handlers (Pattern B):** load aggregate from repository after the domain event fires, then publish the integration event:
+**Domain event handlers** embed all integration-event payload in the domain event at raise-time, then publish directly — no repository reload:
 
 ```csharp
-internal sealed class WeddingCreatedDomainEventHandler(
-    IWeddingRepository weddingRepository,
-    IEventBus eventBus)
+// Domain event carries creation-time data
+public sealed class WeddingCreatedDomainEvent(
+    WeddingId weddingId,
+    Guid tenantId,
+    DateOnly weddingDate) : DomainEvent
+{
+    public WeddingId WeddingId { get; init; } = weddingId;
+    public Guid TenantId { get; init; } = tenantId;
+    public DateOnly WeddingDate { get; init; } = weddingDate;
+}
+
+// Handler injects only IEventBus — no repository
+internal sealed class WeddingCreatedDomainEventHandler(IEventBus eventBus)
     : DomainEventHandler<WeddingCreatedDomainEvent>
 {
     public override async Task Handle(WeddingCreatedDomainEvent domainEvent, CancellationToken ct = default)
     {
-        Wedding? wedding = await weddingRepository.GetAsync(domainEvent.WeddingId, ct);
-        if (wedding is null)
-            throw new InvalidOperationException($"Wedding {domainEvent.WeddingId} not found.");
-
         await eventBus.PublishAsync(
             new WeddingCreatedIntegrationEvent(domainEvent.Id, domainEvent.OccurredOnUtc,
-                wedding.Id.Value, wedding.TenantId, wedding.WeddingDate),
+                domainEvent.WeddingId.Value, domainEvent.TenantId, domainEvent.WeddingDate),
             ct);
     }
 }
@@ -322,5 +328,5 @@ Module-specific config lives in `src/API/Eternelle.Api/`:
 - **`Results.Created` on batch operations** — batch endpoints that return IDs but don't create a single addressable resource should return `Results.Ok`, not `Results.Created` with a self-referential `Location` header.
 - **Empty validator** — a command with new ID fields and no corresponding `RuleFor` rules will silently accept zero GUIDs.
 - **Config empty strings** — empty strings in the base `modules.weddings.json` are not "unset" — they are values that fail `IsNullOrWhiteSpace` validation at startup. Remove keys that must be environment-provided entirely from the base file.
-- **Silent return in domain event handler** — returning early when the aggregate is not found silently swallows the event and prevents retry. Throw `InvalidOperationException` so the pipeline can retry.
+- **Repository reload in domain event handler** — don't inject a repository into a domain event handler to reload the aggregate. Embed all integration-event payload in the domain event at raise-time and publish directly from `domainEvent` properties.
 - **`static readonly` for VO MaxLength** — use `const int MaxLength` in all VOs. `static readonly` is only justified when shipping domain types as binary NuGet packages to independently-deployed consumers, which does not apply to this monorepo.

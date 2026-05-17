@@ -95,7 +95,7 @@ public sealed class Wedding : Entity
             UpdatedAtUtc = utcNow
         };
 
-        wedding.Raise(new WeddingCreatedDomainEvent(wedding.Id));
+        wedding.Raise(new WeddingCreatedDomainEvent(wedding.Id, tenantId, weddingDate));
 
         return wedding;
     }

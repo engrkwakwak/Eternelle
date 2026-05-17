@@ -37,13 +37,12 @@ Violating this graph creates circular dependencies and leaks module internals.
 
 **Only `Eternelle.Modules.{X}.IntegrationEvents` may be referenced from outside module X.**
 
-Integration event flow (Pattern B — load in handler):
+Integration event flow:
 
 ```text
-Domain event raised in aggregate
+Domain event raised in aggregate (carries all payload fields at raise-time)
   → DomainEventHandler<TEvent> (in Application)
-      → loads aggregate from repository to get full state
-      → publishes IntegrationEvent via IEventBus
+      → publishes IntegrationEvent via IEventBus directly from domainEvent properties
           → other module's Presentation subscribes via IntegrationEventHandler<TEvent>
 ```
 
